@@ -1,4 +1,4 @@
-package de.hdm_stuttgart.mi.dbad.project;
+package de.hdm_stuttgart.mi.dbad.dbwarp;
 
 import lombok.extern.slf4j.XSlf4j;
 import picocli.CommandLine;
@@ -16,6 +16,7 @@ public class Main {
   public static void main(String[] args) {
     log.info("Engage!");
     int exitCode = new CommandLine(new DBWarpCLI()).execute(args);
+
     System.exit(exitCode);
   }
 }
