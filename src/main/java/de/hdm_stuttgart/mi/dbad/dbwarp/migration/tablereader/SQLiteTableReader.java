@@ -12,15 +12,21 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.XSlf4j;
 
+@XSlf4j
 public class SQLiteTableReader extends TableReader {
 
   public SQLiteTableReader(ConnectionManager connectionManager) {
     super(connectionManager);
+    log.entry(connectionManager);
+    log.exit();
   }
 
   @Override
   public List<Table> readTables() throws SQLException {
+    log.entry();
+
     final Map<String, Table> outTables = new HashMap<>();
     final Connection connection = connectionManager.getSourceDatabaseConnection();
 
@@ -37,6 +43,6 @@ public class SQLiteTableReader extends TableReader {
           ));
     }
 
-    return Collections.unmodifiableList(new ArrayList<>(outTables.values()));
+    return log.exit(Collections.unmodifiableList(new ArrayList<>(outTables.values())));
   }
 }

@@ -58,14 +58,17 @@ public class DBWarpCLI implements Callable<Integer> {
   }
 
   private void setupLogging() {
+    log.entry();
     log.debug("Setting up logging");
 
     final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 
     if (!verbose) {
       root.setLevel(Level.WARN);
+      return;
     }
 
     root.setLevel(Level.DEBUG);
+    log.exit();
   }
 }
