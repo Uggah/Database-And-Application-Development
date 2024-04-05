@@ -87,33 +87,44 @@ public abstract class DefaultTableReader implements TableReader {
     final List<Column> columnList = new ArrayList<>();
 
     while (columns.next()) {
-      final String name = columns.getString("COLUMN_NAME");
-      final int type = columns.getInt("DATA_TYPE");
-
-      final int nullability = columns.getInt("IS_NULLABLE");
-      final int size = columns.getInt("COLUMN_SIZE");
-
-      final Boolean nullable;
-
-      switch (nullability) {
-        case 0 -> nullable = false;
-        case 1 -> nullable = true;
-        case 2 -> nullable = null;
-        default -> throw new IllegalArgumentException(
-            String.format("Unknown nullability: %s", nullability));
-      }
-
-      final Column column = new Column(
-          name,
-          JDBCType.valueOf(type),
-          nullable,
-          size
-      );
-
-      columnList.add(column);
+      columnList.add(readColumn(columns));
     }
 
     return log.exit(Collections.unmodifiableList(columnList));
+  }
+
+  /**
+   * Reads a single {@link Column}. The given {@link ResultSet} must have been retrieved from
+   * {@link java.sql.DatabaseMetaData#getColumns(String, String, String, String)} and point to the
+   * desired row.
+   *
+   * @param resultSet the {@link ResultSet} to get the {@link Column Column's} metadata from.
+   * @return The {@link Column}
+   * @throws SQLException if a database access error occurs
+   */
+  protected Column readColumn(final ResultSet resultSet) throws SQLException {
+    final String name = resultSet.getString("COLUMN_NAME");
+    final int type = resultSet.getInt("DATA_TYPE");
+
+    final int nullability = resultSet.getInt("IS_NULLABLE");
+    final int size = resultSet.getInt("COLUMN_SIZE");
+
+    final Boolean nullable;
+
+    switch (nullability) {
+      case 0 -> nullable = false;
+      case 1 -> nullable = true;
+      case 2 -> nullable = null;
+      default -> throw new IllegalArgumentException(
+          String.format("Unknown nullability: %s", nullability));
+    }
+
+    return new Column(
+        name,
+        JDBCType.valueOf(type),
+        nullable,
+        size
+    );
   }
 
 }
