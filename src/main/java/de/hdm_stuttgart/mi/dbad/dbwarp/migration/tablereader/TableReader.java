@@ -3,6 +3,7 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.databasemodel.Table;
 import java.sql.SQLException;
+import java.util.List;
 
 public abstract class TableReader {
 
@@ -12,8 +13,6 @@ public abstract class TableReader {
     this.connectionManager = connectionManager;
   }
 
-  ;
-
-  public abstract Table[] readTables() throws SQLException;
+  public abstract List<Table> readTables() throws SQLException;
 
 }

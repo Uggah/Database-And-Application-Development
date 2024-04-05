@@ -7,7 +7,9 @@ import java.sql.Connection;
 import java.sql.JDBCType;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SQLiteTableReader extends TableReader {
@@ -20,7 +22,7 @@ public class SQLiteTableReader extends TableReader {
   }
 
   @Override
-  public Table[] readTables() throws SQLException {
+  public List<Table> readTables() throws SQLException {
 
     Map<String, Table> outTables = new HashMap<>();
 
@@ -35,6 +37,6 @@ public class SQLiteTableReader extends TableReader {
           JDBCType.valueOf(columns.getInt("DATA_TYPE"))));
     }
 
-    return outTables.values().toArray(new Table[0]);
+    return new ArrayList<>(outTables.values());
   }
 }
