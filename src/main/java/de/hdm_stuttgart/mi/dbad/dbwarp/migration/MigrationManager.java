@@ -2,9 +2,9 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration;
 
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
-import de.hdm_stuttgart.mi.dbad.dbwarp.databasemodel.Table;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader.TableReader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader.TableReaderFactory;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.Table;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;

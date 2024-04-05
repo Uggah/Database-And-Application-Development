@@ -1,6 +1,6 @@
-package de.hdm_stuttgart.mi.dbad.dbwarp.databasemodel.constraints;
+package de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints;
 
-import de.hdm_stuttgart.mi.dbad.dbwarp.databasemodel.Column;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.Column;
 import lombok.Data;
 
 @Data

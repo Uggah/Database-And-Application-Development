@@ -1,4 +1,4 @@
-package de.hdm_stuttgart.mi.dbad.dbwarp.databasemodel.constraints;
+package de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints;
 
 public enum ConstraintType {
   UNIQUE,

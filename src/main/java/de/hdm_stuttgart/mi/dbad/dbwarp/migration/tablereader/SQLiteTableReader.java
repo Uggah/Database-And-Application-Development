@@ -1,8 +1,8 @@
 package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
-import de.hdm_stuttgart.mi.dbad.dbwarp.databasemodel.Column;
-import de.hdm_stuttgart.mi.dbad.dbwarp.databasemodel.Table;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.Column;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.Table;
 import java.sql.Connection;
 import java.sql.JDBCType;
 import java.sql.ResultSet;
@@ -14,11 +14,8 @@ import java.util.Map;
 
 public class SQLiteTableReader extends TableReader {
 
-  private final ConnectionManager connectionManager;
-
   public SQLiteTableReader(ConnectionManager connectionManager) {
     super(connectionManager);
-    this.connectionManager = connectionManager;
   }
 
   @Override

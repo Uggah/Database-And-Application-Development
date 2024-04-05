@@ -1,6 +1,6 @@
-package de.hdm_stuttgart.mi.dbad.dbwarp.databasemodel;
+package de.hdm_stuttgart.mi.dbad.dbwarp.model;
 
-import de.hdm_stuttgart.mi.dbad.dbwarp.databasemodel.constraints.Constraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
