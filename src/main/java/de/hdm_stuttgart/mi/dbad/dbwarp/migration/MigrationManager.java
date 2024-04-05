@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @Setter
 @XSlf4j
 @NoArgsConstructor
+@SuppressWarnings("java:S6548")
 public final class MigrationManager {
 
   private static class MigrationManagerHolder {
@@ -32,8 +33,8 @@ public final class MigrationManager {
   public void migrate() throws SQLException {
     log.entry();
 
-    TableReaderFactory.getInstance().setConnectionManager(connectionManager);
-    final TableReader tableReader = TableReaderFactory.getInstance().getTableReader();
+    TableReaderFactory tableReaderFactory = new TableReaderFactory(connectionManager);
+    final TableReader tableReader = tableReaderFactory.getTableReader();
     List<Table> tables = tableReader.readTables();
 
     log.debug(

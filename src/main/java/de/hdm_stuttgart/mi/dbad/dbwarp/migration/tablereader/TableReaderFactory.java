@@ -6,20 +6,10 @@ import lombok.*;
 import lombok.extern.slf4j.XSlf4j;
 
 @XSlf4j
-@Setter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public final class TableReaderFactory {
 
-  private static class TableReaderFactoryHolder {
-    private static final TableReaderFactory INSTANCE = new TableReaderFactory();
-  }
-
   private ConnectionManager connectionManager;
-
-  public static TableReaderFactory getInstance() {
-    log.entry();
-    return log.exit(TableReaderFactoryHolder.INSTANCE);
-  }
 
   public TableReader getTableReader() throws SQLException {
     log.entry();
