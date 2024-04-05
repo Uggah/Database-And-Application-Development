@@ -4,7 +4,7 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration;
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader.TableReader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader.TableReaderFactory;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.Table;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.XSlf4j;
