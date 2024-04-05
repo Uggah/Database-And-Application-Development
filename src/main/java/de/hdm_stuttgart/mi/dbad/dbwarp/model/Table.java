@@ -8,9 +8,9 @@ import lombok.Data;
 @Data
 public class Table {
 
-  final private String name;
-  final private List<Column> columns = new ArrayList<>();
-  private List<Constraint> constraints = new ArrayList<>();
+  private final String name;
+  private final List<Column> columns = new ArrayList<>();
+  private final List<Constraint> constraints = new ArrayList<>();
 
   public void addColumn(Column column) {
     columns.add(column);

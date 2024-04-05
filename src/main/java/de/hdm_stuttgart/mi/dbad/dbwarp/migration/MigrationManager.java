@@ -7,29 +7,43 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader.TableReaderFactory;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.Table;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
+import lombok.extern.slf4j.XSlf4j;
 
+import java.sql.SQLException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Setter
+@XSlf4j
 @NoArgsConstructor
 public final class MigrationManager {
 
-  private static MigrationManager INSTANCE;
+  private static class MigrationManagerHolder {
+    private static final MigrationManager INSTANCE = new MigrationManager();
+  }
 
-  @Setter
   private ConnectionManager connectionManager;
 
   public static MigrationManager getInstance() {
-    if (INSTANCE == null) {
-      INSTANCE = new MigrationManager();
-    }
-
-    return INSTANCE;
+    log.entry();
+    return log.exit(MigrationManagerHolder.INSTANCE);
   }
 
-  @SneakyThrows
-  public void migrate() {
+  public void migrate() throws SQLException {
+    log.entry();
+
     TableReaderFactory.getInstance().setConnectionManager(connectionManager);
-    TableReader tableReader = TableReaderFactory.getInstance().getTableReader();
-    Table[] tables = tableReader.readTables();
+    final TableReader tableReader = TableReaderFactory.getInstance().getTableReader();
+    List<Table> tables = tableReader.readTables();
+
+    log.debug(
+            "Got tables from source database: {}",
+            tables.stream()
+                    .map(Table::toString)
+                    .collect(Collectors.joining(", "))
+    );
+
+    log.exit();
   }
 
 }

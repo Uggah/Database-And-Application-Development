@@ -4,32 +4,27 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import java.sql.SQLException;
 import lombok.*;
 
+@Setter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TableReaderFactory {
 
-  private static TableReaderFactory INSTANCE;
+  private static class TableReaderFactoryHolder {
+    private static final TableReaderFactory INSTANCE = new TableReaderFactory();
+  }
 
-  @Setter
   private ConnectionManager connectionManager;
 
   public static TableReaderFactory getInstance() {
-    if (INSTANCE == null) {
-      INSTANCE = new TableReaderFactory();
-    }
-
-    return INSTANCE;
+    return TableReaderFactoryHolder.INSTANCE;
   }
 
   public TableReader getTableReader() throws SQLException {
+    final String databaseProductName = connectionManager.getSourceDatabaseConnection().getMetaData().getDatabaseProductName();
 
-    switch (connectionManager.getSourceDatabaseConnection().getMetaData()
-        .getDatabaseProductName()) {
-      case "SQLite":
-        return new SQLiteTableReader(connectionManager);
-      default:
-        throw new IllegalArgumentException("Database is not supported by DBWarp");
-    }
-
+    return switch (databaseProductName) {
+      case "SQLite" -> new SQLiteTableReader(connectionManager);
+      default -> throw new IllegalArgumentException("Database is not supported by DBWarp");
+    };
   }
 
 }
