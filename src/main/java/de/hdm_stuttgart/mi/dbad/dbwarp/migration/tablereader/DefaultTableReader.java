@@ -1,8 +1,10 @@
 package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.Column;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableDescriptor;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
@@ -36,7 +38,8 @@ public abstract class DefaultTableReader implements TableReader {
       final List<Column> columns = retrieveColumnsByTableDescriptor(table.getDescriptor());
       table.addColumns(columns);
 
-      final List<Constraint> constraints = retrieveConstraintsByTable(table);
+      final List<Constraint> constraints = retrieveConstraintsByTableDescriptor(
+          table.getDescriptor());
       table.addConstraints(constraints);
     }
 
@@ -131,17 +134,48 @@ public abstract class DefaultTableReader implements TableReader {
     );
   }
 
-  /**
-   * Retrieves all {@link Constraint Constraints} in the table described by the given
-   * {@link TableDescriptor}.
-   *
-   * @param table {@link Table} of the {@link Table} to get the {@link Constraint Constraints} of.
-   * @return an unmodifiable {@link List} of all {@link Constraint Constraints} in the table
-   * described by the given {@link Table}
-   * @throws SQLException if a database access error occurs
-   */
-  protected List<Constraint> retrieveConstraintsByTable(final Table table) throws SQLException {
-    return null;
+  protected final List<Constraint> retrieveConstraintsByTableDescriptor(
+      final TableDescriptor tableDescriptor) throws SQLException {
+    log.entry(tableDescriptor);
+
+    final List<Constraint> constraints = new ArrayList<>();
+
+    constraints.add(retrievePrimaryKeyConstraintByTableDescriptor(tableDescriptor));
+    constraints.addAll(retrieveForeignKeyConstraintsByTableDescriptor(tableDescriptor));
+
+    return log.exit(Collections.unmodifiableList(constraints));
+  }
+
+  protected PrimaryKeyConstraint retrievePrimaryKeyConstraintByTableDescriptor(
+      final TableDescriptor tableDescriptor) throws SQLException {
+    log.entry(tableDescriptor);
+
+    final List<Column> columns = new ArrayList<>();
+
+    final ResultSet resultSet = connection.getMetaData()
+        .getPrimaryKeys(null, tableDescriptor.getSchema(), tableDescriptor.getName());
+
+    while (resultSet.next()) {
+      final String columnName = resultSet.getString("COLUMN_NAME");
+    }
+
+    return log.exit(null);
+  }
+
+  protected List<ForeignKeyConstraint> retrieveForeignKeyConstraintsByTableDescriptor(
+      final TableDescriptor tableDescriptor) throws SQLException {
+    log.entry(tableDescriptor);
+
+    final ResultSet resultSet = connection.getMetaData().getCrossReference(
+        null,
+        null,
+        null,
+        null,
+        tableDescriptor.getSchema(),
+        tableDescriptor.getName()
+    );
+
+    return log.exit(Collections.emptyList());
   }
 
 }
