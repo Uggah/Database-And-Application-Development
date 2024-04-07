@@ -1,4 +1,4 @@
-package de.hdm_stuttgart.mi.dbad.dbwarp.model;
+package de.hdm_stuttgart.mi.dbad.dbwarp.model.column;
 
 import java.sql.JDBCType;
 import lombok.Data;

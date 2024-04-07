@@ -1,7 +1,7 @@
 package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.Column;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import java.sql.JDBCType;
 import java.sql.ResultSet;
 import java.sql.SQLException;

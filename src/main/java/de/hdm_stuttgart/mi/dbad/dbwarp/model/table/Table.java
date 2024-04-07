@@ -1,6 +1,6 @@
 package de.hdm_stuttgart.mi.dbad.dbwarp.model.table;
 
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.Column;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 import java.util.ArrayList;
 import java.util.List;
