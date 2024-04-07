@@ -18,6 +18,7 @@ public class Table {
   private final TableDescriptor descriptor;
 
   private final List<Column> columns = new ArrayList<>();
+  private final List<Constraint> constraints = new ArrayList<>();
 
   /**
    * Adds a {@link Column} to the model.
@@ -41,8 +42,6 @@ public class Table {
     log.exit();
   }
 
-  private final List<Constraint> constraints = new ArrayList<>();
-
   /**
    * Adds a {@link Constraint Constraint} to the model.
    *
@@ -63,6 +62,10 @@ public class Table {
     log.entry(constraints);
     constraints.forEach(this::addConstraint);
     log.exit();
+  }
+
+  public Column getColumnByName(String name) {
+    return columns.parallelStream().filter(c -> c.getName().equals(name)).findAny().orElse(null);
   }
 
 }
