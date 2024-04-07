@@ -2,6 +2,7 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.Column;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableDescriptor;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
@@ -34,6 +35,9 @@ public abstract class DefaultTableReader implements TableReader {
     for (final Table table : tables) {
       final List<Column> columns = retrieveColumnsByTableDescriptor(table.getDescriptor());
       table.addColumns(columns);
+
+      final List<Constraint> constraints = retrieveConstraintsByTable(table);
+      table.addConstraints(constraints);
     }
 
     return log.exit(tables);
@@ -125,6 +129,19 @@ public abstract class DefaultTableReader implements TableReader {
         nullable,
         size
     );
+  }
+
+  /**
+   * Retrieves all {@link Constraint Constraints} in the table described by the given
+   * {@link TableDescriptor}.
+   *
+   * @param table {@link Table} of the {@link Table} to get the {@link Constraint Constraints} of.
+   * @return an unmodifiable {@link List} of all {@link Constraint Constraints} in the table
+   * described by the given {@link Table}
+   * @throws SQLException if a database access error occurs
+   */
+  protected List<Constraint> retrieveConstraintsByTable(final Table table) throws SQLException {
+    return null;
   }
 
 }
