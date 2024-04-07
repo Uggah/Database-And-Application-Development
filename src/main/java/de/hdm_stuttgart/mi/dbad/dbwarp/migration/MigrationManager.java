@@ -5,23 +5,18 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader.TableReader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader.TableReaderFactory;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.XSlf4j;
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.XSlf4j;
 
 @Setter
 @XSlf4j
 @NoArgsConstructor
 @SuppressWarnings("java:S6548")
 public final class MigrationManager {
-
-  private static class MigrationManagerHolder {
-    private static final MigrationManager INSTANCE = new MigrationManager();
-  }
 
   private ConnectionManager connectionManager;
 
@@ -38,13 +33,18 @@ public final class MigrationManager {
     List<Table> tables = tableReader.readTables();
 
     log.debug(
-            "Got tables from source database: {}",
-            tables.stream()
-                    .map(Table::toString)
-                    .collect(Collectors.joining(", "))
+        "Got tables from source database: {}",
+        tables.stream()
+            .map(Table::toString)
+            .collect(Collectors.joining(", "))
     );
 
     log.exit();
+  }
+
+  private static class MigrationManagerHolder {
+
+    private static final MigrationManager INSTANCE = new MigrationManager();
   }
 
 }
