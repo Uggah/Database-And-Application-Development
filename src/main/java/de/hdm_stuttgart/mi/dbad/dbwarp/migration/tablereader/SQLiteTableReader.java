@@ -1,8 +1,7 @@
 package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ConstraintType;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,8 +19,11 @@ public class SQLiteTableReader extends DefaultTableReader {
   }
 
   @Override
-  protected List<Constraint> retrieveConstraintsByTable(final Table table) throws SQLException {
-    final List<Constraint> constraints = new ArrayList<>();
+  protected List<UniqueConstraint> retrieveUniqueConstraintsByTable(final Table table)
+      throws SQLException {
+    log.entry(table);
+
+    final List<UniqueConstraint> constraints = new ArrayList<>();
     final ResultSet allIndexes = connection.createStatement()
         .executeQuery(String.format("PRAGMA index_list('%s')", table.getDescriptor().getName()));
     final List<String> uniqueIndexes = new ArrayList<>();
@@ -39,10 +41,10 @@ public class SQLiteTableReader extends DefaultTableReader {
     return constraints;
   }
 
-  private Constraint retriveUniqueConstraintByIndexName(String indexName, Table table)
+  private UniqueConstraint retriveUniqueConstraintByIndexName(String indexName, Table table)
       throws SQLException {
 
-    Constraint outConstraint = new Constraint(ConstraintType.UNIQUE);
+    UniqueConstraint outConstraint = new UniqueConstraint();
 
     final ResultSet columns = connection.createStatement()
         .executeQuery(String.format("PRAGMA index_info('%s')", indexName));

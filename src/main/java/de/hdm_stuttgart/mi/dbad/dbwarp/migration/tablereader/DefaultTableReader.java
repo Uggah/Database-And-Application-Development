@@ -5,6 +5,7 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableDescriptor;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
@@ -39,7 +40,7 @@ public abstract class DefaultTableReader implements TableReader {
       table.addColumns(columns);
 
       final List<Constraint> constraints = retrieveConstraintsByTableDescriptor(
-          table.getDescriptor());
+          table);
       table.addConstraints(constraints);
     }
 
@@ -135,13 +136,14 @@ public abstract class DefaultTableReader implements TableReader {
   }
 
   protected final List<Constraint> retrieveConstraintsByTableDescriptor(
-      final TableDescriptor tableDescriptor) throws SQLException {
-    log.entry(tableDescriptor);
+      final Table table) throws SQLException {
+    log.entry(table);
 
     final List<Constraint> constraints = new ArrayList<>();
 
-    constraints.add(retrievePrimaryKeyConstraintByTableDescriptor(tableDescriptor));
-    constraints.addAll(retrieveForeignKeyConstraintsByTableDescriptor(tableDescriptor));
+    constraints.add(retrievePrimaryKeyConstraintByTableDescriptor(table.getDescriptor()));
+    constraints.addAll(retrieveForeignKeyConstraintsByTableDescriptor(table.getDescriptor()));
+    constraints.addAll(retrieveUniqueConstraintsByTable(table));
 
     return log.exit(Collections.unmodifiableList(constraints));
   }
@@ -174,6 +176,13 @@ public abstract class DefaultTableReader implements TableReader {
         tableDescriptor.getSchema(),
         tableDescriptor.getName()
     );
+
+    return log.exit(Collections.emptyList());
+  }
+
+  protected List<UniqueConstraint> retrieveUniqueConstraintsByTable(final Table table)
+      throws SQLException {
+    log.entry(table);
 
     return log.exit(Collections.emptyList());
   }
