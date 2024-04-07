@@ -5,6 +5,4 @@ public enum ConstraintType {
   PRIMARY_KEY,
   FOREIGN_KEY,
   CHECK,
-  DEFAULT,
-  NOT_NULL
 }
