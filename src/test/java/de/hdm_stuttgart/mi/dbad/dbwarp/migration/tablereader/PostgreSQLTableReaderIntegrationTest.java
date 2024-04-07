@@ -24,6 +24,8 @@ class PostgreSQLTableReaderIntegrationTest {
 
   static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine")
       .withInitScript("postgreSQL/PostgreSQLTableReaderIntegrationTest.sql");
+  private ConnectionManager connectionManager;
+  private Connection connection;
 
   @BeforeAll
   static void beforeAll() {
@@ -34,9 +36,6 @@ class PostgreSQLTableReaderIntegrationTest {
   static void afterAll() {
     postgres.stop();
   }
-
-  private ConnectionManager connectionManager;
-  private Connection connection;
 
   @BeforeEach
   void beforeEach() throws SQLException {

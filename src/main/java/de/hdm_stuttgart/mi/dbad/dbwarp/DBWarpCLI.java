@@ -6,15 +6,14 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.MigrationManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.validation.DBWarpCLIValidator;
 import jakarta.validation.constraints.NotBlank;
+import java.sql.SQLException;
+import java.util.concurrent.Callable;
 import lombok.extern.slf4j.XSlf4j;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 import picocli.CommandLine.Spec;
-
-import java.sql.SQLException;
-import java.util.concurrent.Callable;
 
 @XSlf4j
 public class DBWarpCLI implements Callable<Integer> {
@@ -52,7 +51,6 @@ public class DBWarpCLI implements Callable<Integer> {
     } catch (SQLException ex) {
       return log.exit(1);
     }
-
 
     return log.exit(0);
   }
