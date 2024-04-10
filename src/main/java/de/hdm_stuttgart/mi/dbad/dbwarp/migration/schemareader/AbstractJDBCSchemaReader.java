@@ -1,13 +1,13 @@
-package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader;
+package de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader.TableReader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
 import java.sql.Connection;
 import java.sql.JDBCType;
 import java.sql.ResultSet;
@@ -18,21 +18,23 @@ import java.util.List;
 import lombok.extern.slf4j.XSlf4j;
 
 @XSlf4j
-public abstract class DefaultTableReader implements TableReader {
+public abstract class AbstractJDBCSchemaReader implements SchemaReader {
 
   protected final Connection connection;
+  protected final TableReader tableReader;
 
-  protected DefaultTableReader(ConnectionManager connectionManager) {
-    log.entry(connectionManager);
+  protected AbstractJDBCSchemaReader(ConnectionManager connectionManager, TableReader tableReader) {
+    log.entry(connectionManager, tableReader);
     this.connection = connectionManager.getSourceDatabaseConnection();
+    this.tableReader = tableReader;
     log.exit();
   }
 
   @Override
-  public List<Table> readTables() throws SQLException {
+  public List<Table> readSchema() throws SQLException {
     log.entry();
 
-    final List<Table> tables = retrieveTables();
+    final List<Table> tables = tableReader.readTables();
 
     for (final Table table : tables) {
       final List<Column> columns = retrieveColumns(table);
@@ -46,33 +48,6 @@ public abstract class DefaultTableReader implements TableReader {
     return log.exit(tables);
   }
 
-  /**
-   * Retrieves all non-system tables {@link Table}, that are neither
-   * temporary nor views.
-   *
-   * @return an unmodifiable {@link List} of all retrieved {@link Table Tables}
-   * @throws SQLException if a database access error occurs
-   */
-  protected List<Table> retrieveTables() throws SQLException {
-    log.entry();
-
-    final ResultSet tables = connection.getMetaData()
-        .getTables(null, null, "%", new String[]{"TABLE"});
-
-    final List<Table> outTables = new ArrayList<>();
-
-    while (tables.next()) {
-      final Table outTable = new Table(
-          tables.getString("TABLE_SCHEM"),
-          tables.getString("TABLE_NAME"),
-          TableType.byTableTypeString(tables.getString("TABLE_TYPE"))
-      );
-
-      outTables.add(outTable);
-    }
-
-    return log.exit(Collections.unmodifiableList(outTables));
-  }
 
   /**
    * Retrieves all {@link Column Columns} in the table {@link Table}.

@@ -2,8 +2,8 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration;
 
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
-import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader.TableReader;
-import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader.TableReaderFactory;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader.SchemaReader;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader.SchemaReaderFactory;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.SQLException;
 import java.util.List;
@@ -28,9 +28,9 @@ public final class MigrationManager {
   public void migrate() throws SQLException {
     log.entry();
 
-    TableReaderFactory tableReaderFactory = new TableReaderFactory(connectionManager);
-    final TableReader tableReader = tableReaderFactory.getTableReader();
-    List<Table> tables = tableReader.readTables();
+    SchemaReaderFactory schemaReaderFactory = new SchemaReaderFactory(connectionManager);
+    final SchemaReader schemaReader = schemaReaderFactory.getTableReader();
+    List<Table> tables = schemaReader.readSchema();
 
     log.debug(
         "Got tables from source database: {}",

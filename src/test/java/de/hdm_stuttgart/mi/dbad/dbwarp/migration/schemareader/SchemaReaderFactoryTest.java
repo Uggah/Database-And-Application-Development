@@ -1,4 +1,4 @@
-package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader;
+package de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader;
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class TableReaderFactoryTest {
+class SchemaReaderFactoryTest {
 
   private ConnectionManager connectionManager;
   private DatabaseMetaData databaseMetaData;
@@ -32,17 +32,17 @@ class TableReaderFactoryTest {
   void testGetTableReader_SQLite() throws SQLException {
     when(this.databaseMetaData.getDatabaseProductName()).thenReturn("SQLite");
 
-    final TableReaderFactory factory = new TableReaderFactory(connectionManager);
-    final TableReader tableReader = factory.getTableReader();
+    final SchemaReaderFactory factory = new SchemaReaderFactory(connectionManager);
+    final SchemaReader schemaReader = factory.getTableReader();
 
-    assertInstanceOf(SQLiteTableReader.class, tableReader);
+    assertInstanceOf(SQLiteSchemaReader.class, schemaReader);
   }
 
   @Test
   void testGetTableReader_UnsupportedDatabase() throws SQLException {
     when(this.databaseMetaData.getDatabaseProductName()).thenReturn("UNSUPPORTED");
 
-    final TableReaderFactory factory = new TableReaderFactory(connectionManager);
+    final SchemaReaderFactory factory = new SchemaReaderFactory(connectionManager);
 
     assertThrows(IllegalArgumentException.class, factory::getTableReader);
   }

@@ -1,6 +1,7 @@
-package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader;
+package de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -13,38 +14,20 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.PostgreSQLContainer;
 
-class PostgreSQLTableReaderIntegrationTest {
+class SQLiteSchemaReaderIntegrationTest {
 
-  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine")
-      .withInitScript("postgreSQL/PostgreSQLTableReaderIntegrationTest.sql");
   private ConnectionManager connectionManager;
   private Connection connection;
-
-  @BeforeAll
-  static void beforeAll() {
-    postgres.start();
-  }
-
-  @AfterAll
-  static void afterAll() {
-    postgres.stop();
-  }
 
   @BeforeEach
   void beforeEach() throws SQLException {
     this.connectionManager = mock(ConnectionManager.class);
     this.connection = DriverManager.getConnection(
-        postgres.getJdbcUrl(),
-        postgres.getUsername(),
-        postgres.getPassword()
-    );
+        "jdbc:sqlite::resource:sqlite/SQLiteSchemaReaderIntegrationTest.db");
 
     when(connectionManager.getSourceDatabaseConnection()).thenReturn(connection);
   }
@@ -56,36 +39,36 @@ class PostgreSQLTableReaderIntegrationTest {
 
   @Test
   void testReadTables() throws SQLException {
-    final PostgreSQLTableReader postgreSQLTableReader = new PostgreSQLTableReader(
-        connectionManager);
-    final List<Table> tables = postgreSQLTableReader.readTables();
+    final SQLiteSchemaReader sqLiteTableReader = new SQLiteSchemaReader(connectionManager);
+    final List<Table> tables = sqLiteTableReader.readSchema();
 
     // SomeTestTable, SomeOtherTestTable are expected
     assertEquals(2, tables.size());
 
     final Table someTestTable = tables.stream()
-        .filter(table -> table.getDescriptor().getName().equalsIgnoreCase("SomeTestTable"))
+        .filter(table -> table.getName().equals("SomeTestTable"))
         .findFirst()
         .orElseThrow();
 
-    assertSame(TableType.TABLE, someTestTable.getDescriptor().getType());
-    assertEquals("public", someTestTable.getDescriptor().getSchema());
+    assertSame(TableType.TABLE, someTestTable.getType());
+    assertNull(someTestTable.getSchema());
 
     final List<Column> someTestTableColumns = someTestTable.getColumns();
 
     assertEquals(2, someTestTableColumns.size());
 
     final Table someOtherTestTable = tables.stream()
-        .filter(table -> table.getDescriptor().getName().equalsIgnoreCase("SomeOtherTestTable"))
+        .filter(table -> table.getName().equals("SomeOtherTestTable"))
         .findFirst()
         .orElseThrow();
 
-    assertSame(TableType.TABLE, someOtherTestTable.getDescriptor().getType());
-    assertEquals("public", someOtherTestTable.getDescriptor().getSchema());
+    assertSame(TableType.TABLE, someOtherTestTable.getType());
+    assertNull(someOtherTestTable.getSchema());
 
     final List<Column> someOtherTestTableColumns = someOtherTestTable.getColumns();
 
     assertEquals(1, someOtherTestTableColumns.size());
+
   }
 
 }
