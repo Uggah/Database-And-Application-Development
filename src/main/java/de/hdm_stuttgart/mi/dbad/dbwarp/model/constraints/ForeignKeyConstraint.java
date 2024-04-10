@@ -1,6 +1,6 @@
 package de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints;
 
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableDescriptor;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -9,13 +9,13 @@ import lombok.EqualsAndHashCode;
 public class ForeignKeyConstraint extends Constraint {
 
   /**
-   * {@link TableDescriptor} of the table importing foreign columns.
+   * {@link Table} of the table importing foreign columns.
    */
-  private final TableDescriptor childTableDescriptor;
+  private final Table childTable;
 
   /**
-   * {@link TableDescriptor} of the table exporting primary key columns.
+   * {@link Table} of the table exporting primary key columns.
    */
-  private final TableDescriptor parentTableDescriptor;
+  private final Table parentTable;
 
 }

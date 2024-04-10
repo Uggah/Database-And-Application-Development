@@ -15,8 +15,9 @@ import lombok.extern.slf4j.XSlf4j;
 @XSlf4j
 public class Table {
 
-  private final TableDescriptor descriptor;
-
+  private final String schema;
+  private final String name;
+  private final TableType type;
   private final List<Column> columns = new ArrayList<>();
   private final List<Constraint> constraints = new ArrayList<>();
 

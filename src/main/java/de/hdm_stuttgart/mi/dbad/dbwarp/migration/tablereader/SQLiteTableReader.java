@@ -19,13 +19,13 @@ public class SQLiteTableReader extends DefaultTableReader {
   }
 
   @Override
-  protected List<UniqueConstraint> retrieveUniqueConstraintsByTable(final Table table)
+  protected List<UniqueConstraint> retrieveUniqueConstraints(final Table table)
       throws SQLException {
     log.entry(table);
 
     final List<UniqueConstraint> constraints = new ArrayList<>();
     final ResultSet allIndexes = connection.createStatement()
-        .executeQuery(String.format("PRAGMA index_list('%s')", table.getDescriptor().getName()));
+        .executeQuery(String.format("PRAGMA index_list('%s')", table.getName()));
     final List<String> uniqueIndexes = new ArrayList<>();
 
     while (allIndexes.next()) {

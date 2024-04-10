@@ -7,7 +7,6 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableDescriptor;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
 import java.sql.Connection;
 import java.sql.JDBCType;
@@ -33,13 +32,13 @@ public abstract class DefaultTableReader implements TableReader {
   public List<Table> readTables() throws SQLException {
     log.entry();
 
-    final List<Table> tables = retrieveTableDescriptors().stream().map(Table::new).toList();
+    final List<Table> tables = retrieveTables();
 
     for (final Table table : tables) {
-      final List<Column> columns = retrieveColumnsByTableDescriptor(table.getDescriptor());
+      final List<Column> columns = retrieveColumns(table);
       table.addColumns(columns);
 
-      final List<Constraint> constraints = retrieveConstraintsByTableDescriptor(
+      final List<Constraint> constraints = retrieveConstraints(
           table);
       table.addConstraints(constraints);
     }
@@ -48,49 +47,47 @@ public abstract class DefaultTableReader implements TableReader {
   }
 
   /**
-   * Retrieves {@link TableDescriptor descriptors} of all non-system tables, that are neither
+   * Retrieves all non-system tables {@link Table}, that are neither
    * temporary nor views.
    *
-   * @return an unmodifiable {@link List} of all retrieved {@link TableDescriptor TableDescriptors}
+   * @return an unmodifiable {@link List} of all retrieved {@link Table Tables}
    * @throws SQLException if a database access error occurs
    */
-  protected List<TableDescriptor> retrieveTableDescriptors() throws SQLException {
+  protected List<Table> retrieveTables() throws SQLException {
     log.entry();
 
     final ResultSet tables = connection.getMetaData()
         .getTables(null, null, "%", new String[]{"TABLE"});
 
-    final List<TableDescriptor> tableDescriptors = new ArrayList<>();
+    final List<Table> outTables = new ArrayList<>();
 
     while (tables.next()) {
-      final TableDescriptor tableDescriptor = new TableDescriptor(
+      final Table outTable = new Table(
           tables.getString("TABLE_SCHEM"),
           tables.getString("TABLE_NAME"),
           TableType.byTableTypeString(tables.getString("TABLE_TYPE"))
       );
 
-      tableDescriptors.add(tableDescriptor);
+      outTables.add(outTable);
     }
 
-    return log.exit(Collections.unmodifiableList(tableDescriptors));
+    return log.exit(Collections.unmodifiableList(outTables));
   }
 
   /**
-   * Retrieves all {@link Column Columns} in the table described by the given
-   * {@link TableDescriptor}.
+   * Retrieves all {@link Column Columns} in the table {@link Table}.
    *
-   * @param tableDescriptor {@link TableDescriptor} of the {@link Table} to get the
+   * @param table {@link Table} to get the
    *                        {@link Column Columns} of.
-   * @return an unmodifiable {@link List} of all {@link Column Columns} in the table described by
-   * the given {@link TableDescriptor}
+   * @return an unmodifiable {@link List} of all {@link Column Columns} in the table {@link Table}
    * @throws SQLException if a database access error occurs
    */
-  protected List<Column> retrieveColumnsByTableDescriptor(final TableDescriptor tableDescriptor)
+  protected List<Column> retrieveColumns(final Table table)
       throws SQLException {
-    log.entry(tableDescriptor);
+    log.entry(table);
 
-    final ResultSet columns = connection.getMetaData().getColumns(null, tableDescriptor.getSchema(),
-        tableDescriptor.getName(), "%");
+    final ResultSet columns = connection.getMetaData().getColumns(null, table.getSchema(),
+        table.getName(), "%");
 
     final List<Column> columnList = new ArrayList<>();
 
@@ -135,27 +132,27 @@ public abstract class DefaultTableReader implements TableReader {
     );
   }
 
-  protected final List<Constraint> retrieveConstraintsByTableDescriptor(
+  protected final List<Constraint> retrieveConstraints(
       final Table table) throws SQLException {
     log.entry(table);
 
     final List<Constraint> constraints = new ArrayList<>();
 
-    constraints.add(retrievePrimaryKeyConstraintByTableDescriptor(table.getDescriptor()));
-    constraints.addAll(retrieveForeignKeyConstraintsByTableDescriptor(table.getDescriptor()));
-    constraints.addAll(retrieveUniqueConstraintsByTable(table));
+    constraints.add(retrievePrimaryKeyConstraint(table));
+    constraints.addAll(retrieveForeignKeyConstraints(table));
+    constraints.addAll(retrieveUniqueConstraints(table));
 
     return log.exit(Collections.unmodifiableList(constraints));
   }
 
-  protected PrimaryKeyConstraint retrievePrimaryKeyConstraintByTableDescriptor(
-      final TableDescriptor tableDescriptor) throws SQLException {
-    log.entry(tableDescriptor);
+  protected PrimaryKeyConstraint retrievePrimaryKeyConstraint(
+      final Table table) throws SQLException {
+    log.entry(table);
 
     final List<Column> columns = new ArrayList<>();
 
     final ResultSet resultSet = connection.getMetaData()
-        .getPrimaryKeys(null, tableDescriptor.getSchema(), tableDescriptor.getName());
+        .getPrimaryKeys(null, table.getSchema(), table.getName());
 
     while (resultSet.next()) {
       final String columnName = resultSet.getString("COLUMN_NAME");
@@ -164,23 +161,23 @@ public abstract class DefaultTableReader implements TableReader {
     return log.exit(null);
   }
 
-  protected List<ForeignKeyConstraint> retrieveForeignKeyConstraintsByTableDescriptor(
-      final TableDescriptor tableDescriptor) throws SQLException {
-    log.entry(tableDescriptor);
+  protected List<ForeignKeyConstraint> retrieveForeignKeyConstraints(
+      final Table table) throws SQLException {
+    log.entry(table);
 
     final ResultSet resultSet = connection.getMetaData().getCrossReference(
         null,
         null,
         null,
         null,
-        tableDescriptor.getSchema(),
-        tableDescriptor.getName()
+        table.getSchema(),
+        table.getName()
     );
 
     return log.exit(Collections.emptyList());
   }
 
-  protected List<UniqueConstraint> retrieveUniqueConstraintsByTable(final Table table)
+  protected List<UniqueConstraint> retrieveUniqueConstraints(final Table table)
       throws SQLException {
     log.entry(table);
 
