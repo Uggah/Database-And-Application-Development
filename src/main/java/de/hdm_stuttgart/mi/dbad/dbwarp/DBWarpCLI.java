@@ -2,7 +2,7 @@ package de.hdm_stuttgart.mi.dbad.dbwarp;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
+import de.hdm_stuttgart.mi.dbad.dbwarp.connection.DefaultConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.MigrationManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.validation.DBWarpCLIValidator;
 import jakarta.validation.constraints.NotBlank;
@@ -49,7 +49,8 @@ public class DBWarpCLI implements Callable<Integer> {
 
     new DBWarpCLIValidator(spec.commandLine()).validate(this);
 
-    MigrationManager.getInstance().setConnectionManager(new ConnectionManager(source, target));
+    MigrationManager.getInstance()
+        .setConnectionManager(new DefaultConnectionManager(source, target));
 
     try {
       MigrationManager.getInstance().migrate();

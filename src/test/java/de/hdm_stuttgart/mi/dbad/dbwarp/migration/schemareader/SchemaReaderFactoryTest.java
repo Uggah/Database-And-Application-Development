@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
+import de.hdm_stuttgart.mi.dbad.dbwarp.connection.DefaultConnectionManager;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -14,12 +14,12 @@ import org.junit.jupiter.api.Test;
 
 class SchemaReaderFactoryTest {
 
-  private ConnectionManager connectionManager;
+  private DefaultConnectionManager connectionManager;
   private DatabaseMetaData databaseMetaData;
 
   @BeforeEach
   void beforeEach() throws SQLException {
-    this.connectionManager = mock(ConnectionManager.class);
+    this.connectionManager = mock(DefaultConnectionManager.class);
     this.databaseMetaData = mock(DatabaseMetaData.class);
 
     final Connection mockedConnection = mock(Connection.class);

@@ -2,7 +2,6 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.constraintreader;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
@@ -10,14 +9,12 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.XSlf4j;
 
 @XSlf4j

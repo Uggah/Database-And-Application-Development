@@ -6,11 +6,9 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.migration.constraintreader.ConstraintRead
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader.TableReader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 import lombok.extern.slf4j.XSlf4j;
 
