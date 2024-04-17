@@ -11,7 +11,7 @@ public final class SchemaReaderFactory {
 
   private ConnectionManager connectionManager;
 
-  public SchemaReader getTableReader() throws SQLException {
+  public SchemaReader getSchemaReader() throws SQLException {
     log.entry();
     final String databaseProductName = connectionManager.getSourceDatabaseConnection().getMetaData()
         .getDatabaseProductName();

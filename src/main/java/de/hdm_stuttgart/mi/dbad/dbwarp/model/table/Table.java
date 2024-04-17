@@ -5,6 +5,7 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.XSlf4j;
 
 /**
@@ -13,11 +14,18 @@ import lombok.extern.slf4j.XSlf4j;
  */
 @Data
 @XSlf4j
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Table {
 
+  @EqualsAndHashCode.Include
   private final String schema;
+
+  @EqualsAndHashCode.Include
   private final String name;
+
+  @EqualsAndHashCode.Include
   private final TableType type;
+
   private final List<Column> columns = new ArrayList<>();
   private final List<Constraint> constraints = new ArrayList<>();
 

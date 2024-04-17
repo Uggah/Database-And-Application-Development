@@ -37,6 +37,11 @@ public class DBWarpCLI implements Callable<Integer> {
       "-v"}, description = "Verbose output", defaultValue = "false")
   private boolean verbose;
 
+  @SuppressWarnings("unused")
+  @Option(names = {"--trace",
+      "-vv"}, description = "Tracing output", defaultValue = "false")
+  private boolean trace;
+
   @Override
   public Integer call() {
     log.entry();
@@ -49,6 +54,8 @@ public class DBWarpCLI implements Callable<Integer> {
     try {
       MigrationManager.getInstance().migrate();
     } catch (SQLException ex) {
+      log.error("Exception thrown:", ex);
+
       return log.exit(1);
     }
 
@@ -61,12 +68,17 @@ public class DBWarpCLI implements Callable<Integer> {
 
     final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
 
-    if (!verbose) {
-      root.setLevel(Level.WARN);
+    if (trace) {
+      root.setLevel(Level.TRACE);
+      log.exit();
+      return;
+    } else if (verbose) {
+      root.setLevel(Level.DEBUG);
+      log.exit();
       return;
     }
 
-    root.setLevel(Level.DEBUG);
+    root.setLevel(Level.WARN);
     log.exit();
   }
 }

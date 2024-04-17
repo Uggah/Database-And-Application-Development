@@ -7,32 +7,36 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.XSlf4j;
 
 @XSlf4j
-public class SQLiteConstraintReader extends AbstractConstraintReader {
+public class SQLiteConstraintReader extends AbstractConstraintReader implements AutoCloseable {
+
+  private final PreparedStatement preparedStatementUniqueConstraints;
+  private final PreparedStatement preparedStatementIndexInfo;
 
   public SQLiteConstraintReader(
-      ConnectionManager connectionManager) {
+      ConnectionManager connectionManager) throws SQLException {
     super(connectionManager);
-  }
+    log.entry(connectionManager);
 
-  @Override
-  public List<Constraint> readConstraints(Table table) throws SQLException {
-    log.entry(table);
+    preparedStatementUniqueConstraints = this.connection.prepareStatement(
+        "SELECT * FROM pragma_index_list(?) WHERE \"UNIQUE\"=1 AND PARTIAL=0");
+    preparedStatementIndexInfo = this.connection.prepareStatement(
+        "SELECT * FROM pragma_index_info(?)");
 
-    final List<Constraint> constraints = new ArrayList<>();
-
-    constraints.add(retrievePrimaryKeyConstraint(table));
-    constraints.addAll(retrieveForeignKeyConstraints(table));
-    constraints.addAll(retrieveUniqueConstraints(table));
-
-    return log.exit(Collections.unmodifiableList(constraints));
+    log.exit();
   }
 
   protected PrimaryKeyConstraint retrievePrimaryKeyConstraint(
@@ -67,39 +71,49 @@ public class SQLiteConstraintReader extends AbstractConstraintReader {
     return log.exit(Collections.emptyList());
   }
 
-  private List<UniqueConstraint> retrieveUniqueConstraints(final Table table)
+  protected Collection<UniqueConstraint> retrieveUniqueConstraints(final Table table)
       throws SQLException {
     log.entry(table);
 
-    final List<UniqueConstraint> constraints = new ArrayList<>();
-    final ResultSet allIndexes = connection.createStatement()
-        .executeQuery(String.format("PRAGMA index_list('%s')", table.getName()));
+    preparedStatementUniqueConstraints.setString(1, table.getName());
+    final ResultSet allIndexes = preparedStatementUniqueConstraints.executeQuery();
+
     final List<String> uniqueIndexes = new ArrayList<>();
 
     while (allIndexes.next()) {
-      if (allIndexes.getBoolean("UNIQUE") && !allIndexes.getBoolean("PARTIAL")) {
-        uniqueIndexes.add(allIndexes.getString("NAME"));
-      }
+      uniqueIndexes.add(allIndexes.getString("NAME"));
     }
+
+    final Set<UniqueConstraint> constraints = new HashSet<>();
 
     for (String index : uniqueIndexes) {
-      constraints.add(retriveUniqueConstraintByIndexName(index, table));
+      constraints.add(retrieveUniqueConstraintByIndexName(index, table));
     }
 
-    return constraints;
+    return log.exit(Collections.unmodifiableSet(constraints));
   }
 
-  private UniqueConstraint retriveUniqueConstraintByIndexName(String indexName, Table table)
+  private UniqueConstraint retrieveUniqueConstraintByIndexName(String indexName, Table table)
       throws SQLException {
+    log.entry(indexName, table);
 
-    UniqueConstraint outConstraint = new UniqueConstraint();
+    final UniqueConstraint outConstraint = new UniqueConstraint(table, indexName);
 
-    final ResultSet columns = connection.createStatement()
-        .executeQuery(String.format("PRAGMA index_info('%s')", indexName));
+    preparedStatementIndexInfo.setString(1, indexName);
+    final ResultSet columns = preparedStatementIndexInfo.executeQuery();
+
     while (columns.next()) {
       outConstraint.addColumn(table.getColumnByName(columns.getString("NAME")));
     }
 
-    return outConstraint;
+    return log.exit(outConstraint);
+  }
+
+  @Override
+  public void close() throws Exception {
+    log.entry();
+    preparedStatementIndexInfo.close();
+    preparedStatementUniqueConstraints.close();
+    log.exit();
   }
 }

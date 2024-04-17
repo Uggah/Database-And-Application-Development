@@ -33,7 +33,7 @@ class SchemaReaderFactoryTest {
     when(this.databaseMetaData.getDatabaseProductName()).thenReturn("SQLite");
 
     final SchemaReaderFactory factory = new SchemaReaderFactory(connectionManager);
-    final SchemaReader schemaReader = factory.getTableReader();
+    final SchemaReader schemaReader = factory.getSchemaReader();
 
     assertInstanceOf(SQLiteSchemaReader.class, schemaReader);
   }
@@ -44,7 +44,7 @@ class SchemaReaderFactoryTest {
 
     final SchemaReaderFactory factory = new SchemaReaderFactory(connectionManager);
 
-    assertThrows(IllegalArgumentException.class, factory::getTableReader);
+    assertThrows(IllegalArgumentException.class, factory::getSchemaReader);
   }
 
 }

@@ -52,4 +52,10 @@ public abstract class AbstractTableReader implements TableReader {
     return log.exit(Collections.unmodifiableList(outTables));
   }
 
+  @Override
+  public void close() throws Exception {
+    log.entry();
+    log.exit();
+  }
+
 }

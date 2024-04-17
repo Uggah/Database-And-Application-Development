@@ -1,10 +1,18 @@
 package de.hdm_stuttgart.mi.dbad.dbwarp.model.column;
 
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.JDBCType;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 public class Column {
+
+  /**
+   * The {@link Column Column's} {@link Table}
+   */
+  @ToString.Exclude
+  private final Table table;
 
   /**
    * The {@link Column Column's} name

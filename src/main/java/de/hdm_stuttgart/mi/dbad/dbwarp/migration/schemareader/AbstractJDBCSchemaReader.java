@@ -54,11 +54,13 @@ public abstract class AbstractJDBCSchemaReader implements SchemaReader {
     return log.exit(tables);
   }
 
-  protected List<UniqueConstraint> retrieveUniqueConstraints(final Table table)
-      throws SQLException {
-    log.entry(table);
-
-    return log.exit(Collections.emptyList());
+  @Override
+  public void close() throws Exception {
+    log.entry();
+    tableReader.close();
+    columnReader.close();
+    constraintReader.close();
+    log.exit();
   }
 
 }

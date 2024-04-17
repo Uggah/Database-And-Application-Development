@@ -5,7 +5,7 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface ConstraintReader {
+public interface ConstraintReader extends AutoCloseable {
 
   List<Constraint> readConstraints(Table table) throws SQLException;
 }

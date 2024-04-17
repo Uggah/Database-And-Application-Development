@@ -29,7 +29,7 @@ public final class MigrationManager {
     log.entry();
 
     SchemaReaderFactory schemaReaderFactory = new SchemaReaderFactory(connectionManager);
-    final SchemaReader schemaReader = schemaReaderFactory.getTableReader();
+    final SchemaReader schemaReader = schemaReaderFactory.getSchemaReader();
     List<Table> tables = schemaReader.readSchema();
 
     log.debug(

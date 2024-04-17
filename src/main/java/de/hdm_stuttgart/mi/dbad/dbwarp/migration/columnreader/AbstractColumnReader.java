@@ -35,13 +35,15 @@ public abstract class AbstractColumnReader implements ColumnReader {
     final List<Column> columnList = new ArrayList<>();
 
     while (columns.next()) {
-      columnList.add(readColumn(columns));
+      columnList.add(readColumn(table, columns));
     }
 
     return log.exit(Collections.unmodifiableList(columnList));
   }
 
-  protected Column readColumn(final ResultSet resultSet) throws SQLException {
+  protected Column readColumn(final Table table, final ResultSet resultSet) throws SQLException {
+    log.entry(table, resultSet);
+
     final String name = resultSet.getString("COLUMN_NAME");
     final int type = resultSet.getInt("DATA_TYPE");
 
@@ -58,12 +60,19 @@ public abstract class AbstractColumnReader implements ColumnReader {
           String.format("Unknown nullability: %s", nullability));
     }
 
-    return new Column(
+    return log.exit(new Column(
+        table,
         name,
         JDBCType.valueOf(type),
         nullable,
         size
-    );
+    ));
+  }
+
+  @Override
+  public void close() throws Exception {
+    log.entry();
+    log.exit();
   }
 
 }
