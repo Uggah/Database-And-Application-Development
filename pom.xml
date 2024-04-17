@@ -118,15 +118,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Spring JDBC (ONLY USED FOR TESTING PURPOSES) -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>6.1.6</version>
-            <scope>test</scope>
-        </dependency>
-
-
         <!-- Bean Validation -->
         <dependency>
             <groupId>org.glassfish.expressly</groupId>

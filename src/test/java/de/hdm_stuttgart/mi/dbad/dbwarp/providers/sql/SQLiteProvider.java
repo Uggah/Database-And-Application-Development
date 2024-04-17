@@ -9,9 +9,8 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.support.EncodedResource;
-import org.springframework.jdbc.datasource.init.ScriptUtils;
+import org.testcontainers.ext.ScriptUtils;
+import org.testcontainers.jdbc.ContainerLessJdbcDelegate;
 
 public class SQLiteProvider implements ParameterResolver, AfterEachCallback {
 
@@ -42,10 +41,8 @@ public class SQLiteProvider implements ParameterResolver, AfterEachCallback {
     try {
       this.connection = DriverManager.getConnection("jdbc:sqlite::memory:");
 
-      ScriptUtils.executeSqlScript(
-          connection,
-          new EncodedResource(new ClassPathResource(initializeDatabase.value()))
-      );
+      ScriptUtils.runInitScript(new ContainerLessJdbcDelegate(connection),
+          initializeDatabase.value());
 
       return new MockConnectionManager(this.connection, null);
     } catch (SQLException e) {
