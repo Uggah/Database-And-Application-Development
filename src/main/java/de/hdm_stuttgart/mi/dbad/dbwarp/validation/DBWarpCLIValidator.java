@@ -33,7 +33,7 @@ public class DBWarpCLIValidator implements ClassValidator<DBWarpCLI> {
           .collect(Collectors.joining("\n"));
 
       throw new ParameterException(commandLine,
-          String.format("The following errors occurred while validating CLI parameters:\n%s",
+          String.format("The following errors occurred while validating CLI parameters:%n%s",
               errorMessage));
     }
 

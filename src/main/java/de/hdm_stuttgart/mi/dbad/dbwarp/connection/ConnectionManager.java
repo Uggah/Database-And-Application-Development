@@ -1,21 +1,11 @@
 package de.hdm_stuttgart.mi.dbad.dbwarp.connection;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import lombok.Getter;
-import lombok.SneakyThrows;
 
-@Getter
-public class ConnectionManager {
+public interface ConnectionManager {
 
-  private final Connection sourceDatabaseConnection;
+  Connection getSourceDatabaseConnection();
 
-  private final Connection targetDatabaseConnection;
-
-  @SneakyThrows
-  public ConnectionManager(final String source, final String target) {
-    this.sourceDatabaseConnection = DriverManager.getConnection(source);
-    this.targetDatabaseConnection = DriverManager.getConnection(target);
-  }
+  Connection getTargetDatabaseConnection();
 
 }

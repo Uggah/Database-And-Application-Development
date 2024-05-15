@@ -14,6 +14,7 @@ public class Main {
    * @param args CLI args
    */
   public static void main(String[] args) {
+    log.entry((Object) args);
     log.info("Engage!");
     int exitCode = new CommandLine(new DBWarpCLI()).execute(args);
 
