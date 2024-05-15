@@ -22,7 +22,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 class SQLiteConstraintReaderIntegrationTest {
 
   @Test
-  @InitializeDatabase("sqlite/SQLiteConstraintReaderIntegrationTest.sql")
+  @InitializeDatabase("sqlite/SQLiteConstraintReaderIntegrationTest_UniqueConstraint.sql")
   void testRetrieveUniqueConstraints(final ConnectionManager connectionManager) throws Exception {
     final SQLiteConstraintReader sqLiteConstraintReader = new SQLiteConstraintReader(
         connectionManager);
@@ -57,8 +57,9 @@ class SQLiteConstraintReaderIntegrationTest {
    * @throws Exception
    */
   @Test
-  @InitializeDatabase("sqlite/SQLiteConstraintReaderIntegrationTest.sql")
-  void testRetriePrimaryKeyConstraint(final ConnectionManager connectionManager) throws Exception {
+  @InitializeDatabase("sqlite/SQLiteConstraintReaderIntegrationTest_PrimaryKeyConstraint.sql")
+  void testRetrievePrimaryKeyConstraint(final ConnectionManager connectionManager)
+      throws Exception {
     final SQLiteConstraintReader sqLiteConstraintReader = new SQLiteConstraintReader(
         connectionManager);
 
