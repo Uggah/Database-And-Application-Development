@@ -77,4 +77,9 @@ public class Table {
     return columns.parallelStream().filter(c -> c.getName().equals(name)).findAny().orElse(null);
   }
 
+  @Override
+  public String toString() {
+    return this.name;
+  }
+
 }
