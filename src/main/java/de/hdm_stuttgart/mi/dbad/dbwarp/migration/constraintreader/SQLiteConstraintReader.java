@@ -47,9 +47,10 @@ public class SQLiteConstraintReader extends AbstractConstraintReader implements 
 
     while (resultSet.next()) {
       final String columnName = resultSet.getString("COLUMN_NAME");
+      columns.add(table.getColumnByName(columnName));
     }
 
-    return log.exit(null);
+    return log.exit(new PrimaryKeyConstraint(table, columns));
   }
 
   protected List<ForeignKeyConstraint> retrieveForeignKeyConstraints(
