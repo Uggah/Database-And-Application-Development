@@ -102,6 +102,7 @@ public class PostgeSQLConstraintReader extends AbstractConstraintReader implemen
   @Override
   public void close() throws Exception {
     log.entry();
+    this.preparedStatementUniqueConstraints.close();
     log.exit();
   }
 }
