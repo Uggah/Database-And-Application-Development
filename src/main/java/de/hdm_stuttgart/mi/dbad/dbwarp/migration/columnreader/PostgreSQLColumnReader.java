@@ -4,6 +4,7 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.JDBCType;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import lombok.extern.slf4j.XSlf4j;
@@ -11,10 +12,23 @@ import lombok.extern.slf4j.XSlf4j;
 @XSlf4j
 public class PostgreSQLColumnReader extends AbstractColumnReader {
 
+  private final PreparedStatement columnDefaultPreparedStatement;
+
   public PostgreSQLColumnReader(
-      ConnectionManager connectionManager) {
+      ConnectionManager connectionManager) throws SQLException {
     super(connectionManager);
     log.entry(connectionManager);
+
+    this.columnDefaultPreparedStatement = this.connection.prepareStatement(
+        """
+                   SELECT
+                     column_default
+                   FROM information_schema.columns
+                   WHERE table_name=?
+                   AND column_name=?;
+            """
+    );
+
     log.exit();
   }
 
@@ -38,13 +52,30 @@ public class PostgreSQLColumnReader extends AbstractColumnReader {
           String.format("Unknown nullability: %s", nullability));
     }
 
-    return log.exit(new Column(
+    columnDefaultPreparedStatement.setString(1, table.getName());
+    columnDefaultPreparedStatement.setString(2, name);
+
+    final ResultSet columnDefaultResultSet = columnDefaultPreparedStatement.executeQuery();
+    resultSet.next();
+
+    final Column column = new Column(
         table,
         name,
         JDBCType.valueOf(type),
         nullable,
         size
-    ));
+    );
+
+    column.setDefaultValue(columnDefaultResultSet.getObject("column_default"));
+
+    return log.exit(column);
+  }
+
+  @Override
+  public void close() throws Exception {
+    log.entry();
+    columnDefaultPreparedStatement.close();
+    log.exit();
   }
 
 }
