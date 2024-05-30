@@ -6,8 +6,6 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
-import java.io.StringReader;
-import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,11 +17,11 @@ import java.util.Optional;
 import lombok.extern.slf4j.XSlf4j;
 
 @XSlf4j
-public class PostgeSQLConstraintReader extends AbstractConstraintReader implements AutoCloseable {
+public class PostgreSQLConstraintReader extends AbstractConstraintReader implements AutoCloseable {
 
   private final PreparedStatement preparedStatementUniqueConstraints;
 
-  public PostgeSQLConstraintReader(
+  public PostgreSQLConstraintReader(
       ConnectionManager connectionManager) throws SQLException {
     super(connectionManager);
     log.entry(connectionManager);

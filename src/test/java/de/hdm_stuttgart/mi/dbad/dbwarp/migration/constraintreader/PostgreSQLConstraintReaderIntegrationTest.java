@@ -24,7 +24,7 @@ class PostgreSQLConstraintReaderIntegrationTest {
   @InitializeDatabase("postgreSQL/PostgreSQLConstraintReaderIntegrationTest_UniqueConstraints.sql")
   void testRetrieveUniqueConstraints_SingleColumn(final ConnectionManager connectionManager)
       throws Exception {
-    final PostgeSQLConstraintReader postgeSQLConstraintReader = new PostgeSQLConstraintReader(
+    final PostgreSQLConstraintReader postgreSQLConstraintReader = new PostgreSQLConstraintReader(
         connectionManager
     );
 
@@ -37,7 +37,7 @@ class PostgreSQLConstraintReaderIntegrationTest {
     );
 
     final List<UniqueConstraint> constraints = new ArrayList<>(
-        postgeSQLConstraintReader.retrieveUniqueConstraints(table)
+        postgreSQLConstraintReader.retrieveUniqueConstraints(table)
     );
 
     assertEquals(1, constraints.size());
@@ -49,14 +49,14 @@ class PostgreSQLConstraintReaderIntegrationTest {
     assertEquals(1, constraint.getColumns().size());
     assertSame(table.getColumns().getLast(), constraint.getColumns().getFirst());
 
-    postgeSQLConstraintReader.close();
+    postgreSQLConstraintReader.close();
   }
 
   @Test
   @InitializeDatabase("postgreSQL/PostgreSQLConstraintReaderIntegrationTest_UniqueConstraints.sql")
   void testRetrieveUniqueConstraints_MultipleColumns(final ConnectionManager connectionManager)
       throws Exception {
-    final PostgeSQLConstraintReader postgeSQLConstraintReader = new PostgeSQLConstraintReader(
+    final PostgreSQLConstraintReader postgreSQLConstraintReader = new PostgreSQLConstraintReader(
         connectionManager
     );
 
@@ -70,7 +70,7 @@ class PostgreSQLConstraintReaderIntegrationTest {
     );
 
     final List<UniqueConstraint> constraints = new ArrayList<>(
-        postgeSQLConstraintReader.retrieveUniqueConstraints(table)
+        postgreSQLConstraintReader.retrieveUniqueConstraints(table)
     );
 
     assertEquals(1, constraints.size());
@@ -83,14 +83,14 @@ class PostgreSQLConstraintReaderIntegrationTest {
     assertTrue(constraint.getColumns().contains(table.getColumns().get(1)));
     assertTrue(constraint.getColumns().contains(table.getColumns().get(2)));
 
-    postgeSQLConstraintReader.close();
+    postgreSQLConstraintReader.close();
   }
 
   @Test
   @InitializeDatabase("postgreSQL/PostgreSQLConstraintReaderIntegrationTest_UniqueConstraints.sql")
   void testRetrieveUniqueConstraints_CustomConstraintName(final ConnectionManager connectionManager)
       throws Exception {
-    final PostgeSQLConstraintReader postgeSQLConstraintReader = new PostgeSQLConstraintReader(
+    final PostgreSQLConstraintReader postgreSQLConstraintReader = new PostgreSQLConstraintReader(
         connectionManager
     );
 
@@ -103,7 +103,7 @@ class PostgreSQLConstraintReaderIntegrationTest {
     );
 
     final List<UniqueConstraint> constraints = new ArrayList<>(
-        postgeSQLConstraintReader.retrieveUniqueConstraints(table)
+        postgreSQLConstraintReader.retrieveUniqueConstraints(table)
     );
 
     assertEquals(1, constraints.size());
@@ -115,7 +115,7 @@ class PostgreSQLConstraintReaderIntegrationTest {
     assertEquals(1, constraint.getColumns().size());
     assertTrue(constraint.getColumns().contains(table.getColumns().getLast()));
 
-    postgeSQLConstraintReader.close();
+    postgreSQLConstraintReader.close();
   }
 
 }
