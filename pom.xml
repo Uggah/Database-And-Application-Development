@@ -12,7 +12,6 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <delombok.output>${project.build.directory}/delombok</delombok.output>
     </properties>
 
     <dependencies>
@@ -46,7 +45,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>5.11.0</version>
+            <version>5.12.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -55,7 +54,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.19.7</version>
+            <version>1.19.8</version>
             <scope>test</scope>
         </dependency>
 
@@ -93,7 +92,7 @@
         <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
-            <version>4.7.5</version>
+            <version>4.7.6</version>
         </dependency>
 
         <!-- JDBC -->
@@ -114,7 +113,7 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.45.2.0</version>
+            <version>3.46.0.0</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -128,7 +127,7 @@
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>8.0.0.Final</version>
+            <version>8.0.1.Final</version>
         </dependency>
 
     </dependencies>
@@ -146,6 +145,11 @@
                         <artifactId>junit-platform-surefire-provider</artifactId>
                         <version>1.3.2</version>
                     </dependency>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-api</artifactId>
+                        <version>3.2.5</version>
+                    </dependency>
                 </dependencies>
                 <configuration>
                     <additionalClasspathElements>
@@ -153,26 +157,6 @@
                     </additionalClasspathElements>
                     <argLine>-XX:+EnableDynamicAgentLoading</argLine>
                 </configuration>
-            </plugin>
-
-            <!-- Lombok -->
-            <plugin>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok-maven-plugin</artifactId>
-                <version>1.18.20.0</version>
-                <configuration>
-                    <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
-                    <outputDirectory>${delombok.output}</outputDirectory>
-                    <addOutputDirectory>false</addOutputDirectory>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>delombok</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
 
             <!-- Compiler Plugin-->
@@ -207,9 +191,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.9</version>
-                <configuration>
-                    <sourcepath>${delombok.output}</sourcepath>
-                </configuration>
             </plugin>
 
         </plugins>
