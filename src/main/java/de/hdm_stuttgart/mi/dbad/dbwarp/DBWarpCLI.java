@@ -37,12 +37,22 @@ import java.util.Arrays;
 import java.util.concurrent.Callable;
 import lombok.extern.slf4j.XSlf4j;
 import org.slf4j.LoggerFactory;
+import picocli.CommandLine.Command;
 import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 import picocli.CommandLine.Spec;
 
 @XSlf4j
+@Command(
+    name = "dbwarp",
+    description = """
+        DBWarp is a cli application that allows you to migrate database schemas between different database management systems.
+        It is the product of our semester project in the module Database and Application Development at Stuttgart Media University, course Computer Science and Media (B.Sc.).
+        """,
+    version = "0.0.1-alpha",
+    mixinStandardHelpOptions = true
+)
 public class DBWarpCLI implements Callable<Integer> {
 
   @SuppressWarnings("unused")
