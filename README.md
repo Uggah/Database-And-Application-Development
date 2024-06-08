@@ -81,7 +81,7 @@ This method is used to generate [USAGE.md](./USAGE.md).
 pandoc -f docbook -t markdown_strict ./target/generated-docs/dbwarp.xml -o ./target/generated-docs/dbwarp.md
 ```
 
-## Licenses
+## Third Party Licenses
 
 To generate a list of all third party licenses, use the following command:
 
@@ -89,8 +89,10 @@ To generate a list of all third party licenses, use the following command:
 mvn generate-sources
 ```
 
-This goal will automatically be executed in the generate-resources phase and its result will be
-included in the final JAR.
+This goal will automatically be executed in build lifecycle and its result will be
+included in the final
+JAR (`META-INF/DBWarp-THIRD-PARTY.txt`, `META-INF/licenses.xml`, `META-INF/licenses`).
+You can preview the files in `./target/generated-sources/licenses`.
 
 # Copyright
 
