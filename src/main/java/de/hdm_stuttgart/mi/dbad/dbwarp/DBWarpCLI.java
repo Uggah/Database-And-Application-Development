@@ -48,9 +48,9 @@ public class DBWarpCLI implements Callable<Integer> {
   private boolean trace;
 
   @SuppressWarnings("unused")
-  @Option(names = {"--drivers",
-      "-D"}, description = "Comma-separated paths to JAR-files containing JDBC drivers to load dynamically", split = ",")
-  private String[] drivers;
+  @Option(names = {"--driver",
+      "-D"}, description = "Comma-separated paths to JAR-files containing JDBC drivers to load dynamically")
+  private String[] drivers = new String[0];
 
   @Override
   public Integer call() {
