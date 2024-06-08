@@ -40,6 +40,7 @@ public class JarDriverLoader implements DriverLoader {
    * from the JAR-file.
    */
   @Override
+  @SuppressWarnings("unchecked")
   public DriverShim loadDriver() {
     log.entry();
 
@@ -63,28 +64,34 @@ public class JarDriverLoader implements DriverLoader {
 
     final Class<?> driverClass;
 
-    try (final URLClassLoader classLoader = URLClassLoader.newInstance(new URL[]{jarUrl})) {
+    try {
+      // Creates a URLClassLoader with the context's class loader as parent, then sets it as the
+      // context's class loader. This ensures that even if multiple JARs are loaded, all JAR's
+      // classes stay loadable.
+      final URLClassLoader classLoader =
+          new URLClassLoader(new URL[]{jarUrl}, Thread.currentThread().getContextClassLoader());
+      Thread.currentThread().setContextClassLoader(classLoader);
+
       driverClass = classLoader.loadClass(driverClassName);
-    } catch (IOException e) {
-      throw new DriverLoadingException("Could not instantiate class loader!", e);
+
     } catch (ClassNotFoundException e) {
       throw new DriverLoadingException("Driver class is non-existent!", e);
     }
 
-    @SuppressWarnings("unchecked") final Constructor<? extends Driver> constructor = (Constructor<? extends Driver>) Arrays.stream(
+    final Driver driver;
+
+    final Constructor<? extends Driver> constructor = (Constructor<? extends Driver>) Arrays.stream(
             driverClass.getConstructors())
         .filter(constr -> constr.getParameters().length == 0)
         .findFirst()
         .orElseThrow(() -> new DriverLoadingException(
             "Could not find suitable constructor in Driver class!"));
 
-    final Driver driver;
-
     try {
       driver = constructor.newInstance();
     } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
       throw new DriverLoadingException(
-          String.format("Failed to instantiate found driver class %s", driverClass.getName()), e);
+          String.format("Failed to instantiate found driver class %s", driverClassName), e);
     }
 
     return DriverShim.builder()
