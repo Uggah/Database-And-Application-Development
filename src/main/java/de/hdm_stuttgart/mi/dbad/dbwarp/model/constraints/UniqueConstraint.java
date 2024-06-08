@@ -34,15 +34,20 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 public class UniqueConstraint extends Constraint {
 
+  /**
+   * {@link Table} on which the constraint is defined.
+   */
   @ToString.Exclude
   private final Table table;
 
+  /**
+   * Name of the constraint.
+   */
   private final String name;
 
+  /**
+   * {@link List} of {@link Column columns} which the constraint includes.
+   */
   private final List<Column> columns = new ArrayList<>();
-
-  public void addColumn(Column column) {
-    columns.add(column);
-  }
 
 }

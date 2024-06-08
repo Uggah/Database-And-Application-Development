@@ -34,6 +34,10 @@ import java.sql.SQLException;
 import java.util.List;
 import lombok.extern.slf4j.XSlf4j;
 
+/**
+ * Provides generic JDBC implementation of reading a schema. Inheriting classes must provide a DBMS
+ * specific {@link TableReader}, {@link ColumnReader} and {@link ConstraintReader}.
+ */
 @XSlf4j
 public abstract class AbstractJDBCSchemaReader implements SchemaReader {
 

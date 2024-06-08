@@ -22,6 +22,9 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.jdbc.exception;
  * #L%
  */
 
+/**
+ * Wrapper class for {@link Exception Exceptions} thrown while dynamically loading a driver.
+ */
 public class DriverLoadingException extends RuntimeException {
 
   public DriverLoadingException(String message, Exception reason) {

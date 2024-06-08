@@ -25,6 +25,9 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.columnreader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import lombok.extern.slf4j.XSlf4j;
 
+/**
+ * SQLite specific implementation of a {@link ColumnReader}.
+ */
 @XSlf4j
 public class SQLiteColumnReader extends AbstractColumnReader {
 

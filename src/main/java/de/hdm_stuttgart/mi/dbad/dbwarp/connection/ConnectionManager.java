@@ -24,6 +24,10 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.connection;
 
 import java.sql.Connection;
 
+/**
+ * Can be used to get {@link Connection Connections} to the source and target database.
+ * Thread-safety (and connection pooling) depends on the implementation.
+ */
 public interface ConnectionManager {
 
   Connection getSourceDatabaseConnection();

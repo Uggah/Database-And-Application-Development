@@ -34,19 +34,34 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.XSlf4j;
 
+/**
+ * Is used to kick off a migration. It will handle the generation of a {@link SchemaReaderFactory}.
+ */
 @Setter
 @XSlf4j
 @NoArgsConstructor
 @SuppressWarnings("java:S6548")
 public final class MigrationManager {
 
+  /**
+   * The {@link ConnectionManager} that is used to get the connections to the source and target
+   * databases.
+   */
   private ConnectionManager connectionManager;
 
+  /**
+   * Gets the singleton instance from {@link MigrationManagerHolder}.
+   * @return singleton instance.
+   */
   public static MigrationManager getInstance() {
     log.entry();
     return log.exit(MigrationManagerHolder.INSTANCE);
   }
 
+  /**
+   * Starts a migration from source database to target database.
+   * @throws SQLException when an SQL error occurs while reading from the source database or writing to the target database.
+   */
   public void migrate() throws SQLException {
     log.entry();
 
@@ -64,6 +79,9 @@ public final class MigrationManager {
     log.exit();
   }
 
+  /**
+   * Holder for the singleton instance.
+   */
   private static class MigrationManagerHolder {
 
     private static final MigrationManager INSTANCE = new MigrationManager();

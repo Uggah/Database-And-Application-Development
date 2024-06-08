@@ -39,16 +39,32 @@ import lombok.extern.slf4j.XSlf4j;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Table {
 
+  /**
+   * Schema in which this table resides in.
+   */
   @EqualsAndHashCode.Include
   private final String schema;
 
+  /**
+   * Name of the table.
+   */
   @EqualsAndHashCode.Include
   private final String name;
 
+  /**
+   * Type of the table.
+   */
   @EqualsAndHashCode.Include
   private final TableType type;
 
+  /**
+   * {@link List} of all {@link Column} definitions in this table.
+   */
   private final List<Column> columns = new ArrayList<>();
+
+  /**
+   * {@link List} of all {@link Constraint} definitions in this table.
+   */
   private final List<Constraint> constraints = new ArrayList<>();
 
   /**
@@ -95,6 +111,12 @@ public class Table {
     log.exit();
   }
 
+  /**
+   * Gets a {@link Column} in this table by its name.
+   *
+   * @param name Name of the column to get.
+   * @return the {@link Column} with the given name, or if it does not exist, {@code null}.
+   */
   public Column getColumnByName(String name) {
     return columns.parallelStream().filter(c -> c.getName().equals(name)).findAny().orElse(null);
   }

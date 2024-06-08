@@ -34,6 +34,10 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.XSlf4j;
 
+/**
+ * Implements a generic approach to reading tables from the source database. It needs to be extended
+ * by a DBMS specific {@link TableReader} that adjusts to implementation details.
+ */
 @XSlf4j
 @RequiredArgsConstructor
 public abstract class AbstractTableReader implements TableReader {

@@ -34,11 +34,28 @@ import lombok.RequiredArgsConstructor;
 import picocli.CommandLine;
 import picocli.CommandLine.ParameterException;
 
+/**
+ * Is used to validate {@link DBWarpCLI}'s arguments.
+ */
 @RequiredArgsConstructor
 public class DBWarpCLIValidator implements ClassValidator<DBWarpCLI> {
 
+  /**
+   * The {@link CommandLine} instance used to create a {@link ParameterException} on constraint
+   * violation.
+   */
   private final CommandLine commandLine;
 
+  /**
+   * Validates the given instance of {@link DBWarpCLI} using Bean Validation annotations. If one or
+   * more {@link ConstraintViolation} is found, their messages are joined using newline characters
+   * and wrapped inside a {@link ParameterException}. See: <a
+   * href="https://jakarta.ee/specifications/bean-validation/3.0/apidocs/">Jakarta Bean Validation
+   * 3.0 Javadoc</a>
+   *
+   * @param cli instance of {@link DBWarpCLI} to validate.
+   * @throws ValidationException if a {@link ConstraintViolation} has been found.
+   */
   @Override
   public void validate(final DBWarpCLI cli) throws ValidationException {
     try (final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory()) {

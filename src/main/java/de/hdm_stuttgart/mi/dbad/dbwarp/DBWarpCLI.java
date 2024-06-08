@@ -59,31 +59,58 @@ public class DBWarpCLI implements Callable<Integer> {
   @Spec
   private CommandSpec spec;
 
+  /**
+   * source defines the JDBC connection URL of the source database. It will be automatically
+   * injected by PicoCLI.
+   */
   @SuppressWarnings("unused")
   @NotBlank
   @Parameters(index = "0", description = "JDBC connection URL of source database")
   private String source;
 
+  /**
+   * target defines the JDBC connection URL of the target database. It will be automatically
+   * injected by PicoCLI.
+   */
   @SuppressWarnings("unused")
   @NotBlank
   @Parameters(index = "1", description = "JDBC connection URL of target database")
   private String target;
 
+  /**
+   * verbose signals whether debug logging should be enabled. It will be automatically injected by
+   * PicoCLI.
+   */
   @SuppressWarnings("unused")
   @Option(names = {"--verbose",
       "-v"}, description = "Verbose output", defaultValue = "false")
   private boolean verbose;
 
+  /**
+   * trace signals whether trace logging should be enabled. It will be automatically injected by
+   * PicoCLI.
+   */
   @SuppressWarnings("unused")
   @Option(names = {"--trace",
       "-vv"}, description = "Tracing output", defaultValue = "false")
   private boolean trace;
 
+  /**
+   * drivers is an array of paths to JAR files containing JDBC drivers. They will be loaded upon
+   * application initialization and registered with the {@link DriverManager}. It will be
+   * automatically injected by PicoCLI.
+   */
   @SuppressWarnings("unused")
   @Option(names = {"--drivers",
       "-D"}, description = "Comma-separated paths to JAR-files containing JDBC drivers to load dynamically", split = ",")
   private String[] drivers;
 
+  /**
+   * call is called on every application startup. The returned {@link picocli.CommandLine.ExitCode}
+   * shows the status in which the application exited.
+   *
+   * @return the exit status code.
+   */
   @Override
   public Integer call() {
     log.entry();
@@ -106,6 +133,9 @@ public class DBWarpCLI implements Callable<Integer> {
     return log.exit(0);
   }
 
+  /**
+   * Sets up logging based on the command line options used.
+   */
   private void setupLogging() {
     log.entry();
     log.debug("Setting up logging");
@@ -126,6 +156,9 @@ public class DBWarpCLI implements Callable<Integer> {
     log.exit();
   }
 
+  /**
+   * Dynamically loads drivers as specified in the command line options.
+   */
   public void setupDrivers() {
     log.entry();
     log.debug("Loading drivers");

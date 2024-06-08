@@ -39,10 +39,19 @@ import java.util.List;
 import java.util.Set;
 import lombok.extern.slf4j.XSlf4j;
 
+/**
+ * SQLite specific {@link ConstraintReader}.
+ */
 @XSlf4j
 public class SQLiteConstraintReader extends AbstractConstraintReader implements AutoCloseable {
 
+  /**
+   * {@link PreparedStatement} used to query unique constraints from the SQLite database.
+   */
   private final PreparedStatement preparedStatementUniqueConstraints;
+  /**
+   * {@link PreparedStatement} used to query info about a specific index from the SQLite database.
+   */
   private final PreparedStatement preparedStatementIndexInfo;
 
   public SQLiteConstraintReader(
@@ -90,6 +99,15 @@ public class SQLiteConstraintReader extends AbstractConstraintReader implements 
     return log.exit(Collections.emptyList());
   }
 
+  /**
+   * Retrieves a {@link Collection} of {@link UniqueConstraint UniqueConstraints} in the given
+   * {@link Table}.
+   *
+   * @param table {@link Table} to get the {@link UniqueConstraint UniqueConstraints} from.
+   * @return {@link Collection} of {@link UniqueConstraint UniqueConstraints}.
+   * @throws SQLException if an SQL error occurs while retrieving
+   *                      {@link UniqueConstraint UniqueConstraints}.
+   */
   protected Collection<UniqueConstraint> retrieveUniqueConstraints(final Table table)
       throws SQLException {
     log.entry(table);
@@ -112,6 +130,15 @@ public class SQLiteConstraintReader extends AbstractConstraintReader implements 
     return log.exit(Collections.unmodifiableSet(constraints));
   }
 
+  /**
+   * Retrieves a single {@link UniqueConstraint} from the given {@link Table} by its name.
+   *
+   * @param indexName name of the {@link UniqueConstraint}.
+   * @param table     {@link Table} to get the {@link UniqueConstraint} from.
+   * @return the wanted {@link UniqueConstraint}
+   * @throws SQLException when an SQL error occurs when querying for the {@link UniqueConstraint}.
+   *                      For example, if the {@link UniqueConstraint} does not exist.
+   */
   private UniqueConstraint retrieveUniqueConstraintByIndexName(String indexName, Table table)
       throws SQLException {
     log.entry(indexName, table);
@@ -122,12 +149,15 @@ public class SQLiteConstraintReader extends AbstractConstraintReader implements 
     final ResultSet columns = preparedStatementIndexInfo.executeQuery();
 
     while (columns.next()) {
-      outConstraint.addColumn(table.getColumnByName(columns.getString("NAME")));
+      outConstraint.getColumns().add(table.getColumnByName(columns.getString("NAME")));
     }
 
     return log.exit(outConstraint);
   }
 
+  /**
+   * Closes the {@link PreparedStatement} initialized during construction of this {@link ConstraintReader}.
+   */
   @Override
   public void close() throws Exception {
     log.entry();

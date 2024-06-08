@@ -29,6 +29,9 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader.SQLiteTableReader;
 import java.sql.SQLException;
 import lombok.extern.slf4j.XSlf4j;
 
+/**
+ * SQLite specific schema reader.
+ */
 @XSlf4j
 public class SQLiteSchemaReader extends AbstractJDBCSchemaReader {
 

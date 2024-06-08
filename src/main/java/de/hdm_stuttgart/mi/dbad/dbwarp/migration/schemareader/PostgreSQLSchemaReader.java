@@ -28,6 +28,9 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.migration.constraintreader.PostgeSQLConst
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader.PostgreSQLTableReader;
 import lombok.extern.slf4j.XSlf4j;
 
+/**
+ * PostgreSQL specific {@link SchemaReader}.
+ */
 @XSlf4j
 public class PostgreSQLSchemaReader extends AbstractJDBCSchemaReader {
 

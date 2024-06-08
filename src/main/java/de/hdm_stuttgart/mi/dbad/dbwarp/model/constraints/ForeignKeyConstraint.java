@@ -26,6 +26,9 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * Internal model for a foreign key constraint.
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ForeignKeyConstraint extends Constraint {

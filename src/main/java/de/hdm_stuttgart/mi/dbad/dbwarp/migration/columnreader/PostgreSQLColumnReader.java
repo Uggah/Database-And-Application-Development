@@ -30,6 +30,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import lombok.extern.slf4j.XSlf4j;
 
+/**
+ * PostgreSQL specific implementation of a {@link ColumnReader}.
+ */
 @XSlf4j
 public class PostgreSQLColumnReader extends AbstractColumnReader {
 

@@ -37,6 +37,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.XSlf4j;
 
+/**
+ * Implements a generic approach to read constraints from SQL databases.
+ */
 @XSlf4j
 @RequiredArgsConstructor
 public abstract class AbstractConstraintReader implements ConstraintReader {
@@ -49,6 +52,17 @@ public abstract class AbstractConstraintReader implements ConstraintReader {
     log.exit();
   }
 
+  /**
+   * Template method for reading constraints from a {@link Table}. Calls the
+   * {@link this#retrievePrimaryKeyConstraint(Table)},
+   * {@link this#retrieveForeignKeyConstraints(Table)} and
+   * {@link this#retrieveUniqueConstraints(Table)} methods that need to be implemented by child
+   * classes.
+   *
+   * @param table {@link Table} to read {@link Constraint Constraints} from.
+   * @return {@link List} of {@link Constraint Constraints}.
+   * @throws SQLException if an SQL error occurs.
+   */
   @Override
   public List<Constraint> readConstraints(Table table) throws SQLException {
     log.entry(table);

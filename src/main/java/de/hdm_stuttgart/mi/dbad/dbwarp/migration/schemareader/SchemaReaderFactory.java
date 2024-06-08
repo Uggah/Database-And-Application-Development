@@ -27,12 +27,23 @@ import java.sql.SQLException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.XSlf4j;
 
+/**
+ * Factory to construct a {@link SchemaReader} depending on database product name of the source
+ * datbase connection.
+ */
 @XSlf4j
 @AllArgsConstructor
 public final class SchemaReaderFactory {
 
   private ConnectionManager connectionManager;
 
+  /**
+   * Constructs a {@link SchemaReader} depending on the database product name of the source database
+   * connection in the instance's {@link ConnectionManager}.
+   *
+   * @return the constructed {@link SchemaReader}
+   * @throws SQLException if an exception occurs during constructing a schema reader.
+   */
   public SchemaReader getSchemaReader() throws SQLException {
     log.entry();
     final String databaseProductName = connectionManager.getSourceDatabaseConnection().getMetaData()

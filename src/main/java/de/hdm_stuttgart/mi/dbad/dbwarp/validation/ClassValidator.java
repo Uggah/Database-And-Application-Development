@@ -24,6 +24,11 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.validation;
 
 import jakarta.validation.ValidationException;
 
+/**
+ * A generic interface for a Jakarta Bean Validation validator.
+ *
+ * @param <T> Class type which is validated by the specific implementation.
+ */
 public interface ClassValidator<T> {
 
   void validate(T input) throws ValidationException;

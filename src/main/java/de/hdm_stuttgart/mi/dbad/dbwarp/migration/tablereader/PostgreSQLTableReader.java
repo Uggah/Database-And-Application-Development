@@ -25,6 +25,9 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import lombok.extern.slf4j.XSlf4j;
 
+/**
+ * PostgresQL specific implementation of {@link TableReader}.
+ */
 @XSlf4j
 public class PostgreSQLTableReader extends AbstractTableReader {
 

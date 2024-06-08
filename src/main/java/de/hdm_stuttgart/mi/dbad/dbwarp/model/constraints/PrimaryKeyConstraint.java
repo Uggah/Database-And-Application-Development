@@ -28,12 +28,21 @@ import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * Internal model for a primary key constraint.
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class PrimaryKeyConstraint extends Constraint {
 
+  /**
+   * {@link Table} on which the constraint is defined.
+   */
   private final Table table;
 
+  /**
+   * {@link List} of {@link Column columns} which the constraint includes.
+   */
   private final List<Column> columns;
 
 }

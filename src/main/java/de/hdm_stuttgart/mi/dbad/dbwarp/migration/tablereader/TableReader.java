@@ -26,6 +26,9 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Reads
+ */
 public interface TableReader extends AutoCloseable {
 
   List<Table> readTables() throws SQLException;

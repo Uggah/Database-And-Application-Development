@@ -26,6 +26,10 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * A schema reader will be used to read a list of tables from the source database. Schema does not
+ * refer to collections inside a database but to the overall structure of the database.
+ */
 public interface SchemaReader extends AutoCloseable {
 
   List<Table> readSchema() throws SQLException;

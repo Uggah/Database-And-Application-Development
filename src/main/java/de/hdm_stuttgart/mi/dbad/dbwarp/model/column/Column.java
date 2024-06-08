@@ -27,6 +27,9 @@ import java.sql.JDBCType;
 import lombok.Data;
 import lombok.ToString;
 
+/**
+ * Internal model of a column.
+ */
 @Data
 public class Column {
 

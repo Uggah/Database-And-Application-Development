@@ -28,6 +28,10 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.XSlf4j;
 
+/**
+ * Default implementation of a {@link ConnectionManager}. Does not do connection pooling and can
+ * thus not be used by multiple threads.
+ */
 @XSlf4j
 @Getter
 public class DefaultConnectionManager implements ConnectionManager {
