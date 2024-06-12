@@ -27,7 +27,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Reads
+ * Reads Tables
  */
 public interface TableReader extends AutoCloseable {
 
