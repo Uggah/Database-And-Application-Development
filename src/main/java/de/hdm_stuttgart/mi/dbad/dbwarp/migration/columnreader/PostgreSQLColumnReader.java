@@ -76,15 +76,15 @@ public class PostgreSQLColumnReader extends AbstractColumnReader {
 
       log.error(defaultValueUncasted);
 
-      final Statement castStatement = this.connection.createStatement();
+      try (final Statement castStatement = this.connection.createStatement()) {
+        final ResultSet castResultSet = castStatement.executeQuery(
+            String.format("SELECT %s AS \"cast\";", defaultValueUncasted));
+        castResultSet.next();
 
-      final ResultSet castResultSet = castStatement.executeQuery(
-          String.format("SELECT %s AS \"cast\";", defaultValueUncasted));
-      castResultSet.next();
+        final Object defaultValue = castResultSet.getObject("cast");
 
-      final Object defaultValue = castResultSet.getObject("cast");
-
-      column.setDefaultValue(defaultValue);
+        column.setDefaultValue(defaultValue);
+      }
     }
 
     return log.exit(column);
