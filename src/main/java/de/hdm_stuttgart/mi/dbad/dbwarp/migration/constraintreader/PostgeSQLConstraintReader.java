@@ -23,7 +23,7 @@ public class PostgeSQLConstraintReader extends AbstractConstraintReader implemen
   }
 
   @Override
-  public List<Constraint> readConstraints(Table table) throws SQLException {
+  public List<Constraint> readConstraints(Table table, List<Table> tableList) throws SQLException {
     log.entry(table);
     return log.exit(Collections.emptyList());
   }
@@ -35,7 +35,8 @@ public class PostgeSQLConstraintReader extends AbstractConstraintReader implemen
   }
 
   @Override
-  protected Collection<ForeignKeyConstraint> retrieveForeignKeyConstraints(Table table)
+  protected Collection<ForeignKeyConstraint> retrieveForeignKeyConstraints(Table table,
+      List<Table> tableList)
       throws SQLException {
     log.entry();
     return log.exit(Collections.emptyList());

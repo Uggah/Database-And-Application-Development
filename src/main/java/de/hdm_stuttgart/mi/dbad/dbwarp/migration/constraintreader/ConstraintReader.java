@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ConstraintReader extends AutoCloseable {
 
-  List<Constraint> readConstraints(Table table) throws SQLException;
+  List<Constraint> readConstraints(Table table, List<Table> tableList) throws SQLException;
 }

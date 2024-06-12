@@ -10,6 +10,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class PrimaryKeyConstraint extends Constraint {
 
+  private final String name;
+
   private final Table table;
 
   private final List<Column> columns;

@@ -28,7 +28,7 @@ public abstract class AbstractConstraintReader implements ConstraintReader {
   }
 
   @Override
-  public List<Constraint> readConstraints(Table table) throws SQLException {
+  public List<Constraint> readConstraints(Table table, List<Table> tableList) throws SQLException {
     log.entry(table);
 
     final List<Constraint> constraints = new ArrayList<>();
@@ -38,7 +38,7 @@ public abstract class AbstractConstraintReader implements ConstraintReader {
       constraints.add(primaryKeyConstraint);
     }
 
-    constraints.addAll(retrieveForeignKeyConstraints(table));
+    constraints.addAll(retrieveForeignKeyConstraints(table, tableList));
     constraints.addAll(retrieveUniqueConstraints(table));
 
     return log.exit(Collections.unmodifiableList(constraints));
@@ -47,7 +47,8 @@ public abstract class AbstractConstraintReader implements ConstraintReader {
   protected abstract PrimaryKeyConstraint retrievePrimaryKeyConstraint(Table table)
       throws SQLException;
 
-  protected abstract Collection<ForeignKeyConstraint> retrieveForeignKeyConstraints(Table table)
+  protected abstract Collection<ForeignKeyConstraint> retrieveForeignKeyConstraints(Table table,
+      List<Table> tableList)
       throws SQLException;
 
   protected abstract Collection<UniqueConstraint> retrieveUniqueConstraints(Table table)
