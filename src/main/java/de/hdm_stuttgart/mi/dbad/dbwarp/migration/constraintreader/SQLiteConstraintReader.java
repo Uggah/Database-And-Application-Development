@@ -12,8 +12,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import lombok.extern.slf4j.XSlf4j;
 
@@ -50,23 +52,46 @@ public class SQLiteConstraintReader extends AbstractConstraintReader implements 
       columns.add(table.getColumnByName(columnName));
     }
 
-    return log.exit(new PrimaryKeyConstraint(table, columns));
+    final String name = resultSet.getString("PK_NAME");
+
+    return log.exit(new PrimaryKeyConstraint(name, table, columns));
   }
 
   protected List<ForeignKeyConstraint> retrieveForeignKeyConstraints(
-      final Table table) throws SQLException {
+      final Table table, final List<Table> tableList) throws SQLException {
     log.entry(table);
 
-    final ResultSet resultSet = connection.getMetaData().getCrossReference(
-        null,
-        null,
-        null,
+    final Map<String, ForeignKeyConstraint> constraints = new HashMap<>();
+
+    final ResultSet resultSet = connection.getMetaData().getImportedKeys(
         null,
         table.getSchema(),
         table.getName()
     );
 
-    return log.exit(Collections.emptyList());
+    while (resultSet.next()) {
+
+      final String fkName = resultSet.getString("FK_NAME");
+      final String parentTableName = resultSet.getString("PKTABLE_NAME");
+
+      final Table parentTable = tableList.stream()
+          .filter(t -> t.getName().equals(parentTableName))
+          .findFirst()
+          .orElse(null);
+
+      if (!constraints.containsKey(fkName)) {
+        constraints.put(fkName, new ForeignKeyConstraint(fkName, table, parentTable));
+      }
+
+      final Column childColumn = table.getColumnByName(resultSet.getString("FKCOLUMN_NAME"));
+      final Column parentColumn = parentTable.getColumnByName(resultSet.getString("PKCOLUMN_NAME"));
+      constraints.get(fkName).getChildColumns().add(childColumn);
+      constraints.get(fkName).getParentColumns().add(parentColumn);
+
+
+    }
+
+    return log.exit(new ArrayList<>(constraints.values()));
   }
 
   protected Collection<UniqueConstraint> retrieveUniqueConstraints(final Table table)

@@ -43,9 +43,11 @@ public abstract class AbstractJDBCSchemaReader implements SchemaReader {
     for (final Table table : tables) {
       final List<Column> columns = columnReader.readColumns(table);
       table.addColumns(columns);
+    }
 
+    for (final Table table : tables) {
       final List<Constraint> constraints = constraintReader.readConstraints(
-          table);
+          table, tables);
       table.addConstraints(constraints);
     }
 
