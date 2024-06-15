@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.extern.slf4j.XSlf4j;
 
 /**
@@ -15,14 +16,18 @@ import lombok.extern.slf4j.XSlf4j;
 @Data
 @XSlf4j
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
 public class Table {
 
+  @ToString.Include
   @EqualsAndHashCode.Include
   private final String schema;
 
+  @ToString.Include
   @EqualsAndHashCode.Include
   private final String name;
 
+  @ToString.Include
   @EqualsAndHashCode.Include
   private final TableType type;
 
@@ -75,11 +80,6 @@ public class Table {
 
   public Column getColumnByName(String name) {
     return columns.parallelStream().filter(c -> c.getName().equals(name)).findAny().orElse(null);
-  }
-
-  @Override
-  public String toString() {
-    return this.name;
   }
 
 }

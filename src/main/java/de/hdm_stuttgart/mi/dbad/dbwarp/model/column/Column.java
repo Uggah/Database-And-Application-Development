@@ -36,4 +36,9 @@ public class Column {
    */
   private final int size;
 
+  /**
+   * Default value. Is {@code null} if no default value is set.
+   */
+  private Object defaultValue = null;
+
 }

@@ -17,7 +17,7 @@ import lombok.extern.slf4j.XSlf4j;
 @RequiredArgsConstructor
 public abstract class AbstractColumnReader implements ColumnReader {
 
-  private final Connection connection;
+  protected final Connection connection;
 
   protected AbstractColumnReader(ConnectionManager connectionManager) {
     log.entry(connectionManager);
@@ -29,8 +29,12 @@ public abstract class AbstractColumnReader implements ColumnReader {
   public List<Column> readColumns(Table table) throws SQLException {
     log.entry(table);
 
-    final ResultSet columns = connection.getMetaData().getColumns(null, table.getSchema(),
-        table.getName(), "%");
+    final ResultSet columns = connection.getMetaData().getColumns(
+        null,
+        table.getSchema(),
+        table.getName(),
+        "%"
+    );
 
     final List<Column> columnList = new ArrayList<>();
 
