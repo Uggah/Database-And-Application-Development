@@ -1,5 +1,27 @@
 package de.hdm_stuttgart.mi.dbad.dbwarp.model.table;
 
+/*-
+ * #%L
+ * DBWarp
+ * %%
+ * Copyright (C) 2024 Kay Knöpfle, Lucca Greschner and contributors
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 import java.util.ArrayList;
@@ -19,19 +41,35 @@ import lombok.extern.slf4j.XSlf4j;
 @ToString(onlyExplicitlyIncluded = true)
 public class Table {
 
+  /**
+   * Schema in which this table resides in.
+   */
   @ToString.Include
   @EqualsAndHashCode.Include
   private final String schema;
 
+  /**
+   * Name of the table.
+   */
   @ToString.Include
   @EqualsAndHashCode.Include
   private final String name;
 
+  /**
+   * Type of the table.
+   */
   @ToString.Include
   @EqualsAndHashCode.Include
   private final TableType type;
 
+  /**
+   * {@link List} of all {@link Column} definitions in this table.
+   */
   private final List<Column> columns = new ArrayList<>();
+
+  /**
+   * {@link List} of all {@link Constraint} definitions in this table.
+   */
   private final List<Constraint> constraints = new ArrayList<>();
 
   /**
@@ -78,6 +116,12 @@ public class Table {
     log.exit();
   }
 
+  /**
+   * Gets a {@link Column} in this table by its name.
+   *
+   * @param name Name of the column to get.
+   * @return the {@link Column} with the given name, or if it does not exist, {@code null}.
+   */
   public Column getColumnByName(String name) {
     return columns.parallelStream().filter(c -> c.getName().equals(name)).findAny().orElse(null);
   }
