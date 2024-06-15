@@ -101,9 +101,9 @@ public class DBWarpCLI implements Callable<Integer> {
    * automatically injected by PicoCLI.
    */
   @SuppressWarnings("unused")
-  @Option(names = {"--drivers",
-      "-D"}, description = "Comma-separated paths to JAR-files containing JDBC drivers to load dynamically", split = ",")
-  private String[] drivers;
+  @Option(names = {"--driver",
+      "-D"}, description = "Comma-separated paths to JAR-files containing JDBC drivers to load dynamically")
+  private String[] drivers = new String[0];
 
   /**
    * call is called on every application startup. The returned {@link picocli.CommandLine.ExitCode}

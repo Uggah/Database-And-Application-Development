@@ -45,9 +45,10 @@ import org.junit.jupiter.api.Test;
 class JarDriverLoaderTest {
 
   private static final Map<String, String> JDBC_DRIVER_DOWNLOAD_URLS = Map.of(
-      "postgresql", "https://jdbc.postgresql.org/download/postgresql-42.7.3.jar",
-      "mariadb",
-      "https://dlm.mariadb.com/3824147/Connectors/java/connector-java-3.4.0/mariadb-java-client-3.4.0.jar"
+      "h2",
+      "https://repo1.maven.org/maven2/com/h2database/h2/2.2.224/h2-2.2.224.jar",
+      "firebird",
+      "https://repo1.maven.org/maven2/org/firebirdsql/jdbc/jaybird/5.0.4.java11/jaybird-5.0.4.java11.jar"
   );
 
   private final Map<String, DriverLoader> driverLoaderMap = new HashMap<>();
@@ -72,21 +73,21 @@ class JarDriverLoaderTest {
   }
 
   @Test
-  void testLoadDriver_PostgreSQL() throws SQLException {
-    final Driver driver = driverLoaderMap.get("postgresql").loadDriver();
+  void testLoadDriver_H2() throws SQLException {
+    final Driver driver = driverLoaderMap.get("h2").loadDriver();
 
-    assertEquals(42, driver.getMajorVersion());
-    assertEquals(7, driver.getMinorVersion());
-    assertTrue(driver.acceptsURL("jdbc:postgresql://localhost:5173/"));
+    assertEquals(2, driver.getMajorVersion());
+    assertEquals(2, driver.getMinorVersion());
+    assertTrue(driver.acceptsURL("jdbc:h2:mem:db1"));
   }
 
   @Test
-  void testLoadDriver_MariaDB() throws SQLException {
-    final Driver driver = driverLoaderMap.get("mariadb").loadDriver();
+  void testLoadDriver_Firebird() throws SQLException {
+    final Driver driver = driverLoaderMap.get("firebird").loadDriver();
 
-    assertEquals(3, driver.getMajorVersion());
-    assertEquals(3, driver.getMinorVersion());
-    assertTrue(driver.acceptsURL("jdbc:mariadb://localhost:3306/"));
+    assertEquals(5, driver.getMajorVersion());
+    assertEquals(0, driver.getMinorVersion());
+    assertTrue(driver.acceptsURL("jdbc:firebird:localhost/3050:/some/database/path"));
   }
 
   private void downloadDriver(URL source, String destination) throws IOException {

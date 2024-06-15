@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.extern.slf4j.XSlf4j;
 
 /**
@@ -37,23 +38,27 @@ import lombok.extern.slf4j.XSlf4j;
 @Data
 @XSlf4j
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
 public class Table {
 
   /**
    * Schema in which this table resides in.
    */
+  @ToString.Include
   @EqualsAndHashCode.Include
   private final String schema;
 
   /**
    * Name of the table.
    */
+  @ToString.Include
   @EqualsAndHashCode.Include
   private final String name;
 
   /**
    * Type of the table.
    */
+  @ToString.Include
   @EqualsAndHashCode.Include
   private final TableType type;
 
