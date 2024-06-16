@@ -65,7 +65,7 @@ public class DBWarpCLI implements Callable<Integer> {
 
     try {
       MigrationManager.getInstance().migrate();
-    } catch (SQLException ex) {
+    } catch (Exception ex) {
       log.error("Exception thrown:", ex);
 
       return log.exit(1);

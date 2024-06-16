@@ -82,4 +82,17 @@ public class Table {
     return columns.parallelStream().filter(c -> c.getName().equals(name)).findAny().orElse(null);
   }
 
+  public String getFullName() {
+    if (schema != null) {
+      return String.format("%s.%s", schema, name);
+    }
+
+    return getName();
+  }
+
+  @Override
+  public String toString() {
+    return this.name;
+  }
+
 }

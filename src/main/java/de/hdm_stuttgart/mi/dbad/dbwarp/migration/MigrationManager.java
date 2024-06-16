@@ -4,6 +4,8 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration;
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader.SchemaReader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader.SchemaReaderFactory;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.TableWriter;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.TableWriterFactory;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.SQLException;
 import java.util.List;
@@ -25,12 +27,12 @@ public final class MigrationManager {
     return log.exit(MigrationManagerHolder.INSTANCE);
   }
 
-  public void migrate() throws SQLException {
+  public void migrate() throws Exception {
     log.entry();
 
     SchemaReaderFactory schemaReaderFactory = new SchemaReaderFactory(connectionManager);
     final SchemaReader schemaReader = schemaReaderFactory.getSchemaReader();
-    List<Table> tables = schemaReader.readSchema();
+    final List<Table> tables = schemaReader.readSchema();
 
     log.debug(
         "Got tables from source database: {}",
@@ -38,6 +40,14 @@ public final class MigrationManager {
             .map(Table::toString)
             .collect(Collectors.joining(", "))
     );
+
+    final TableWriterFactory tableWriterFactory = new TableWriterFactory(connectionManager);
+    final TableWriter tableWriter = tableWriterFactory.getTableWriter();
+
+    for (final Table table : tables) {
+      tableWriter.writeTable(table);
+    }
+
 
     log.exit();
   }
