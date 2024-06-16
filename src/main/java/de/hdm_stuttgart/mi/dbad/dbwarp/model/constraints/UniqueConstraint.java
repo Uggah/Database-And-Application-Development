@@ -50,4 +50,13 @@ public class UniqueConstraint extends Constraint {
    */
   private final List<Column> columns = new ArrayList<>();
 
+  /**
+   * Adds a {@link Column} to the {@link Column columns} affected by this constraint.
+   *
+   * @param column {@link Column} to add.
+   */
+  public void addColumn(final Column column) {
+    this.columns.add(column);
+  }
+
 }

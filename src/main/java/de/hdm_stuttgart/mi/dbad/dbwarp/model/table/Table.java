@@ -126,17 +126,17 @@ public class Table {
     return columns.parallelStream().filter(c -> c.getName().equals(name)).findAny().orElse(null);
   }
 
+  /**
+   * Gets the table's full name in the format "SCHEMA.TABLE_NAME".
+   *
+   * @return the table's full name.
+   */
   public String getFullName() {
     if (schema != null) {
       return String.format("%s.%s", schema, name);
     }
 
     return getName();
-  }
-
-  @Override
-  public String toString() {
-    return this.name;
   }
 
 }
