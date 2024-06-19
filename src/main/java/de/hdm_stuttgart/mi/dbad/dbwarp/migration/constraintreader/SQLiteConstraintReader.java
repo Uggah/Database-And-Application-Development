@@ -2,6 +2,7 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.constraintreader;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
@@ -10,8 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,82 +37,90 @@ public class SQLiteConstraintReader extends AbstractConstraintReader implements 
     log.exit();
   }
 
-  protected PrimaryKeyConstraint retrievePrimaryKeyConstraint(
-      final Table table) throws SQLException {
-    log.entry(table);
+  @Override
+  protected void retrievePrimaryKeyConstraint(
+      final List<Table> tableList) throws SQLException {
+    log.entry(tableList);
 
-    final List<Column> columns = new ArrayList<>();
+    for (Table table : tableList) {
 
-    final ResultSet resultSet = connection.getMetaData()
-        .getPrimaryKeys(null, table.getSchema(), table.getName());
+      final List<Column> columns = new ArrayList<>();
 
-    while (resultSet.next()) {
-      final String columnName = resultSet.getString("COLUMN_NAME");
-      columns.add(table.getColumnByName(columnName));
-    }
+      final ResultSet resultSet = connection.getMetaData()
+          .getPrimaryKeys(null, table.getSchema(), table.getName());
 
-    final String name = resultSet.getString("PK_NAME");
-
-    return log.exit(new PrimaryKeyConstraint(name, table, columns));
-  }
-
-  protected List<ForeignKeyConstraint> retrieveForeignKeyConstraints(
-      final Table table, final List<Table> tableList) throws SQLException {
-    log.entry(table);
-
-    final Map<String, ForeignKeyConstraint> constraints = new HashMap<>();
-
-    final ResultSet resultSet = connection.getMetaData().getImportedKeys(
-        null,
-        table.getSchema(),
-        table.getName()
-    );
-
-    while (resultSet.next()) {
-
-      final String fkName = resultSet.getString("FK_NAME");
-      final String parentTableName = resultSet.getString("PKTABLE_NAME");
-
-      final Table parentTable = tableList.stream()
-          .filter(t -> t.getName().equals(parentTableName))
-          .findFirst()
-          .orElse(null);
-
-      if (!constraints.containsKey(fkName)) {
-        constraints.put(fkName, new ForeignKeyConstraint(fkName, table, parentTable));
+      while (resultSet.next()) {
+        final String columnName = resultSet.getString("COLUMN_NAME");
+        columns.add(table.getColumnByName(columnName));
       }
 
-      final Column childColumn = table.getColumnByName(resultSet.getString("FKCOLUMN_NAME"));
-      final Column parentColumn = parentTable.getColumnByName(resultSet.getString("PKCOLUMN_NAME"));
-      constraints.get(fkName).getChildColumns().add(childColumn);
-      constraints.get(fkName).getParentColumns().add(parentColumn);
+      final String name = resultSet.getString("PK_NAME");
 
-
+      table.addConstraint(new PrimaryKeyConstraint(name, table, columns));
     }
 
-    return log.exit(new ArrayList<>(constraints.values()));
   }
 
-  protected Collection<UniqueConstraint> retrieveUniqueConstraints(final Table table)
-      throws SQLException {
-    log.entry(table);
+  @Override
+  protected void retrieveForeignKeyConstraints(final List<Table> tableList) throws SQLException {
+    log.entry(tableList);
 
-    preparedStatementUniqueConstraints.setString(1, table.getName());
-    final ResultSet allIndexes = preparedStatementUniqueConstraints.executeQuery();
+    for (Table table : tableList) {
+      final Map<String, ForeignKeyConstraint> constraints = new HashMap<>();
 
-    final List<String> uniqueIndexes = new ArrayList<>();
+      final ResultSet resultSet = connection.getMetaData().getImportedKeys(
+          null,
+          table.getSchema(),
+          table.getName()
+      );
 
-    while (allIndexes.next()) {
-      uniqueIndexes.add(allIndexes.getString("NAME"));
+      while (resultSet.next()) {
+
+        final String fkName = resultSet.getString("FK_NAME");
+        final String parentTableName = resultSet.getString("PKTABLE_NAME");
+
+        final Table parentTable = tableList.stream()
+            .filter(t -> t.getName().equals(parentTableName))
+            .findFirst()
+            .orElse(null);
+
+        if (!constraints.containsKey(fkName)) {
+          constraints.put(fkName, new ForeignKeyConstraint(fkName, table, parentTable));
+        }
+
+        final Column childColumn = table.getColumnByName(resultSet.getString("FKCOLUMN_NAME"));
+        final Column parentColumn = parentTable.getColumnByName(
+            resultSet.getString("PKCOLUMN_NAME"));
+        constraints.get(fkName).getChildColumns().add(childColumn);
+        constraints.get(fkName).getParentColumns().add(parentColumn);
+
+      }
+      table.addForeignKeyConstraints(constraints.values());
     }
+  }
 
-    final Set<UniqueConstraint> constraints = new HashSet<>();
+  @Override
+  protected void retrieveUniqueConstraints(final List<Table> tableList) throws SQLException {
+    log.entry(tableList);
 
-    for (String index : uniqueIndexes) {
-      constraints.add(retrieveUniqueConstraintByIndexName(index, table));
+    for (Table table : tableList) {
+      preparedStatementUniqueConstraints.setString(1, table.getName());
+      final ResultSet allIndexes = preparedStatementUniqueConstraints.executeQuery();
+
+      final List<String> uniqueIndexes = new ArrayList<>();
+
+      while (allIndexes.next()) {
+        uniqueIndexes.add(allIndexes.getString("NAME"));
+      }
+
+      final Set<Constraint> constraints = new HashSet<>();
+
+      for (String index : uniqueIndexes) {
+        constraints.add(retrieveUniqueConstraintByIndexName(index, table));
+      }
+
+      table.addConstraints(constraints);
     }
-
-    return log.exit(Collections.unmodifiableSet(constraints));
   }
 
   private UniqueConstraint retrieveUniqueConstraintByIndexName(String indexName, Table table)

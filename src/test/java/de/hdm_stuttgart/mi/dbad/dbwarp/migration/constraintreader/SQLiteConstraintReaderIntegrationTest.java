@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
@@ -37,11 +38,13 @@ class SQLiteConstraintReaderIntegrationTest {
         )
     );
 
-    final List<UniqueConstraint> constraints = new ArrayList<>(
-        sqLiteConstraintReader.retrieveUniqueConstraints(table));
+    sqLiteConstraintReader.retrieveUniqueConstraints(List.of(table));
+
+    final List<Constraint> constraints = new ArrayList<>(table.getConstraints());
+
     assertEquals(1, constraints.size());
 
-    final UniqueConstraint constraint = constraints.getFirst();
+    final UniqueConstraint constraint = (UniqueConstraint) constraints.getFirst();
 
     assertSame(table, constraint.getTable());
     assertEquals("sqlite_autoindex_Test_1", constraint.getName());
@@ -70,8 +73,10 @@ class SQLiteConstraintReaderIntegrationTest {
         )
     );
 
-    final PrimaryKeyConstraint constraint = sqLiteConstraintReader.retrievePrimaryKeyConstraint(
-        table);
+    sqLiteConstraintReader.retrievePrimaryKeyConstraint(List.of(table));
+
+    final PrimaryKeyConstraint constraint = (PrimaryKeyConstraint) table.getConstraints()
+        .getFirst();
 
     assertSame(table, constraint.getTable());
     assertEquals(1, constraint.getColumns().size());
@@ -111,9 +116,13 @@ class SQLiteConstraintReaderIntegrationTest {
         )
     );
 
+    sqLiteConstraintReader.retrieveForeignKeyConstraints(List.of(parentTable, childTable));
+
     final List<ForeignKeyConstraint> constraints = new ArrayList<>(
-        sqLiteConstraintReader.retrieveForeignKeyConstraints(childTable,
-            List.of(parentTable, childTable)));
+        childTable.getForeignKeyConstraints());
+
+
+
     assertEquals(1, constraints.size());
     assertEquals(constraints.getFirst().getParentTable(), parentTable);
     assertEquals(constraints.getFirst().getChildTable(), childTable);

@@ -2,7 +2,9 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.model.table;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,6 +30,7 @@ public class Table {
 
   private final List<Column> columns = new ArrayList<>();
   private final List<Constraint> constraints = new ArrayList<>();
+  private final List<ForeignKeyConstraint> foreignKeyConstraints = new ArrayList<>();
 
   /**
    * Adds a {@link Column} to the model.
@@ -63,16 +66,45 @@ public class Table {
   }
 
   /**
+   * Adds a {@link ForeignKeyConstraint ForeignKeyConstraint} to the model.
+   *
+   * @param constraint {@link ForeignKeyConstraint} to add
+   */
+  public void addForeignKeyConstraint(ForeignKeyConstraint constraint) {
+    log.entry(constraint);
+    foreignKeyConstraints.add(constraint);
+    log.exit();
+  }
+
+  /**
    * Adds multiple {@link Constraint Constraints} to the model.
    *
    * @param constraints {@link Iterable} of {@link Constraint Constraints} to add
    */
-  public void addConstraints(Iterable<Constraint> constraints) {
+  public void addConstraints(Collection<Constraint> constraints) {
     log.entry(constraints);
     constraints.forEach(this::addConstraint);
     log.exit();
   }
 
+  /**
+   * Adds multiple {@link ForeignKeyConstraint ForeignKeyConstraints} to the model.
+   *
+   * @param constraints {@link Iterable} of {@link ForeignKeyConstraint ForeignKeyConstraints} to
+   *                    add
+   */
+  public void addForeignKeyConstraints(Iterable<ForeignKeyConstraint> constraints) {
+    log.entry(constraints);
+    constraints.forEach(this::addForeignKeyConstraint);
+    log.exit();
+  }
+
+  /**
+   * Retrieves a {@link Column} by its name.
+   *
+   * @param name Name of the {@link Column} to retrieve
+   * @return {@link Column} with the given name or {@code null} if no such {@link Column} exists
+   */
   public Column getColumnByName(String name) {
     return columns.parallelStream().filter(c -> c.getName().equals(name)).findAny().orElse(null);
   }
