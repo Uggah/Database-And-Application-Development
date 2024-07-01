@@ -43,3 +43,8 @@ CREATE TABLE TextDefaultValue
     id                 int PRIMARY KEY,
     with_default_value text DEFAULT 'SomeDefaultValue'
 );
+
+CREATE TABLE AutoIncrementTest
+(
+    id INTEGER PRIMARY KEY AUTOINCREMENT
+);
