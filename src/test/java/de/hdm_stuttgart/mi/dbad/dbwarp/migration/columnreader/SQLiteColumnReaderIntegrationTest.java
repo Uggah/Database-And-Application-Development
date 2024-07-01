@@ -109,4 +109,21 @@ class SQLiteColumnReaderIntegrationTest {
     sqLiteColumnReader.close();
   }
 
+  @Test
+  @InitializeDatabase("sqlite/SQLiteColumnReaderIntegrationTest.sql")
+  void testReadColumns_AutoIncrement(final ConnectionManager connectionManager) throws Exception {
+    final ColumnReader sqLiteColumnReader = new SQLiteColumnReader(connectionManager);
+
+    final Table table = new Table(null, "AutoIncrementTest", TableType.TABLE);
+
+    final List<Column> columns = sqLiteColumnReader.readColumns(table);
+    assertEquals(1, columns.size());
+
+    columns.forEach(column -> assertSame(table, column.getTable()));
+
+    assertEquals(true, columns.get(0).isAutoIncrement());
+
+    sqLiteColumnReader.close();
+  }
+
 }

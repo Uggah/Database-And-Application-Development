@@ -26,7 +26,6 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.helper.types.TypeConversionHelper;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
-import java.io.StringReader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,6 +38,8 @@ import lombok.extern.slf4j.XSlf4j;
 public class SQLiteColumnReader extends AbstractColumnReader {
 
   private final PreparedStatement columnDefaultPreparedStatement;
+  private final PreparedStatement isAutoIncrementPreparedStatement;
+  private final PreparedStatement isPrimaryKeyPreparedStatement;
 
   public SQLiteColumnReader(
       ConnectionManager connectionManager) throws SQLException {
@@ -48,6 +49,14 @@ public class SQLiteColumnReader extends AbstractColumnReader {
         """
               SELECT dflt_value AS default_value FROM pragma_table_info(?) WHERE name = ?;
             """);
+
+    this.isAutoIncrementPreparedStatement = this.connection.prepareStatement(
+        "SELECT * FROM sqlite_master WHERE tbl_name=? AND sql LIKE '%AUTOINCREMENT%';"
+    );
+
+    this.isPrimaryKeyPreparedStatement = this.connection.prepareStatement(
+        "SELECT pk AS primary_key FROM pragma_table_info(?) WHERE name=?;"
+    );
     log.exit();
   }
 
@@ -78,6 +87,19 @@ public class SQLiteColumnReader extends AbstractColumnReader {
         column.setDefaultValue(
             defaultValueString
         );
+      }
+    }
+
+    this.isPrimaryKeyPreparedStatement.setString(1, table.getName());
+    this.isPrimaryKeyPreparedStatement.setString(2, column.getName());
+    final ResultSet primaryKeyResultSet = this.isPrimaryKeyPreparedStatement.executeQuery();
+    primaryKeyResultSet.next();
+    boolean isPrimaryKey = primaryKeyResultSet.getBoolean("primary_key");
+    if (isPrimaryKey) {
+      this.isAutoIncrementPreparedStatement.setString(1, table.getName());
+      final ResultSet autoIncrementResultSet = this.isAutoIncrementPreparedStatement.executeQuery();
+      if (autoIncrementResultSet.next()) {
+        column.setAutoIncrement(true);
       }
     }
 
