@@ -121,8 +121,6 @@ class SQLiteConstraintReaderIntegrationTest {
     final List<ForeignKeyConstraint> constraints = new ArrayList<>(
         childTable.getForeignKeyConstraints());
 
-
-
     assertEquals(1, constraints.size());
     assertEquals(constraints.getFirst().getParentTable(), parentTable);
     assertEquals(constraints.getFirst().getChildTable(), childTable);
