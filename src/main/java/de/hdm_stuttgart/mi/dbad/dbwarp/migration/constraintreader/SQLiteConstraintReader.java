@@ -60,7 +60,7 @@ public class SQLiteConstraintReader extends AbstractConstraintReader implements 
     log.entry(connectionManager);
 
     preparedStatementUniqueConstraints = this.connection.prepareStatement(
-        "SELECT * FROM pragma_index_list(?) WHERE \"UNIQUE\"=1 AND PARTIAL=0");
+        "SELECT * FROM pragma_index_list(?) WHERE \"UNIQUE\"=1 AND ORIGIN='u' AND PARTIAL=0");
     preparedStatementIndexInfo = this.connection.prepareStatement(
         "SELECT * FROM pragma_index_info(?)");
 
