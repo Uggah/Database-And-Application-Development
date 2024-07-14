@@ -1,5 +1,27 @@
 package de.hdm_stuttgart.mi.dbad.dbwarp.model.table;
 
+/*-
+ * #%L
+ * DBWarp
+ * %%
+ * Copyright (C) 2024 Kay Knöpfle, Lucca Greschner and contributors
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
@@ -8,6 +30,7 @@ import java.util.Collection;
 import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.extern.slf4j.XSlf4j;
 
 /**
@@ -17,19 +40,43 @@ import lombok.extern.slf4j.XSlf4j;
 @Data
 @XSlf4j
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
 public class Table {
 
+  /**
+   * Schema in which this table resides in.
+   */
+  @ToString.Include
   @EqualsAndHashCode.Include
   private final String schema;
 
+  /**
+   * Name of the table.
+   */
+  @ToString.Include
   @EqualsAndHashCode.Include
   private final String name;
 
+  /**
+   * Type of the table.
+   */
+  @ToString.Include
   @EqualsAndHashCode.Include
   private final TableType type;
 
+  /**
+   * {@link List} of all {@link Column} definitions in this table.
+   */
   private final List<Column> columns = new ArrayList<>();
+
+  /**
+   * {@link List} of all {@link Constraint} definitions in this table.
+   */
   private final List<Constraint> constraints = new ArrayList<>();
+
+  /**
+   * {@link List} of all {@link ForeignKeyConstraint} definitions in this table.
+   */
   private final List<ForeignKeyConstraint> foreignKeyConstraints = new ArrayList<>();
 
   /**
@@ -79,7 +126,7 @@ public class Table {
   /**
    * Adds multiple {@link Constraint Constraints} to the model.
    *
-   * @param constraints {@link Iterable} of {@link Constraint Constraints} to add
+   * @param constraints {@link Collection} of {@link Constraint Constraints} to add
    */
   public void addConstraints(Collection<Constraint> constraints) {
     log.entry(constraints);
@@ -100,18 +147,13 @@ public class Table {
   }
 
   /**
-   * Retrieves a {@link Column} by its name.
+   * Gets a {@link Column} in this table by its name.
    *
-   * @param name Name of the {@link Column} to retrieve
-   * @return {@link Column} with the given name or {@code null} if no such {@link Column} exists
+   * @param name Name of the column to get.
+   * @return the {@link Column} with the given name, or if it does not exist, {@code null}.
    */
   public Column getColumnByName(String name) {
     return columns.parallelStream().filter(c -> c.getName().equals(name)).findAny().orElse(null);
-  }
-
-  @Override
-  public String toString() {
-    return this.name;
   }
 
 }

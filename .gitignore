@@ -19,3 +19,6 @@ buildNumber.properties
 testdata
 
 .idea
+
+# Test artifacts
+*-driver.jar

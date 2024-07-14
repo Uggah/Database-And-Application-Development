@@ -19,23 +19,27 @@ public class PostgeSQLConstraintReader extends AbstractConstraintReader implemen
   @Override
   public void readConstraints(List<Table> tableList) throws SQLException {
     log.entry(tableList);
+    log.exit();
   }
 
   @Override
   protected void retrievePrimaryKeyConstraint(List<Table> tableList) throws SQLException {
     log.entry();
+    log.exit();
   }
 
   @Override
   protected void retrieveForeignKeyConstraints(List<Table> tableList)
       throws SQLException {
     log.entry();
+    log.exit();
   }
 
   @Override
   protected void retrieveUniqueConstraints(List<Table> tableList)
       throws SQLException {
     log.entry();
+    log.exit();
   }
 
   @Override
