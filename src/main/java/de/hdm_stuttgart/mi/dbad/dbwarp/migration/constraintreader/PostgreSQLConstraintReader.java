@@ -64,59 +64,54 @@ public class PostgreSQLConstraintReader extends AbstractConstraintReader impleme
   }
 
   @Override
-  public List<Constraint> readConstraints(Table table) throws SQLException {
-    log.entry(table);
-    return log.exit(Collections.emptyList());
+  protected void retrievePrimaryKeyConstraint(List<Table> tableList) throws SQLException {
+    log.entry(tableList);
+    log.exit();
   }
 
   @Override
-  protected PrimaryKeyConstraint retrievePrimaryKeyConstraint(Table table) throws SQLException {
-    log.entry();
-    return log.exit(null);
+  protected void retrieveForeignKeyConstraints(List<Table> tableList) throws SQLException {
+    log.entry(tableList);
   }
 
   @Override
-  protected Collection<ForeignKeyConstraint> retrieveForeignKeyConstraints(Table table)
-      throws SQLException {
-    log.entry();
-    return log.exit(Collections.emptyList());
-  }
-
-  @Override
-  protected Collection<UniqueConstraint> retrieveUniqueConstraints(Table table)
-      throws SQLException {
+  protected void retrieveUniqueConstraints(List<Table> tableList) throws SQLException {
     log.entry();
 
-    preparedStatementUniqueConstraints.setString(1, table.getName());
-    final ResultSet allUniqueConstraints = preparedStatementUniqueConstraints.executeQuery();
-    final List<UniqueConstraint> constraints = new ArrayList<>();
+    for (final Table table : tableList) {
+      preparedStatementUniqueConstraints.setString(1, table.getName());
+      final ResultSet allUniqueConstraints = preparedStatementUniqueConstraints.executeQuery();
+      final List<UniqueConstraint> constraints = new ArrayList<>();
 
-    while (allUniqueConstraints.next()) {
-      final String constraintName = allUniqueConstraints.getString("constraint_name");
-      final String columnName = allUniqueConstraints.getString("column_name");
+      while (allUniqueConstraints.next()) {
+        final String constraintName = allUniqueConstraints.getString("constraint_name");
+        final String columnName = allUniqueConstraints.getString("column_name");
 
-      final Optional<UniqueConstraint> existingConstraintOptional = constraints.stream()
-          .filter(constraint -> constraint.getName().equals(constraintName))
-          .findAny();
+        final Optional<UniqueConstraint> existingConstraintOptional = constraints.stream()
+            .filter(constraint -> constraint.getName().equals(constraintName))
+            .findAny();
 
-      existingConstraintOptional.ifPresentOrElse(
-          constraint -> constraint.addColumn(table.getColumnByName(columnName)),
-          () -> {
-            final UniqueConstraint constraint = new UniqueConstraint(
-                table,
-                constraintName
-            );
+        existingConstraintOptional.ifPresentOrElse(
+            constraint -> constraint.addColumn(table.getColumnByName(columnName)),
+            () -> {
+              final UniqueConstraint constraint = new UniqueConstraint(
+                  table,
+                  constraintName
+              );
 
-            constraint.addColumn(
-                table.getColumnByName(columnName)
-            );
+              constraint.addColumn(
+                  table.getColumnByName(columnName)
+              );
 
-            constraints.add(constraint);
-          }
-      );
+              constraints.add(constraint);
+            }
+        );
+      }
+
+      table.addConstraints(constraints);
     }
 
-    return log.exit(constraints);
+    log.exit();
   }
 
   @Override

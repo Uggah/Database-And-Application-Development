@@ -34,7 +34,6 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.InitializeDatabase;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.PostgreSQLProvider;
 import java.sql.JDBCType;
-import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,13 +57,11 @@ class PostgreSQLConstraintReaderIntegrationTest {
         )
     );
 
-    final List<UniqueConstraint> constraints = new ArrayList<>(
-        postgreSQLConstraintReader.retrieveUniqueConstraints(table)
-    );
+    postgreSQLConstraintReader.retrieveUniqueConstraints(List.of(table));
 
-    assertEquals(1, constraints.size());
+    assertEquals(1, table.getConstraints().size());
 
-    final UniqueConstraint constraint = constraints.getFirst();
+    final UniqueConstraint constraint = (UniqueConstraint) table.getConstraints().getFirst();
 
     assertSame(table, constraint.getTable());
     assertEquals("test_table1_something_unique_key", constraint.getName());
@@ -91,13 +88,11 @@ class PostgreSQLConstraintReaderIntegrationTest {
         )
     );
 
-    final List<UniqueConstraint> constraints = new ArrayList<>(
-        postgreSQLConstraintReader.retrieveUniqueConstraints(table)
-    );
+    postgreSQLConstraintReader.retrieveUniqueConstraints(List.of(table));
 
-    assertEquals(1, constraints.size());
+    assertEquals(1, table.getConstraints().size());
 
-    final UniqueConstraint constraint = constraints.getFirst();
+    final UniqueConstraint constraint = (UniqueConstraint) table.getConstraints().getFirst();
 
     assertSame(table, constraint.getTable());
     assertEquals("test_table2_something_unique_something_else_key", constraint.getName());
@@ -124,13 +119,11 @@ class PostgreSQLConstraintReaderIntegrationTest {
         )
     );
 
-    final List<UniqueConstraint> constraints = new ArrayList<>(
-        postgreSQLConstraintReader.retrieveUniqueConstraints(table)
-    );
+    postgreSQLConstraintReader.retrieveUniqueConstraints(List.of(table));
 
-    assertEquals(1, constraints.size());
+    assertEquals(1, table.getConstraints().size());
 
-    final UniqueConstraint constraint = constraints.getFirst();
+    final UniqueConstraint constraint = (UniqueConstraint) table.getConstraints().getFirst();
 
     assertSame(table, constraint.getTable());
     assertEquals("custom_constraint_name", constraint.getName());

@@ -126,9 +126,9 @@ public class Table {
   /**
    * Adds multiple {@link Constraint Constraints} to the model.
    *
-   * @param constraints {@link Collection} of {@link Constraint Constraints} to add
+   * @param constraints {@link Iterable} of {@link Constraint Constraints} to add
    */
-  public void addConstraints(Collection<Constraint> constraints) {
+  public void addConstraints(Iterable<? extends Constraint> constraints) {
     log.entry(constraints);
     constraints.forEach(this::addConstraint);
     log.exit();
