@@ -28,6 +28,7 @@ import jakarta.validation.Validation;
 import jakarta.validation.ValidationException;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -63,13 +64,28 @@ public class DBWarpCLIValidator implements ClassValidator<DBWarpCLI> {
 
       final Set<ConstraintViolation<DBWarpCLI>> violationSet = validator.validate(cli);
 
-      if (violationSet.isEmpty()) {
+      final List<String> errors = violationSet.stream()
+          .map(ConstraintViolation::getMessage)
+          .collect(Collectors.toList());
+
+      // Check if target DBMS is SQLite and no schema is set.
+      if (cli.getTarget().startsWith("jdbc:sqlite") && cli.getSchema() == null) {
+        errors.add(
+            "SQLite does not support multiple schemas. You must provide the --schema option when the target is an SQLite database."
+        );
+      }
+
+      if (cli.getSource().equals(cli.getTarget())) {
+        errors.add(
+            "The source and target database must not be the same."
+        );
+      }
+
+      if (errors.isEmpty()) {
         return;
       }
 
-      final String errorMessage = violationSet.stream()
-          .map(ConstraintViolation::getMessage)
-          .collect(Collectors.joining("\n"));
+      final String errorMessage = String.join("\n", errors);
 
       throw new ParameterException(commandLine,
           String.format("The following errors occurred while validating CLI parameters:%n%s",

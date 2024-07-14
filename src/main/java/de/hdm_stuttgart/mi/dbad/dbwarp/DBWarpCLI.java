@@ -35,6 +35,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
+import lombok.Getter;
 import lombok.extern.slf4j.XSlf4j;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine.Command;
@@ -53,6 +54,7 @@ import picocli.CommandLine.Spec;
     version = "0.0.1-alpha",
     mixinStandardHelpOptions = true
 )
+@Getter
 public class DBWarpCLI implements Callable<Integer> {
 
   @SuppressWarnings("unused")
@@ -76,6 +78,10 @@ public class DBWarpCLI implements Callable<Integer> {
   @NotBlank
   @Parameters(index = "1", description = "JDBC connection URL of target database")
   private String target;
+
+  @Option(names = {"--schema",
+      "-S"}, description = "Schema to migrate, migrates all schemas by default", defaultValue = "")
+  private String schema;
 
   /**
    * verbose signals whether debug logging should be enabled. It will be automatically injected by

@@ -52,7 +52,7 @@ public class SQLiteTableDefinitionBuilder {
 
     final StringBuilder sb = new StringBuilder();
 
-    sb.append(String.format(CREATE_TABLE, table.getFullName()));
+    sb.append(String.format(CREATE_TABLE, table.getName()));
 
     for (final Column column : table.getColumns()) {
       sb.append(createColumnDefinition(column));

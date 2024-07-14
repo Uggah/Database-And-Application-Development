@@ -62,14 +62,29 @@ public final class MigrationManager {
 
   /**
    * Starts a migration from source database to target database.
+   * Equivalent to calling {@link this#migrate(String)} with null schema.
    * @throws SQLException when an SQL error occurs while reading from the source database or writing to the target database.
    */
   public void migrate() throws Exception {
     log.entry();
+    this.migrate(null);
+    log.exit();
+  }
+
+
+  /**
+   * Starts a migration from source database to target database.
+   *
+   * @param schema Schema to migrate, will migrate all schemas if unspecified.
+   * @throws SQLException when an SQL error occurs while reading from the source database or writing
+   *                      to the target database.
+   */
+  public void migrate(final String schema) throws Exception {
+    log.entry();
 
     SchemaReaderFactory schemaReaderFactory = new SchemaReaderFactory(connectionManager);
     final SchemaReader schemaReader = schemaReaderFactory.getSchemaReader();
-    final List<Table> tables = schemaReader.readSchema();
+    List<Table> tables = schemaReader.readSchema();
 
     log.debug(
         "Got tables from source database: {}",
@@ -78,13 +93,16 @@ public final class MigrationManager {
             .collect(Collectors.joining(", "))
     );
 
+    if (schema != null) {
+      tables = tables.stream().filter(table -> table.getSchema().equals(schema)).toList();
+    }
+
     final TableWriterFactory tableWriterFactory = new TableWriterFactory(connectionManager);
     final TableWriter tableWriter = tableWriterFactory.getTableWriter();
 
     for (final Table table : tables) {
       tableWriter.writeTable(table);
     }
-
 
     log.exit();
   }

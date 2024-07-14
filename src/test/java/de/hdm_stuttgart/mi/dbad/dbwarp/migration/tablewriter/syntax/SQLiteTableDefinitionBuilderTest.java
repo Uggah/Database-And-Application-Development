@@ -45,7 +45,7 @@ class SQLiteTableDefinitionBuilderTest {
     final String out = builder.createTableDefinitionStatement(table);
 
     assertEquals(
-        "CREATE TABLE schema.table (column INTEGER(4));",
+        "CREATE TABLE table (column INTEGER(4));",
         out
     );
   }
@@ -60,7 +60,7 @@ class SQLiteTableDefinitionBuilderTest {
     final String out = builder.createTableDefinitionStatement(table);
 
     assertEquals(
-        "CREATE TABLE schema.table (column INTEGER(4) NOT NULL);",
+        "CREATE TABLE table (column INTEGER(4) NOT NULL);",
         out
     );
   }
@@ -82,7 +82,7 @@ class SQLiteTableDefinitionBuilderTest {
     final String out = builder.createTableDefinitionStatement(table);
 
     assertEquals(
-        "CREATE TABLE schema.table (column INTEGER(4) NOT NULL,PRIMARY KEY (column));",
+        "CREATE TABLE table (column INTEGER(4) NOT NULL,PRIMARY KEY (column));",
         out
     );
   }
@@ -107,7 +107,7 @@ class SQLiteTableDefinitionBuilderTest {
     final String out = builder.createTableDefinitionStatement(table);
 
     assertEquals(
-        "CREATE TABLE schema.table (column INTEGER(4) NOT NULL,column2 VARCHAR(24),UNIQUE (column));",
+        "CREATE TABLE table (column INTEGER(4) NOT NULL,column2 VARCHAR(24),UNIQUE (column));",
         out
     );
   }
