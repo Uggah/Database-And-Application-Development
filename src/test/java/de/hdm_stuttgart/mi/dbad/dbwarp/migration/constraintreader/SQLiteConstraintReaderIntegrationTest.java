@@ -152,6 +152,8 @@ class SQLiteConstraintReaderIntegrationTest {
     assertIterableEquals(constraints.getFirst().getChildColumns(),
         List.of(childTable.getColumns().get(1), childTable.getColumns().get(2),
             childTable.getColumns().get(3)));
+
+    sqLiteConstraintReader.close();
   }
 
 }
