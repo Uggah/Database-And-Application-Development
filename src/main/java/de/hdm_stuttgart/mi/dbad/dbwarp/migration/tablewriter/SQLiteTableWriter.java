@@ -23,7 +23,6 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter;
  */
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
-import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.SQLiteTableDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.Statement;
 import lombok.extern.slf4j.XSlf4j;

@@ -437,7 +437,6 @@
                 <configuration>
                     <!-- The package of your generated sources -->
                     <packageName>de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax</packageName>
-                    <addGeneratedAnnotation>true</addGeneratedAnnotation>
                     <sources>
                         <source>
                             src/main/resources/syntaxes/schema.xsd

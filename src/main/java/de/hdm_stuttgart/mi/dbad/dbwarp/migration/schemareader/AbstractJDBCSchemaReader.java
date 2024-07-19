@@ -27,7 +27,6 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.migration.columnreader.ColumnReader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.constraintreader.ConstraintReader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader.TableReader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -69,11 +68,9 @@ public abstract class AbstractJDBCSchemaReader implements SchemaReader {
     for (final Table table : tables) {
       final List<Column> columns = columnReader.readColumns(table);
       table.addColumns(columns);
-
-      final List<Constraint> constraints = constraintReader.readConstraints(
-          table);
-      table.addConstraints(constraints);
     }
+
+    constraintReader.readConstraints(tables);
 
     return log.exit(tables);
   }

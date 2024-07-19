@@ -66,9 +66,7 @@ class SQLiteColumnReaderIntegrationTest {
     columns.forEach(column -> assertSame(table, column.getTable()));
 
     columns.stream().filter(column -> column.getName().equals("with_default_value"))
-        .forEach(column -> {
-          assertEquals(1, column.getDefaultValue());
-        });
+        .forEach(column -> assertEquals(1, column.getDefaultValue()));
 
     sqLiteColumnReader.close();
   }
@@ -87,9 +85,7 @@ class SQLiteColumnReaderIntegrationTest {
     columns.forEach(column -> assertSame(table, column.getTable()));
 
     columns.stream().filter(column -> column.getName().equals("with_default_value"))
-        .forEach(column -> {
-          assertEquals(1.0f, column.getDefaultValue());
-        });
+        .forEach(column -> assertEquals(1.0f, column.getDefaultValue()));
 
     sqLiteColumnReader.close();
   }
@@ -108,9 +104,7 @@ class SQLiteColumnReaderIntegrationTest {
     columns.forEach(column -> assertSame(table, column.getTable()));
 
     columns.stream().filter(column -> column.getName().equals("with_default_value"))
-        .forEach(column -> {
-          assertEquals("SomeDefaultValue", column.getDefaultValue());
-        });
+        .forEach(column -> assertEquals("SomeDefaultValue", column.getDefaultValue()));
 
     sqLiteColumnReader.close();
   }

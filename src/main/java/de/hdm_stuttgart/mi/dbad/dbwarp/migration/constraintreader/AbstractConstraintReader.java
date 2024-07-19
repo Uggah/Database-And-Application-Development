@@ -23,22 +23,25 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.constraintreader;
  */
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.XSlf4j;
 
 /**
  * Implements a generic approach to read constraints from SQL databases.
+ * This class is intended to be extended by database specific implementations.
+ * The class provides default implementations for reading primary keys and foreign keys through JDBC Metadata.
  */
 @XSlf4j
 @RequiredArgsConstructor
@@ -54,40 +57,149 @@ public abstract class AbstractConstraintReader implements ConstraintReader {
 
   /**
    * Template method for reading constraints from a {@link Table}. Calls the
-   * {@link this#retrievePrimaryKeyConstraint(Table)},
-   * {@link this#retrieveForeignKeyConstraints(Table)} and
-   * {@link this#retrieveUniqueConstraints(Table)} methods that need to be implemented by child
+   * {@link this#retrievePrimaryKeyConstraint(List)},
+   * {@link this#retrieveForeignKeyConstraints(List)} and
+   * {@link this#retrieveUniqueConstraints(List)} methods that need to be implemented by child
    * classes.
    *
-   * @param table {@link Table} to read {@link Constraint Constraints} from.
-   * @return {@link List} of {@link Constraint Constraints}.
+   * @param tableList List of {@link Table tables} to read {@link de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint constraints} from.
    * @throws SQLException if an SQL error occurs.
    */
   @Override
-  public List<Constraint> readConstraints(Table table) throws SQLException {
-    log.entry(table);
+  public final void readConstraints(final List<Table> tableList) throws SQLException {
+    log.entry(tableList);
 
-    final List<Constraint> constraints = new ArrayList<>();
+    retrievePrimaryKeyConstraint(tableList);
+    retrieveUniqueConstraints(tableList);
+    retrieveForeignKeyConstraints(tableList);
 
-    final PrimaryKeyConstraint primaryKeyConstraint = retrievePrimaryKeyConstraint(table);
-    if (primaryKeyConstraint != null) {
-      constraints.add(primaryKeyConstraint);
-    }
-
-    constraints.addAll(retrieveForeignKeyConstraints(table));
-    constraints.addAll(retrieveUniqueConstraints(table));
-
-    return log.exit(Collections.unmodifiableList(constraints));
+    log.exit();
   }
 
-  protected abstract PrimaryKeyConstraint retrievePrimaryKeyConstraint(Table table)
-      throws SQLException;
+  /**
+   * Default implementation for retrieving primary keys from a {@link Table}. The primary key is
+   * added to the {@link Table} object. This method can be overriden by child classes to implement
+   * database specific behavior.
+   *
+   * @param tableList List of {@link Table tables} to retrieve the primary key constraints for.
+   * @throws SQLException if an SQL error occurs while retrieving primary key constraints.
+   */
+  protected void retrievePrimaryKeyConstraint(final List<Table> tableList) throws SQLException {
+    log.entry(tableList);
 
-  protected abstract Collection<ForeignKeyConstraint> retrieveForeignKeyConstraints(Table table)
-      throws SQLException;
+    for (Table table : tableList) {
 
-  protected abstract Collection<UniqueConstraint> retrieveUniqueConstraints(Table table)
-      throws SQLException;
+      final List<Column> columns = new ArrayList<>();
 
+      final ResultSet resultSet = connection.getMetaData()
+          .getPrimaryKeys(
+              connection.getCatalog(),
+              table.getSchema(),
+              table.getName()
+          );
+
+      while (resultSet.next()) {
+        final String columnName = resultSet.getString("COLUMN_NAME");
+        columns.add(table.getColumnByName(columnName));
+      }
+
+      final String name = resultSet.getString("PK_NAME");
+
+      table.addConstraint(new PrimaryKeyConstraint(name, table, columns));
+    }
+
+    log.exit();
+  }
+
+  /**
+   * Default implementation for retrieving foreign key constraints from a {@link Table}. The foreign
+   * key constraints are added to the {@link Table} object. This method can be overriden by child
+   * classes to implement database specific behavior.
+   *
+   * @param tableList List of {@link Table tables} to retrieve the foreign key constraints for.
+   * @throws SQLException if an SQL error occurs while retrieving foreign key constraints.
+   */
+  protected void retrieveForeignKeyConstraints(final List<Table> tableList) throws SQLException {
+    log.entry(tableList);
+
+    for (final Table table : tableList) {
+      final Map<String, ForeignKeyConstraint> constraints = new HashMap<>();
+
+      final ResultSet resultSet = connection.getMetaData().getImportedKeys(
+          connection.getCatalog(),
+          table.getSchema(),
+          table.getName()
+      );
+
+      while (resultSet.next()) {
+
+        final String fkName = resultSet.getString("FK_NAME");
+        final String parentTableName = resultSet.getString("PKTABLE_NAME");
+
+        final Table parentTable = tableList.stream()
+            .filter(t -> t.getName().equals(parentTableName))
+            .findFirst()
+            .orElseThrow();
+
+        if (!constraints.containsKey(fkName)) {
+          constraints.put(fkName, new ForeignKeyConstraint(fkName, table, parentTable));
+        }
+
+        final Column childColumn = table.getColumnByName(resultSet.getString("FKCOLUMN_NAME"));
+        final Column parentColumn = parentTable.getColumnByName(
+            resultSet.getString("PKCOLUMN_NAME"));
+        constraints.get(fkName).getChildColumns().add(childColumn);
+        constraints.get(fkName).getParentColumns().add(parentColumn);
+
+      }
+
+      table.addForeignKeyConstraints(constraints.values());
+    }
+
+    log.exit();
+  }
+
+  /**
+   * Default implementation for retrieving unique constraints from a {@link Table}. The unique
+   * constraints are added to the {@link Table} object. This method can be overriden by child
+   * classes to implement database specific behavior.
+   *
+   * @param tableList List of {@link Table tables} to retrieve the unique constraints for.
+   * @throws SQLException if an SQL error occurs while retrieving unique constraints.
+   */
+  protected void retrieveUniqueConstraints(List<Table> tableList) throws SQLException {
+    log.entry(tableList);
+
+    for (final Table table : tableList) {
+      final ResultSet indexResultSet = connection.getMetaData().getIndexInfo(
+          connection.getCatalog(),
+          table.getSchema(),
+          table.getName(),
+          true,
+          false
+      );
+
+      final Map<String, UniqueConstraint> uniqueConstraints = new HashMap<>();
+
+      while (indexResultSet.next()) {
+        final String indexName = indexResultSet.getString("INDEX_NAME");
+        final Column column = table.getColumnByName(indexResultSet.getString("COLUMN_NAME"));
+
+        uniqueConstraints.compute(indexName, (k, v) -> {
+          if (v == null) {
+            v = new UniqueConstraint(table, indexName);
+          }
+
+          v.addColumn(column);
+
+          return v;
+        });
+      }
+
+      table.addConstraints(uniqueConstraints.values());
+    }
+
+    log.exit();
+  }
 
 }

@@ -24,12 +24,17 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.model.table;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.XSlf4j;
+import org.hibernate.validator.cfg.ConstraintDef;
 
 /**
  * This is the internal representation of a database table. It is used as an intermediate format for
@@ -68,9 +73,19 @@ public class Table {
   private final List<Column> columns = new ArrayList<>();
 
   /**
-   * {@link List} of all {@link Constraint} definitions in this table.
+   * {@link PrimaryKeyConstraint} in this table.
    */
-  private final List<Constraint> constraints = new ArrayList<>();
+  private PrimaryKeyConstraint primaryKeyConstraint;
+
+  /**
+   * {@link List} of all {@link UniqueConstraint} definitions in this table.
+   */
+  private final List<UniqueConstraint> uniqueConstraints = new ArrayList<>();
+
+  /**
+   * {@link List} of all {@link ForeignKeyConstraint} definitions in this table.
+   */
+  private final List<ForeignKeyConstraint> foreignKeyConstraints = new ArrayList<>();
 
   /**
    * Adds a {@link Column} to the model.
@@ -97,22 +112,75 @@ public class Table {
   /**
    * Adds a {@link Constraint Constraint} to the model.
    *
+   * @deprecated Use {@link #setPrimaryKeyConstraint(PrimaryKeyConstraint)}, {@link #addForeignKeyConstraint(ForeignKeyConstraint)}
    * @param constraint {@link Iterable} of {@link Constraint Constraints} to add
    */
+  @Deprecated(forRemoval = true)
   public void addConstraint(Constraint constraint) {
     log.entry(constraint);
-    constraints.add(constraint);
+
+    if (constraint instanceof PrimaryKeyConstraint newPrimaryKey) {
+      this.primaryKeyConstraint = newPrimaryKey;
+    } else if (constraint instanceof UniqueConstraint uniqueConstraint) {
+      uniqueConstraints.add(uniqueConstraint);
+    } else if (constraint instanceof ForeignKeyConstraint foreignKeyConstraint) {
+      foreignKeyConstraints.add(foreignKeyConstraint);
+    }
+
+    log.exit();
+  }
+
+  /**
+   * Adds a {@link ForeignKeyConstraint ForeignKeyConstraint} to the model.
+   *
+   * @param constraint {@link ForeignKeyConstraint} to add
+   */
+  public void addForeignKeyConstraint(ForeignKeyConstraint constraint) {
+    log.entry(constraint);
+    foreignKeyConstraints.add(constraint);
     log.exit();
   }
 
   /**
    * Adds multiple {@link Constraint Constraints} to the model.
    *
+   * @deprecated Use {@link #setPrimaryKeyConstraint(PrimaryKeyConstraint)}, and {@link #addForeignKeyConstraints(Iterable)}
    * @param constraints {@link Iterable} of {@link Constraint Constraints} to add
    */
-  public void addConstraints(Iterable<Constraint> constraints) {
+  @Deprecated(forRemoval = true)
+  public void addConstraints(Iterable<? extends Constraint> constraints) {
     log.entry(constraints);
     constraints.forEach(this::addConstraint);
+    log.exit();
+  }
+
+  /**
+   * Gets all {@link Constraint Constraints} in this table.
+   *
+   * @return {@link List} of all {@link Constraint Constraints} in this table
+   * @deprecated Use {@link #getPrimaryKeyConstraint()}, {@link #getUniqueConstraints()}
+   */
+  @Deprecated(forRemoval = true)
+  public List<Constraint> getConstraints() {
+    log.entry();
+    List<Constraint> constraints = new ArrayList<>();
+    if (primaryKeyConstraint != null) {
+      constraints.add(primaryKeyConstraint);
+    }
+    constraints.addAll(uniqueConstraints);
+    constraints.addAll(foreignKeyConstraints);
+    return log.exit(constraints);
+  }
+
+  /**
+   * Adds multiple {@link ForeignKeyConstraint ForeignKeyConstraints} to the model.
+   *
+   * @param constraints {@link Iterable} of {@link ForeignKeyConstraint ForeignKeyConstraints} to
+   *                    add
+   */
+  public void addForeignKeyConstraints(Iterable<ForeignKeyConstraint> constraints) {
+    log.entry(constraints);
+    constraints.forEach(this::addForeignKeyConstraint);
     log.exit();
   }
 

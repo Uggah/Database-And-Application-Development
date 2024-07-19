@@ -1,4 +1,4 @@
-package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax;
+package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.exception;
 
 public class SyntaxLoadException extends RuntimeException {
 

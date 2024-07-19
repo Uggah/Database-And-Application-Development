@@ -24,6 +24,7 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.SQLiteTableDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
@@ -75,7 +76,7 @@ class SQLiteTableDefinitionBuilderTest {
 
     table.addColumns(columns);
 
-    table.addConstraint(new PrimaryKeyConstraint(table, columns));
+    table.addConstraint(new PrimaryKeyConstraint("", table, columns));
 
     final SQLiteTableDefinitionBuilder builder = new SQLiteTableDefinitionBuilder();
 

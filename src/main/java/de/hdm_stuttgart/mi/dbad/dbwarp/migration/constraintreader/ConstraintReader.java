@@ -32,5 +32,5 @@ import java.util.List;
  */
 public interface ConstraintReader extends AutoCloseable {
 
-  List<Constraint> readConstraints(Table table) throws SQLException;
+  void readConstraints(List<Table> tableList) throws SQLException;
 }

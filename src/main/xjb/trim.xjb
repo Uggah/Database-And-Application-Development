@@ -1,0 +1,12 @@
+<jaxb:bindings
+  version="3.0"
+  xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
+  xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc">
+  <jaxb:globalBindings>
+    <xjc:javaType
+      name="java.lang.String"
+      xmlType="xs:string"
+      adapter="de.hdm_stuttgart.mi.dbad.dbwarp.xml.StringTrimAdapter"/>
+  </jaxb:globalBindings>
+
+</jaxb:bindings>

@@ -1,34 +1,37 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:element name="syntax" type="Syntax"/>
+  <xs:element name="syntax" type="syntax"/>
 
   <!-- ConstraintDefinition -->
   <xs:complexType name="inlineConstraintDefinition">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attribute name="constraintType" use="required">
-          <xs:simpleType>
-            <xs:restriction base="xs:string">
-              <xs:enumeration value="NOT_NULL"/>
-              <xs:enumeration value="PRIMARY_KEY"/>
-              <xs:enumeration value="UNIQUE"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="strategy" default="END_OF_LINE">
-          <xs:simpleType>
-            <xs:restriction base="xs:string">
-              <!-- Constraint is defined at the end of a line -->
-              <xs:enumeration value="END_OF_LINE"/>
-              <!-- Constraint is defined at the end of the table creation block -->
-              <xs:enumeration value="END_OF_BLOCK"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
+        <xs:attribute name="constraintType" use="required" type="ConstraintType"/>
+        <xs:attribute name="strategy" default="END_OF_LINE"
+          type="InlineConstraintDefinitionStrategy"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
+
+  <xs:simpleType name="InlineConstraintDefinitionStrategy">
+    <xs:restriction base="xs:string">
+      <!-- Constraint is defined at the end of a line -->
+      <xs:enumeration value="END_OF_LINE"/>
+      <!-- Constraint is defined at the end of the table creation block -->
+      <xs:enumeration value="END_OF_BLOCK"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ConstraintType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NOT_NULL"/>
+      <xs:enumeration value="PRIMARY_KEY"/>
+      <xs:enumeration value="FOREIGN_KEY"/>
+      <xs:enumeration value="CHECK"/>
+      <xs:enumeration value="UNIQUE"/>
+    </xs:restriction>
+  </xs:simpleType>
 
   <!-- TemplateDefinition -->
   <xs:complexType name="templateDefinition">
@@ -38,7 +41,7 @@
       <xs:element name="inlineConstraints" minOccurs="0">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="Constraint" type="inlineConstraintDefinition" minOccurs="0"
+            <xs:element name="constraint" type="inlineConstraintDefinition" minOccurs="0"
               maxOccurs="unbounded"/>
           </xs:sequence>
         </xs:complexType>
@@ -47,7 +50,7 @@
   </xs:complexType>
 
   <!-- Model -->
-  <xs:complexType name="Syntax">
+  <xs:complexType name="syntax">
     <xs:sequence>
       <xs:element name="tableCreation">
         <xs:complexType>
@@ -55,14 +58,8 @@
             <xs:element name="options">
               <xs:complexType>
                 <xs:sequence>
-                  <xs:element name="inlineConstraintDefinitions">
-                    <xs:simpleType>
-                      <xs:restriction base="xs:string">
-                        <xs:enumeration value="ALWAYS"/>
-                        <xs:enumeration value="NEVER"/>
-                      </xs:restriction>
-                    </xs:simpleType>
-                  </xs:element>
+                  <xs:element name="inlineConstraintDefinitions"
+                    type="inlineConstraintDefinitionsOption"/>
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
@@ -72,4 +69,11 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
+
+  <xs:simpleType name="inlineConstraintDefinitionsOption">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ALWAYS"/>
+      <xs:enumeration value="NEVER"/>
+    </xs:restriction>
+  </xs:simpleType>
 </xs:schema>

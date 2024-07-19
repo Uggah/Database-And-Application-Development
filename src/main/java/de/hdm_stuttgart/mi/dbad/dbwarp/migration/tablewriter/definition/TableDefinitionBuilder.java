@@ -1,4 +1,4 @@
-package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax;
+package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 
