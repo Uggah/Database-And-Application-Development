@@ -44,19 +44,36 @@ public class SyntaxForeignKeyConstraintDefinitionBuilder implements
     final Map<String, String> params = new HashMap<>();
 
     params.put(
+        SyntaxPlaceholders.CONSTRAINT_NAME,
+        foreignKeyConstraint.getName()
+    );
+
+    final String childColumnNames = foreignKeyConstraint.getChildColumns().stream()
+        .map(Column::getName)
+        .collect(Collectors.joining(", "));
+
+    params.put(
         SyntaxPlaceholders.COLUMN_NAMES,
-        foreignKeyConstraint.getChildColumns().stream()
-            .map(Column::getName)
-            .collect(Collectors.joining(", "))
+        childColumnNames
     );
 
     params.put(
-        SyntaxPlaceholders.FOREIGN_TABLE_NAME,
+        SyntaxPlaceholders.CHILD_TABLE_NAME,
+        foreignKeyConstraint.getChildTable().getName()
+    );
+
+    params.put(
+        SyntaxPlaceholders.CHILD_COLUMN_NAMES,
+        childColumnNames
+    );
+
+    params.put(
+        SyntaxPlaceholders.PARENT_TABLE_NAME,
         foreignKeyConstraint.getParentTable().getName()
     );
 
     params.put(
-        SyntaxPlaceholders.FOREIGN_COLUMN_NAMES,
+        SyntaxPlaceholders.PARENT_COLUMN_NAMES,
         foreignKeyConstraint.getParentColumns().stream()
             .map(Column::getName)
             .collect(Collectors.joining(", "))

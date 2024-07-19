@@ -187,7 +187,7 @@ public abstract class AbstractConstraintReader implements ConstraintReader {
 
         uniqueConstraints.compute(indexName, (k, v) -> {
           if (v == null) {
-            v = new UniqueConstraint(table, indexName);
+            v = new UniqueConstraint(indexName, table);
           }
 
           v.addColumn(column);

@@ -16,13 +16,17 @@
           EXAMPLE_NOT_NULL_CONSTRAINT
         </constraint>
         <constraint constraintType="PRIMARY_KEY">
-          EXAMPLE_PRIMARY_KEY_CONSTRAINT
+          CONSTRAINT_NAME: ${constraint_name}, TABLE_NAME: ${table_name}, COLUMN_NAMES:
+          ${column_names}
         </constraint>
         <constraint constraintType="FOREIGN_KEY">
-          EXAMPLE_FOREIGN_KEY_CONSTRAINT
+          CONSTRAINT_NAME: ${constraint_name}, COLUMN_NAMES: ${column_names}, CHILD_TABLE_NAME:
+          ${child_table_name}, CHILD_COLUMN_NAMES: ${child_column_names}, PARENT_TABLE_NAME:
+          ${parent_table_name}, PARENT_COLUMN_NAMES: ${parent_column_names}
         </constraint>
         <constraint constraintType="UNIQUE">
-          EXAMPLE_UNIQUE_CONSTRAINT
+          CONSTRAINT_NAME: ${constraint_name}, TABLE_NAME: ${table_name}, COLUMN_NAMES:
+          ${column_names}
         </constraint>
       </inlineConstraints>
     </templates>

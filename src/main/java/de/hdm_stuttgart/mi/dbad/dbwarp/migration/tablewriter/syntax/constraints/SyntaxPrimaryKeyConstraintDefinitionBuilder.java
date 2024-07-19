@@ -31,6 +31,10 @@ public class SyntaxPrimaryKeyConstraintDefinitionBuilder implements
 
     final Map<String, String> params = new HashMap<>();
 
+    params.put(SyntaxPlaceholders.CONSTRAINT_NAME, primaryKeyConstraint.getName());
+
+    params.put(SyntaxPlaceholders.TABLE_NAME, primaryKeyConstraint.getTable().getName());
+
     params.put(SyntaxPlaceholders.COLUMN_NAMES,
         primaryKeyConstraint.getColumns().stream().map(Column::getName)
             .collect(Collectors.joining(", ")));

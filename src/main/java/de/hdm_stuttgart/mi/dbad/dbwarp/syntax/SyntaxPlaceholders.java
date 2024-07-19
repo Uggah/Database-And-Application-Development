@@ -48,18 +48,35 @@ public final class SyntaxPlaceholders {
   // CONSTRAINT DEFINITIONS
 
   /**
+   * Placeholder for the constraint name.
+   */
+  public static final String CONSTRAINT_NAME = "constraint_name";
+
+  /**
    * Placeholder for the column names.
    */
   public static final String COLUMN_NAMES = "column_names";
 
+  // FOREIGN KEY SPECIFIC
+
+  /**
+   * Placeholder for the child table name.
+   */
+  public static final String CHILD_TABLE_NAME = "child_table_name";
+
+  /**
+   * Placeholder for the child column names. Interchangeable with {@link #COLUMN_NAMES}.
+   */
+  public static final String CHILD_COLUMN_NAMES = "child_column_names";
+
   /**
    * Placeholder for the foreign table name.
    */
-  public static final String FOREIGN_TABLE_NAME = "foreign_table_name";
+  public static final String PARENT_TABLE_NAME = "parent_table_name";
 
   /**
    * Placeholder for the foreign column names.
    */
-  public static final String FOREIGN_COLUMN_NAMES = "foreign_column_names";
+  public static final String PARENT_COLUMN_NAMES = "parent_column_names";
 
 }

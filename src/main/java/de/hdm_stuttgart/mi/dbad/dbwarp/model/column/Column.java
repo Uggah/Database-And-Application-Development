@@ -24,6 +24,7 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.model.column;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.JDBCType;
 import java.util.Collections;
@@ -77,7 +78,8 @@ public class Column {
    * otherwise, null.
    */
   public PrimaryKeyConstraint getPrimaryKey() {
-    if (table == null || !table.getPrimaryKeyConstraint().getColumns().contains(this)) {
+    if (table == null || table.getPrimaryKeyConstraint() == null || !table.getPrimaryKeyConstraint()
+        .getColumns().contains(this)) {
       return null;
     }
 
@@ -100,4 +102,18 @@ public class Column {
         .toList();
   }
 
+  /**
+   * Retrieves the unique constraints that this column is a part of, if any.
+   *
+   * @return The list of {@link UniqueConstraint} objects if this column is part of a unique
+   */
+  public List<UniqueConstraint> getUniqueConstraints() {
+    if (table == null) {
+      return Collections.emptyList();
+    }
+
+    return table.getUniqueConstraints().stream()
+        .filter(uniqueConstraint -> uniqueConstraint.getColumns().contains(this))
+        .toList();
+  }
 }

@@ -25,7 +25,7 @@ public class SyntaxValidatorFactory {
   public Validator createValidator() throws SAXException {
     final SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
-    factory.setFeature("https://apache.org/xml/features/disallow-doctype-decl", true);
+    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
     factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
     Source schemaFile = new StreamSource(getClass().getResourceAsStream("/syntaxes/schema.xsd"));

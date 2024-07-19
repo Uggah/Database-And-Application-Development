@@ -185,6 +185,28 @@ public class Table {
   }
 
   /**
+   * Adds a single {@link UniqueConstraint} to the model.
+   *
+   * @param constraint {@link UniqueConstraint} to add
+   */
+  public void addUniqueConstraint(UniqueConstraint constraint) {
+    log.entry(constraint);
+    uniqueConstraints.add(constraint);
+    log.exit();
+  }
+
+  /**
+   * Adds multiple {@link UniqueConstraint UniqueConstraints} to the model.
+   *
+   * @param constraints {@link Iterable} of {@link UniqueConstraint UniqueConstraints} to add
+   */
+  public void addUniqueConstraints(Iterable<UniqueConstraint> constraints) {
+    log.entry(constraints);
+    constraints.forEach(this::addUniqueConstraint);
+    log.exit();
+  }
+
+  /**
    * Gets a {@link Column} in this table by its name.
    *
    * @param name Name of the column to get.

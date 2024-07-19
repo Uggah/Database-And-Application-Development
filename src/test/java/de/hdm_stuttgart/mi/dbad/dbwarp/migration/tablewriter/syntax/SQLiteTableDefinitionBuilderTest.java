@@ -99,7 +99,7 @@ class SQLiteTableDefinitionBuilderTest {
 
     table.addColumns(columns);
 
-    final UniqueConstraint constraint = new UniqueConstraint(table, "");
+    final UniqueConstraint constraint = new UniqueConstraint("", table);
     constraint.addColumn(columns.getFirst());
     table.addConstraint(constraint);
 

@@ -67,4 +67,27 @@ public class UniqueConstraint extends Constraint {
   public void addColumns(final Iterable<Column> columns) {
     columns.forEach(this.columns::add);
   }
+
+  /**
+   * Constructor.
+   *
+   * @param name  Name of the constraint.
+   * @param table {@link Table} on which the constraint is defined.
+   */
+  public UniqueConstraint(String name, Table table) {
+    this.name = name;
+    this.table = table;
+  }
+
+  /**
+   * Constructor.
+   *
+   * @param name    Name of the constraint.
+   * @param table   {@link Table} on which the constraint is defined.
+   * @param columns {@link List} of {@link Column columns} which the constraint includes.
+   */
+  public UniqueConstraint(String name, Table table, List<Column> columns) {
+    this(name, table);
+    this.columns.addAll(columns);
+  }
 }

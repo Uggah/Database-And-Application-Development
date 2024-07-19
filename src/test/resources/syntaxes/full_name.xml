@@ -6,7 +6,7 @@
     </options>
     <templates>
       <createTable>
-        CREATE TABLE ${table_name} (${column_definitions} ${end_of_block_constraints});
+        CREATE TABLE ${full_table_name} (${column_definitions} ${end_of_block_constraints});
       </createTable>
       <columnDefinition>
         ${column_name} ${column_type} ${end_of_line_constraints}
@@ -15,14 +15,11 @@
         <constraint constraintType="NOT_NULL">
           EXAMPLE_NOT_NULL_CONSTRAINT
         </constraint>
-        <constraint constraintType="PRIMARY_KEY">
+        <constraint constraintType="PRIMARY_KEY" strategy="END_OF_LINE">
           EXAMPLE_PRIMARY_KEY_CONSTRAINT
         </constraint>
-        <constraint constraintType="FOREIGN_KEY">
+        <constraint constraintType="FOREIGN_KEY" strategy="END_OF_LINE">
           EXAMPLE_FOREIGN_KEY_CONSTRAINT
-        </constraint>
-        <constraint constraintType="UNIQUE">
-          EXAMPLE_UNIQUE_CONSTRAINT
         </constraint>
       </inlineConstraints>
     </templates>

@@ -1,4 +1,4 @@
-package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax;
+package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.table;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ColumnDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ConstraintDefinitionBuilder;
-import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.table.SyntaxTableDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
@@ -38,6 +37,35 @@ class SyntaxTableDefinitionBuilderTest {
   void beforeEach() {
     this.columnDefinitionBuilder = mock(ColumnDefinitionBuilder.class);
     this.constraintDefinitionBuilder = mock(ConstraintDefinitionBuilder.class);
+  }
+
+  @Test
+  @LoadSyntax("full_name")
+  void testBuildTableDefinition_FullName(final Syntax syntax) {
+    final SyntaxTableDefinitionBuilder syntaxTableDefinitionBuilder = new SyntaxTableDefinitionBuilder(
+        syntax,
+        columnDefinitionBuilder,
+        constraintDefinitionBuilder
+    );
+
+    when(columnDefinitionBuilder.createColumnDefinitionStatement(any())).thenReturn(
+        "EXAMPLE_COLUMN_DEFINITION");
+
+    final Table table = new Table("some_schema", "some_table", TableType.TABLE);
+    table.addColumns(List.of(
+        new Column(table, "some_column", JDBCType.VARCHAR, false, 255),
+        new Column(table, "some_other_column", JDBCType.INTEGER, false, 255)
+    ));
+
+    final String renderedDefinition = syntaxTableDefinitionBuilder.createTableDefinitionStatement(
+        table);
+
+    assertEquals(
+        "CREATE TABLE some_schema.some_table (EXAMPLE_COLUMN_DEFINITION, EXAMPLE_COLUMN_DEFINITION );",
+        renderedDefinition);
+
+    table.getColumns()
+        .forEach(column -> verify(columnDefinitionBuilder).createColumnDefinitionStatement(column));
   }
 
   @Test
@@ -156,7 +184,7 @@ class SyntaxTableDefinitionBuilderTest {
         new Column(table, "some_other_column", JDBCType.INTEGER, false, 255)
     ));
 
-    table.addConstraint(new UniqueConstraint(table, "UQ_first"));
+    table.addConstraint(new UniqueConstraint("UQ_first", table));
 
     final String renderedDefinition = syntaxTableDefinitionBuilder.createTableDefinitionStatement(
         table);
@@ -197,7 +225,7 @@ class SyntaxTableDefinitionBuilderTest {
         new PrimaryKeyConstraint("PK_first", table, List.of(table.getColumns().getFirst())));
     table.addForeignKeyConstraint(new ForeignKeyConstraint("FK_first", table,
         new Table("some_schema", "some_other_table", TableType.TABLE)));
-    table.addConstraint(new UniqueConstraint(table, "UQ_first"));
+    table.addConstraint(new UniqueConstraint("UQ_first", table));
 
     final String renderedDefinition = syntaxTableDefinitionBuilder.createTableDefinitionStatement(
         table);

@@ -2,6 +2,7 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.column;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ColumnDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ConstraintDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.syntax.SyntaxPlaceholders;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.exception.SyntaxRenderingException;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
@@ -62,6 +63,15 @@ public class SyntaxColumnDefinitionBuilder implements ColumnDefinitionBuilder {
           foreignKeyConstraints.forEach(foreignKey ->
               endOfLineConstraints.add(
                   constraintDefinitionBuilder.createConstraintDefinitionStatement(foreignKey)
+              )
+          );
+        }
+        case UNIQUE -> {
+          final List<UniqueConstraint> uniqueConstraints = column.getUniqueConstraints();
+
+          uniqueConstraints.forEach(uniqueConstraint ->
+              endOfLineConstraints.add(
+                  constraintDefinitionBuilder.createConstraintDefinitionStatement(uniqueConstraint)
               )
           );
         }
