@@ -110,27 +110,6 @@ public class Table {
   }
 
   /**
-   * Adds a {@link Constraint Constraint} to the model.
-   *
-   * @deprecated Use {@link #setPrimaryKeyConstraint(PrimaryKeyConstraint)}, {@link #addForeignKeyConstraint(ForeignKeyConstraint)}
-   * @param constraint {@link Iterable} of {@link Constraint Constraints} to add
-   */
-  @Deprecated(forRemoval = true)
-  public void addConstraint(Constraint constraint) {
-    log.entry(constraint);
-
-    if (constraint instanceof PrimaryKeyConstraint newPrimaryKey) {
-      this.primaryKeyConstraint = newPrimaryKey;
-    } else if (constraint instanceof UniqueConstraint uniqueConstraint) {
-      uniqueConstraints.add(uniqueConstraint);
-    } else if (constraint instanceof ForeignKeyConstraint foreignKeyConstraint) {
-      foreignKeyConstraints.add(foreignKeyConstraint);
-    }
-
-    log.exit();
-  }
-
-  /**
    * Adds a {@link ForeignKeyConstraint ForeignKeyConstraint} to the model.
    *
    * @param constraint {@link ForeignKeyConstraint} to add
@@ -139,37 +118,6 @@ public class Table {
     log.entry(constraint);
     foreignKeyConstraints.add(constraint);
     log.exit();
-  }
-
-  /**
-   * Adds multiple {@link Constraint Constraints} to the model.
-   *
-   * @deprecated Use {@link #setPrimaryKeyConstraint(PrimaryKeyConstraint)}, and {@link #addForeignKeyConstraints(Iterable)}
-   * @param constraints {@link Iterable} of {@link Constraint Constraints} to add
-   */
-  @Deprecated(forRemoval = true)
-  public void addConstraints(Iterable<? extends Constraint> constraints) {
-    log.entry(constraints);
-    constraints.forEach(this::addConstraint);
-    log.exit();
-  }
-
-  /**
-   * Gets all {@link Constraint Constraints} in this table.
-   *
-   * @return {@link List} of all {@link Constraint Constraints} in this table
-   * @deprecated Use {@link #getPrimaryKeyConstraint()}, {@link #getUniqueConstraints()}
-   */
-  @Deprecated(forRemoval = true)
-  public List<Constraint> getConstraints() {
-    log.entry();
-    List<Constraint> constraints = new ArrayList<>();
-    if (primaryKeyConstraint != null) {
-      constraints.add(primaryKeyConstraint);
-    }
-    constraints.addAll(uniqueConstraints);
-    constraints.addAll(foreignKeyConstraints);
-    return log.exit(constraints);
   }
 
   /**

@@ -105,7 +105,7 @@ public abstract class AbstractConstraintReader implements ConstraintReader {
 
       final String name = resultSet.getString("PK_NAME");
 
-      table.addConstraint(new PrimaryKeyConstraint(name, table, columns));
+      table.setPrimaryKeyConstraint(new PrimaryKeyConstraint(name, table, columns));
     }
 
     log.exit();
@@ -196,7 +196,7 @@ public abstract class AbstractConstraintReader implements ConstraintReader {
         });
       }
 
-      table.addConstraints(uniqueConstraints.values());
+      table.addUniqueConstraints(uniqueConstraints.values());
     }
 
     log.exit();

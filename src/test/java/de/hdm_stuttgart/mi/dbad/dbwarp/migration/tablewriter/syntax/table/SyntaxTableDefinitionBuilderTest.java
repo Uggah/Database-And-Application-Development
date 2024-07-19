@@ -184,7 +184,7 @@ class SyntaxTableDefinitionBuilderTest {
         new Column(table, "some_other_column", JDBCType.INTEGER, false, 255)
     ));
 
-    table.addConstraint(new UniqueConstraint("UQ_first", table));
+    table.addUniqueConstraint(new UniqueConstraint("UQ_first", table));
 
     final String renderedDefinition = syntaxTableDefinitionBuilder.createTableDefinitionStatement(
         table);
@@ -225,7 +225,7 @@ class SyntaxTableDefinitionBuilderTest {
         new PrimaryKeyConstraint("PK_first", table, List.of(table.getColumns().getFirst())));
     table.addForeignKeyConstraint(new ForeignKeyConstraint("FK_first", table,
         new Table("some_schema", "some_other_table", TableType.TABLE)));
-    table.addConstraint(new UniqueConstraint("UQ_first", table));
+    table.addUniqueConstraint(new UniqueConstraint("UQ_first", table));
 
     final String renderedDefinition = syntaxTableDefinitionBuilder.createTableDefinitionStatement(
         table);

@@ -23,18 +23,38 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter;
  */
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ConstraintDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.TableDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.column.SyntaxColumnDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.constraints.DelegatingSyntaxConstraintDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.table.SyntaxTableDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.Syntax;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
+import de.hdm_stuttgart.mi.dbad.dbwarp.syntax.loading.SyntaxLoader;
 import java.sql.Statement;
 import lombok.extern.slf4j.XSlf4j;
 
 @XSlf4j
 public class SQLiteTableWriter extends AbstractJDBCTableWriter {
 
-  private final SQLiteTableDefinitionBuilder definitionBuilder = new SQLiteTableDefinitionBuilder();
+  private final TableDefinitionBuilder definitionBuilder;
 
   protected SQLiteTableWriter(final ConnectionManager connectionManager) {
     super(connectionManager);
     log.entry(connectionManager);
+
+    final Syntax syntax = SyntaxLoader.getInstance().loadSyntax("sqlite");
+
+    final ConstraintDefinitionBuilder<Constraint> constraintDefinitionBuilder = new DelegatingSyntaxConstraintDefinitionBuilder(
+        syntax);
+    this.definitionBuilder = new SyntaxTableDefinitionBuilder(
+        syntax,
+        new SyntaxColumnDefinitionBuilder(syntax, constraintDefinitionBuilder),
+        constraintDefinitionBuilder
+    );
+
+
     log.exit(this);
   }
 

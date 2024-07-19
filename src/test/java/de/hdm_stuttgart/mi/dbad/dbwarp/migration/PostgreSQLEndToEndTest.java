@@ -23,6 +23,7 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration;
  */
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
@@ -71,9 +72,8 @@ class PostgreSQLEndToEndTest {
     assertNull(ownerTable.getSchema());
     assertEquals(TableType.TABLE, ownerTable.getType());
     assertEquals(4, ownerTable.getColumns().size());
-    assertEquals(1,
-        ownerTable.getConstraints()
-            .size()); // TODO: Change this when more constraints are implemented
+    assertNotNull(
+        ownerTable.getPrimaryKeyConstraint()); // TODO: Change this when more constraints are implemented
 
     final Table petTable = readTables.stream()
         .filter(table -> table.getName().equals("pet"))
@@ -83,8 +83,8 @@ class PostgreSQLEndToEndTest {
     assertNull(petTable.getSchema());
     assertEquals(TableType.TABLE, petTable.getType());
     assertEquals(4, petTable.getColumns().size());
-    assertEquals(1, petTable.getConstraints()
-        .size()); // TODO: Change this when more constraints are implemented
+    assertNotNull(
+        petTable.getPrimaryKeyConstraint()); // TODO: Change this when more constraints are implemented
   }
 
 }

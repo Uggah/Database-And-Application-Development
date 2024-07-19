@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<syntax xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:noNamespaceSchemaLocation="schema.xsd">
+<syntax>
   <tableCreation>
     <options>
-      <inlineConstraintDefinitions>
-        ALWAYS
-      </inlineConstraintDefinitions>
+      <inlineConstraintDefinitions>ALWAYS</inlineConstraintDefinitions>
     </options>
     <templates>
       <createTable>
         CREATE TABLE ${table_name} (${column_definitions} ${end_of_block_constraints});
       </createTable>
       <columnDefinition>
-        ${column_name} ${column_type} ${end_of_line_constraints},
+        ${column_name} ${column_type} ${end_of_line_constraints}
       </columnDefinition>
       <inlineConstraints>
         <constraint constraintType="NOT_NULL">
           NOT NULL
         </constraint>
         <constraint constraintType="PRIMARY_KEY" strategy="END_OF_BLOCK">
-          PRIMARY KEY (${column_names}),
+          PRIMARY KEY (${column_names})
         </constraint>
         <constraint constraintType="FOREIGN_KEY" strategy="END_OF_BLOCK">
-          FOREIGN KEY ${constraint_name} (${column_names}) REFERENCES ${foreign_table_name}
-          (${foreign_column_names}),
+          FOREIGN KEY ${constraint_name} (${column_names}) REFERENCES ${parent_table_name}
+          (${parent_column_names})
+        </constraint>
+        <constraint constraintType="UNIQUE" strategy="END_OF_BLOCK">
+          UNIQUE (${column_names})
         </constraint>
       </inlineConstraints>
     </templates>
