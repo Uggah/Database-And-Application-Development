@@ -11,7 +11,7 @@
       PRIMARY KEY (${column_names})
     </primaryKeyConstraint>
     <foreignKeyConstraint strategy="END_OF_BLOCK">
-      FOREIGN KEY ${constraint_name} (${column_names}) REFERENCES ${parent_table_name}
+      CONSTRAINT ${constraint_name} FOREIGN KEY (${column_names}) REFERENCES ${parent_table_name}
       (${parent_column_names})
     </foreignKeyConstraint>
     <uniqueConstraint strategy="END_OF_BLOCK">
