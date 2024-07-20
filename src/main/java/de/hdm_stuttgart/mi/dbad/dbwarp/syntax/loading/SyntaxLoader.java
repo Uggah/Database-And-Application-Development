@@ -35,7 +35,7 @@ public class SyntaxLoader {
    * @return The syntax
    */
   public Syntax loadSyntax(String databaseType) {
-    final String resourcePath = String.format("/syntaxes/%s.xml", databaseType);
+    final String resourcePath = String.format("/syntaxes/%s.xml", databaseType.toLowerCase());
 
     parseSecure(resourcePath);
 

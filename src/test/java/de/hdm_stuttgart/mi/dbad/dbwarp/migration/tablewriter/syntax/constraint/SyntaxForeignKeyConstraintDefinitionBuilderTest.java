@@ -13,6 +13,7 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.xml.LoadSyntax;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.xml.SyntaxProvider;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -43,8 +44,8 @@ class SyntaxForeignKeyConstraintDefinitionBuilderTest {
         foreignKeyConstraint);
 
     assertEquals(
-        "CONSTRAINT_NAME: some_constraint, COLUMN_NAMES: some_column, CHILD_TABLE_NAME: some_table, CHILD_COLUMN_NAMES: some_column, PARENT_TABLE_NAME: some_referenced_table, PARENT_COLUMN_NAMES: some_referenced_column",
-        renderedStatement
+        "CONSTRAINT_NAME:some_constraint,COLUMN_NAMES:some_column,CHILD_TABLE_NAME:some_table,CHILD_COLUMN_NAMES:some_column,PARENT_TABLE_NAME:some_referenced_table,PARENT_COLUMN_NAMES:some_referenced_column",
+        StringUtils.deleteWhitespace(renderedStatement)
     );
   }
 
@@ -75,8 +76,8 @@ class SyntaxForeignKeyConstraintDefinitionBuilderTest {
         foreignKeyConstraint);
 
     assertEquals(
-        "CONSTRAINT_NAME: some_constraint, COLUMN_NAMES: some_column, some_other_column, CHILD_TABLE_NAME: some_table, CHILD_COLUMN_NAMES: some_column, some_other_column, PARENT_TABLE_NAME: some_referenced_table, PARENT_COLUMN_NAMES: some_referenced_column, some_other_referenced_column",
-        renderedStatement
+        "CONSTRAINT_NAME:some_constraint,COLUMN_NAMES:some_column,some_other_column,CHILD_TABLE_NAME:some_table,CHILD_COLUMN_NAMES:some_column,some_other_column,PARENT_TABLE_NAME:some_referenced_table,PARENT_COLUMN_NAMES:some_referenced_column,some_other_referenced_column",
+        StringUtils.deleteWhitespace(renderedStatement)
     );
   }
 

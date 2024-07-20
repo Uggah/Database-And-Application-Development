@@ -9,6 +9,11 @@ public final class SyntaxPlaceholders {
   public static final String PLACEHOLDER_END = "}";
 
   /**
+   * Placeholder for the schema name.
+   */
+  public static final String SCHEMA_NAME = "schema_name";
+
+  /**
    * Placeholder for the table name.
    */
   public static final String TABLE_NAME = "table_name";
@@ -60,6 +65,11 @@ public final class SyntaxPlaceholders {
   // FOREIGN KEY SPECIFIC
 
   /**
+   * Placeholder for the child table schema name.
+   */
+  public static final String CHILD_TABLE_SCHEMA_NAME = "child_table_schema_name";
+
+  /**
    * Placeholder for the child table name.
    */
   public static final String CHILD_TABLE_NAME = "child_table_name";
@@ -68,6 +78,11 @@ public final class SyntaxPlaceholders {
    * Placeholder for the child column names. Interchangeable with {@link #COLUMN_NAMES}.
    */
   public static final String CHILD_COLUMN_NAMES = "child_column_names";
+
+  /**
+   * Placeholder for the child table schema name.
+   */
+  public static final String PARENT_TABLE_SCHEMA_NAME = "parent_table_schema_name";
 
   /**
    * Placeholder for the foreign table name.

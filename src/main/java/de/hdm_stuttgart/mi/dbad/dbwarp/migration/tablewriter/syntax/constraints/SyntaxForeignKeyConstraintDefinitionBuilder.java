@@ -56,6 +56,11 @@ public class SyntaxForeignKeyConstraintDefinitionBuilder implements
     );
 
     params.put(
+        SyntaxPlaceholders.CHILD_TABLE_SCHEMA_NAME,
+        foreignKeyConstraint.getChildTable().getSchema()
+    );
+
+    params.put(
         SyntaxPlaceholders.CHILD_TABLE_NAME,
         foreignKeyConstraint.getChildTable().getName()
     );
@@ -63,6 +68,11 @@ public class SyntaxForeignKeyConstraintDefinitionBuilder implements
     params.put(
         SyntaxPlaceholders.CHILD_COLUMN_NAMES,
         childColumnNames
+    );
+
+    params.put(
+        SyntaxPlaceholders.PARENT_TABLE_SCHEMA_NAME,
+        foreignKeyConstraint.getParentTable().getSchema()
     );
 
     params.put(

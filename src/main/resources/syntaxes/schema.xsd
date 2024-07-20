@@ -26,6 +26,7 @@
   <!-- TemplateDefinition -->
   <xs:complexType name="templateDefinition">
     <xs:all>
+      <xs:element name="createSchema" type="xs:string" minOccurs="0"/>
       <xs:element name="createTable" type="xs:string"/>
       <xs:element name="columnDefinition" type="xs:string"/>
       <xs:element name="primaryKeyConstraint" type="constraintDefinition"/>

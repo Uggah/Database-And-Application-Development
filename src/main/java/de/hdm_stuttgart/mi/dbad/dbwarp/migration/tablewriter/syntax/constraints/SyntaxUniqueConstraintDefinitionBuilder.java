@@ -41,6 +41,8 @@ public class SyntaxUniqueConstraintDefinitionBuilder implements
 
     final Map<String, String> params = new HashMap<>();
 
+    params.put(SyntaxPlaceholders.SCHEMA_NAME, uniqueConstraint.getTable().getSchema());
+
     params.put(SyntaxPlaceholders.CONSTRAINT_NAME, uniqueConstraint.getName());
 
     params.put(SyntaxPlaceholders.TABLE_NAME, uniqueConstraint.getTable().getName());

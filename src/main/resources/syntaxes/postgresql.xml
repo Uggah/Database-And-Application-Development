@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<syntax>
+  <templates>
+    <createSchema>
+      CREATE SCHEMA IF NOT EXISTS ${schema_name};
+    </createSchema>
+    <createTable>
+      CREATE TABLE IF NOT EXISTS ${schema_name}.${table_name} (${column_definitions}
+      ${end_of_block_constraints});
+    </createTable>
+    <columnDefinition>
+      ${column_name} ${column_type} ${end_of_line_constraints}
+    </columnDefinition>
+    <primaryKeyConstraint>
+      ALTER TABLE ${schema_name}.${table_name} ADD CONSTRAINT ${constraint_name} PRIMARY KEY
+      (${column_names});
+    </primaryKeyConstraint>
+    <foreignKeyConstraint>
+      ALTER TABLE ${schema_name}.${table_name} ADD CONSTRAINT ${constraint_name} FOREIGN KEY
+      (${column_names}) REFERENCES ${parent_schema_name}.${parent_table_name}
+      (${parent_column_names});
+    </foreignKeyConstraint>
+    <uniqueConstraint>
+      ALTER TABLE ${schema_name}.${table_name} ADD CONSTRAINT ${constraint_name} UNIQUE
+      (${column_names});
+    </uniqueConstraint>
+    <notNullConstraint>
+      ALTER TABLE ${schema_name}.${table_name} ALTER COLUMN ${column_name} SET NOT NULL;
+    </notNullConstraint>
+  </templates>
+</syntax>
