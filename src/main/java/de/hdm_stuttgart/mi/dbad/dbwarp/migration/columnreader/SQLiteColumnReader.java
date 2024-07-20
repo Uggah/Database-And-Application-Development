@@ -24,6 +24,7 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.columnreader;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.helper.types.TypeConversionHelper;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.AutoIncrement;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.PreparedStatement;
@@ -99,7 +100,7 @@ public class SQLiteColumnReader extends AbstractColumnReader {
       this.isAutoIncrementPreparedStatement.setString(1, table.getName());
       final ResultSet autoIncrementResultSet = this.isAutoIncrementPreparedStatement.executeQuery();
       if (autoIncrementResultSet.next()) {
-        column.setAutoIncrement(true);
+        column.setAutoIncrement(AutoIncrement.SERIAL);
       }
     }
 

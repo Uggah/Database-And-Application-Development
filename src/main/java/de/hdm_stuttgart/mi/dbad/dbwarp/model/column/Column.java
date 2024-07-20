@@ -69,6 +69,6 @@ public class Column {
   /**
    * If the column is auto increment
    */
-  private boolean autoIncrement = false;
+  private AutoIncrement autoIncrement = AutoIncrement.NONE;
 
 }

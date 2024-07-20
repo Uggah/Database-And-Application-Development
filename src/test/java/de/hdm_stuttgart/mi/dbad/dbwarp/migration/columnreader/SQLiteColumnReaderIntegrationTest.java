@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.AutoIncrement;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
@@ -121,7 +122,7 @@ class SQLiteColumnReaderIntegrationTest {
 
     columns.forEach(column -> assertSame(table, column.getTable()));
 
-    assertEquals(true, columns.get(0).isAutoIncrement());
+    assertEquals(AutoIncrement.SERIAL, columns.get(0).getAutoIncrement());
 
     sqLiteColumnReader.close();
   }
