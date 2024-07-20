@@ -36,6 +36,11 @@ import lombok.EqualsAndHashCode;
 public class PrimaryKeyConstraint extends Constraint {
 
   /**
+   * Name of the constraint
+   */
+  private final String name;
+
+  /**
    * {@link Table} on which the constraint is defined.
    */
   private final Table table;
