@@ -189,6 +189,11 @@ public abstract class AbstractConstraintReader implements ConstraintReader {
         final String indexName = indexResultSet.getString("INDEX_NAME");
         final Column column = table.getColumnByName(indexResultSet.getString("COLUMN_NAME"));
 
+        if (table.getPrimaryKeyConstraint() != null && indexName.equals(
+            table.getPrimaryKeyConstraint().getName())) {
+          continue;
+        }
+
         uniqueConstraints.compute(indexName, (k, v) -> {
           if (v == null) {
             v = new UniqueConstraint(indexName, table);

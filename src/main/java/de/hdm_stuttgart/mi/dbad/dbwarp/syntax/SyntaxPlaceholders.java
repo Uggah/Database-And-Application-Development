@@ -50,6 +50,19 @@ public final class SyntaxPlaceholders {
    */
   public static final String END_OF_LINE_CONSTRAINTS = "end_of_line_constraints";
 
+  /**
+   * Placeholder for the column default value.
+   */
+  public static final String COLUMN_DEFAULT = "column_default";
+
+  // COLUMN DEFAULT
+
+  /**
+   * Placeholder for the default value. The injected value will be the result of a toString call on
+   * the default value.
+   */
+  public static final String DEFAULT_VALUE = "default_value";
+
   // CONSTRAINT DEFINITIONS
 
   /**

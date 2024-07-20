@@ -79,6 +79,8 @@ public class SyntaxTableDefinitionBuilder implements TableDefinitionBuilder {
       endOfBlockConstraints.addAll(constraintDefinitions);
     }
 
+    params.put(SyntaxPlaceholders.SCHEMA_NAME, table.getSchema());
+
     params.put(SyntaxPlaceholders.END_OF_BLOCK_CONSTRAINTS,
         String.join(", ", endOfBlockConstraints));
 

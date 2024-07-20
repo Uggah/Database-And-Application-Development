@@ -61,4 +61,18 @@ public class PrimaryKeyConstraint extends Constraint {
     this.columns.addAll(columns);
   }
 
+  /**
+   * Gets the name of the primary key constraint. If no name is set, a default name is generated.
+   *
+   * @return Name of the primary key constraint.
+   */
+  public String getName() {
+    if (name == null || name.isBlank()) {
+      return String.format("PK_%s",
+          table.getName()
+      );
+    }
+
+    return name;
+  }
 }

@@ -31,12 +31,14 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader.SQLiteSchemaReader
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
+import de.hdm_stuttgart.mi.dbad.dbwarp.providers.config.ConfigProvider;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.InitializeDatabase;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.SQLiteProvider;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(ConfigProvider.class)
 @ExtendWith(SQLiteProvider.class)
 class SQLiteTableReaderIntegrationTest {
 

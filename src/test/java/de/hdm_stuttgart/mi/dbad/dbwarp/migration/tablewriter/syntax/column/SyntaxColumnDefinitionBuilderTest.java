@@ -45,7 +45,7 @@ class SyntaxColumnDefinitionBuilderTest {
     final String renderedDefinition = columnDefinitionBuilder.createColumnDefinitionStatement(
         column);
 
-    assertEquals("some_column VARCHAR ", renderedDefinition);
+    assertEquals("some_column VARCHAR  ", renderedDefinition);
   }
 
   @Test
@@ -60,7 +60,7 @@ class SyntaxColumnDefinitionBuilderTest {
     final String renderedDefinition = columnDefinitionBuilder.createColumnDefinitionStatement(
         column);
 
-    assertEquals("some_column VARCHAR EXAMPLE_NOT_NULL_CONSTRAINT", renderedDefinition);
+    assertEquals("some_column VARCHAR  EXAMPLE_NOT_NULL_CONSTRAINT", renderedDefinition);
   }
 
   @Test
@@ -80,7 +80,7 @@ class SyntaxColumnDefinitionBuilderTest {
     final String renderedDefinition = columnDefinitionBuilder.createColumnDefinitionStatement(
         column);
 
-    assertEquals("some_column VARCHAR EXAMPLE_PRIMARY_KEY_CONSTRAINT", renderedDefinition);
+    assertEquals("some_column VARCHAR  EXAMPLE_PRIMARY_KEY_CONSTRAINT", renderedDefinition);
   }
 
   @Test
@@ -104,7 +104,7 @@ class SyntaxColumnDefinitionBuilderTest {
     final String renderedDefinition = columnDefinitionBuilder.createColumnDefinitionStatement(
         column);
 
-    assertEquals("some_column VARCHAR EXAMPLE_FOREIGN_KEY_CONSTRAINT", renderedDefinition);
+    assertEquals("some_column VARCHAR  EXAMPLE_FOREIGN_KEY_CONSTRAINT", renderedDefinition);
   }
 
   @Test
@@ -126,7 +126,24 @@ class SyntaxColumnDefinitionBuilderTest {
     final String renderedDefinition = columnDefinitionBuilder.createColumnDefinitionStatement(
         column);
 
-    assertEquals("some_column VARCHAR EXAMPLE_UNIQUE_CONSTRAINT", renderedDefinition);
+    assertEquals("some_column VARCHAR  EXAMPLE_UNIQUE_CONSTRAINT", renderedDefinition);
   }
+
+  @Test
+  @LoadSyntax("end_of_line")
+  void testCreateColumnDefinitionStatement_DefaultValue(final Syntax syntax) {
+    final ColumnDefinitionBuilder columnDefinitionBuilder = new SyntaxColumnDefinitionBuilder(
+        syntax, this.constraintDefinitionBuilder);
+
+    final Table table = new Table("some_schema", "some_table", TableType.TABLE);
+    final Column column = new Column(table, "some_column", JDBCType.VARCHAR, true, 255);
+    column.setDefaultValue("some default value");
+
+    final String renderedDefinition = columnDefinitionBuilder.createColumnDefinitionStatement(
+        column);
+
+    assertEquals("some_column VARCHAR DEFAULT 'some default value' ", renderedDefinition);
+  }
+
 
 }

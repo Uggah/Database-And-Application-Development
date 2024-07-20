@@ -90,4 +90,20 @@ public class UniqueConstraint extends Constraint {
     this(name, table);
     this.columns.addAll(columns);
   }
+
+  /**
+   * Gets the name of the unique constraint. If no name is set, a default name is generated.
+   *
+   * @return Name of the unique constraint.
+   */
+  public String getName() {
+    if (name == null || name.isBlank()) {
+      return String.format("UQ_%s_on_%s",
+          table.getName(),
+          columns.stream().map(Column::getName).reduce((a, b) -> a + "_" + b).orElse("")
+      );
+    }
+
+    return name;
+  }
 }

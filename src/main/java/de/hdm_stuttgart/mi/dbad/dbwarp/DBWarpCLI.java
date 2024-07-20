@@ -24,6 +24,7 @@ package de.hdm_stuttgart.mi.dbad.dbwarp;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+import de.hdm_stuttgart.mi.dbad.dbwarp.config.Configuration;
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.DefaultConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.jdbc.DriverLoader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.jdbc.JarDriverLoader;
@@ -34,6 +35,8 @@ import jakarta.validation.constraints.NotBlank;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import lombok.Getter;
 import lombok.extern.slf4j.XSlf4j;
@@ -79,6 +82,9 @@ public class DBWarpCLI implements Callable<Integer> {
   @Parameters(index = "1", description = "JDBC connection URL of target database")
   private String target;
 
+  /**
+   * schema defines the schema to migrate. It will be automatically injected by PicoCLI.
+   */
   @Option(names = {"--schema",
       "-S"}, description = "Schema to migrate, migrates all schemas by default", defaultValue = "")
   private String schema;
@@ -122,6 +128,7 @@ public class DBWarpCLI implements Callable<Integer> {
     log.entry();
     setupLogging();
     setupDrivers();
+    setupConfiguration();
 
     new DBWarpCLIValidator(spec.commandLine()).validate(this);
 
@@ -165,7 +172,7 @@ public class DBWarpCLI implements Callable<Integer> {
   /**
    * Dynamically loads drivers as specified in the command line options.
    */
-  public void setupDrivers() {
+  private void setupDrivers() {
     log.entry();
     log.debug("Loading drivers");
 
@@ -179,5 +186,16 @@ public class DBWarpCLI implements Callable<Integer> {
             throw new DriverLoadingException("Exception upon trying to register driver!", e);
           }
         });
+  }
+
+  /**
+   * Configures the application based on the command line options used.
+   */
+  private void setupConfiguration() {
+    final Map<String, Object> configuration = new HashMap<>();
+
+    configuration.put("schema", this.schema);
+
+    Configuration.getInstance().configure(configuration);
   }
 }

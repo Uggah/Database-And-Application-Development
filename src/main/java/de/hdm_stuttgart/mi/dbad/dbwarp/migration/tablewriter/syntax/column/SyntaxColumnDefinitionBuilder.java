@@ -82,6 +82,21 @@ public class SyntaxColumnDefinitionBuilder implements ColumnDefinitionBuilder {
 
     final Map<String, String> params = new HashMap<>();
 
+    // COLUMN DEFAULT
+
+    if (column.getDefaultValue() != null) {
+      final String defaultValueDefinition = StringSubstitutor.replace(
+          syntax.getTemplates().getColumnDefault(),
+          Map.of(SyntaxPlaceholders.DEFAULT_VALUE, column.getDefaultValue()),
+          SyntaxPlaceholders.PLACEHOLDER_BEGIN,
+          SyntaxPlaceholders.PLACEHOLDER_END
+      );
+
+      params.put(SyntaxPlaceholders.COLUMN_DEFAULT, defaultValueDefinition);
+    } else {
+      params.put(SyntaxPlaceholders.COLUMN_DEFAULT, "");
+    }
+
     params.put(SyntaxPlaceholders.COLUMN_NAME, column.getName());
     params.put(SyntaxPlaceholders.COLUMN_TYPE,
         column.getType().getName()); // TODO: Implement configurable type mappings!

@@ -21,5 +21,8 @@
     <uniqueConstraint>
       CONSTRAINT_NAME: ${constraint_name}, TABLE_NAME: ${table_name}, COLUMN_NAMES: ${column_names}
     </uniqueConstraint>
+    <columnDefault>
+      DEFAULT ${default_value}
+    </columnDefault>
   </templates>
 </syntax>

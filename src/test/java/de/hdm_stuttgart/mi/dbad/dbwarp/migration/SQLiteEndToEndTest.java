@@ -31,6 +31,7 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader.SchemaReader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader.SchemaReaderFactory;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
+import de.hdm_stuttgart.mi.dbad.dbwarp.providers.config.ConfigProvider;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.EndToEndProvider;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.InitializeDatabase;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.MockConnectionManager;
@@ -40,6 +41,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(ConfigProvider.class)
 @ExtendWith(EndToEndProvider.class)
 class SQLiteEndToEndTest {
 

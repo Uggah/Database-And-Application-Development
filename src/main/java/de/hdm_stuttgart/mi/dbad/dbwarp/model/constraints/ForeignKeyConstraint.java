@@ -61,4 +61,21 @@ public class ForeignKeyConstraint extends Constraint {
    */
   private final List<Column> parentColumns = new ArrayList<>();
 
+  /**
+   * Gets the name of the foreign key constraint. If no name is set, a default name is generated.
+   *
+   * @return Name of the foreign key constraint.
+   */
+  public String getName() {
+    if (name == null || name.isBlank()) {
+      return String.format("FK_%s_%s_on_%s",
+          childTable.getName(),
+          parentTable.getName(),
+          childColumns.stream().map(Column::getName).reduce((a, b) -> a + "_" + b).orElse("")
+      );
+    }
+
+    return name;
+  }
+
 }

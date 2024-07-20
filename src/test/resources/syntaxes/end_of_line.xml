@@ -5,7 +5,7 @@
       CREATE TABLE ${table_name} (${column_definitions} ${end_of_block_constraints});
     </createTable>
     <columnDefinition>
-      ${column_name} ${column_type} ${end_of_line_constraints}
+      ${column_name} ${column_type} ${column_default} ${end_of_line_constraints}
     </columnDefinition>
     <notNullConstraint strategy="END_OF_LINE">
       EXAMPLE_NOT_NULL_CONSTRAINT
@@ -19,5 +19,8 @@
     <uniqueConstraint strategy="END_OF_LINE">
       EXAMPLE_UNIQUE_CONSTRAINT
     </uniqueConstraint>
+    <columnDefault>
+      DEFAULT '${default_value}'
+    </columnDefault>
   </templates>
 </syntax>

@@ -19,5 +19,8 @@
     <uniqueConstraint strategy="END_OF_LINE">
       EXAMPLE_UNIQUE_CONSTRAINT
     </uniqueConstraint>
+    <columnDefault>
+      DEFAULT ${default_value}
+    </columnDefault>
   </templates>
 </syntax>

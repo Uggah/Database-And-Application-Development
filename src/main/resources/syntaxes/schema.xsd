@@ -33,6 +33,7 @@
       <xs:element name="foreignKeyConstraint" type="constraintDefinition"/>
       <xs:element name="uniqueConstraint" type="constraintDefinition"/>
       <xs:element name="notNullConstraint" type="constraintDefinition"/>
+      <xs:element name="columnDefault" type="xs:string"/>
     </xs:all>
   </xs:complexType>
 
