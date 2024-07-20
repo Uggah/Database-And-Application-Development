@@ -98,12 +98,16 @@ public abstract class AbstractConstraintReader implements ConstraintReader {
               table.getName()
           );
 
-      while (resultSet.next()) {
-        final String columnName = resultSet.getString("COLUMN_NAME");
-        columns.add(table.getColumnByName(columnName));
+      if (!resultSet.next()) {
+        continue;
       }
 
       final String name = resultSet.getString("PK_NAME");
+
+      do {
+        final String columnName = resultSet.getString("COLUMN_NAME");
+        columns.add(table.getColumnByName(columnName));
+      } while (resultSet.next());
 
       table.setPrimaryKeyConstraint(new PrimaryKeyConstraint(name, table, columns));
     }
