@@ -4,12 +4,10 @@ import static de.hdm_stuttgart.mi.dbad.dbwarp.syntax.SyntaxPlaceholders.PLACEHOL
 import static de.hdm_stuttgart.mi.dbad.dbwarp.syntax.SyntaxPlaceholders.PLACEHOLDER_END;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ConstraintDefinitionBuilder;
-import de.hdm_stuttgart.mi.dbad.dbwarp.syntax.SyntaxPlaceholders;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.ConstraintType;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.Syntax;
-import de.hdm_stuttgart.mi.dbad.dbwarp.syntax.SyntaxHelper;
+import de.hdm_stuttgart.mi.dbad.dbwarp.syntax.SyntaxPlaceholders;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -80,8 +78,7 @@ public class SyntaxForeignKeyConstraintDefinitionBuilder implements
     );
 
     final String out = StringSubstitutor.replace(
-        SyntaxHelper.getInlineConstraintDefinitionByType(syntax, ConstraintType.FOREIGN_KEY)
-            .getValue(),
+        syntax.getTemplates().getForeignKeyConstraint().getValue(),
         params,
         PLACEHOLDER_BEGIN,
         PLACEHOLDER_END

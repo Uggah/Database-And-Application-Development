@@ -1,27 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <syntax>
-  <tableCreation>
-    <options>
-      <inlineConstraintDefinitions>ALWAYS</inlineConstraintDefinitions>
-    </options>
-    <templates>
-      <createTable>
-        CREATE TABLE ${full_table_name} (${column_definitions} ${end_of_block_constraints});
-      </createTable>
-      <columnDefinition>
-        ${column_name} ${column_type} ${end_of_line_constraints}
-      </columnDefinition>
-      <inlineConstraints>
-        <constraint constraintType="NOT_NULL">
-          EXAMPLE_NOT_NULL_CONSTRAINT
-        </constraint>
-        <constraint constraintType="PRIMARY_KEY" strategy="END_OF_LINE">
-          EXAMPLE_PRIMARY_KEY_CONSTRAINT
-        </constraint>
-        <constraint constraintType="FOREIGN_KEY" strategy="END_OF_LINE">
-          EXAMPLE_FOREIGN_KEY_CONSTRAINT
-        </constraint>
-      </inlineConstraints>
-    </templates>
-  </tableCreation>
+  <templates>
+    <createTable>
+      CREATE TABLE ${full_table_name} (${column_definitions} ${end_of_block_constraints});
+    </createTable>
+    <columnDefinition>
+      ${column_name} ${column_type} ${end_of_line_constraints}
+    </columnDefinition>
+    <notNullConstraint strategy="END_OF_LINE">
+      EXAMPLE_NOT_NULL_CONSTRAINT
+    </notNullConstraint>
+    <primaryKeyConstraint strategy="END_OF_LINE">
+      EXAMPLE_PRIMARY_KEY_CONSTRAINT
+    </primaryKeyConstraint>
+    <foreignKeyConstraint strategy="END_OF_LINE">
+      EXAMPLE_FOREIGN_KEY_CONSTRAINT
+    </foreignKeyConstraint>
+    <uniqueConstraint strategy="END_OF_LINE">
+      EXAMPLE_UNIQUE_CONSTRAINT
+    </uniqueConstraint>
+  </templates>
 </syntax>

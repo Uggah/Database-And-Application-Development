@@ -6,13 +6,12 @@ import static de.hdm_stuttgart.mi.dbad.dbwarp.syntax.SyntaxPlaceholders.PLACEHOL
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ColumnDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ConstraintDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.TableDefinitionBuilder;
-import de.hdm_stuttgart.mi.dbad.dbwarp.syntax.SyntaxPlaceholders;
-import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.exception.SyntaxRenderingException;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.InlineConstraintDefinition;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.ConstraintDefinitionStrategy;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.Syntax;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import de.hdm_stuttgart.mi.dbad.dbwarp.syntax.SyntaxHelper;
+import de.hdm_stuttgart.mi.dbad.dbwarp.syntax.SyntaxPlaceholders;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,49 +55,28 @@ public class SyntaxTableDefinitionBuilder implements TableDefinitionBuilder {
 
     params.put(SyntaxPlaceholders.COLUMN_DEFINITIONS, String.join(", ", columnDefinitions));
 
-    final List<InlineConstraintDefinition> endOfBlockConstraintDefinitions = SyntaxHelper.getEndOfBlockConstraints(
-        syntax);
     final List<String> endOfBlockConstraints = new ArrayList<>();
 
-    for (InlineConstraintDefinition inlineConstraintDefinition : endOfBlockConstraintDefinitions) {
-      switch (inlineConstraintDefinition.getConstraintType()) {
-        case PRIMARY_KEY -> {
-          if (table.getPrimaryKeyConstraint() == null) {
-            break;
-          }
+    if (SyntaxHelper.getPrimaryKeyStrategy(syntax) == ConstraintDefinitionStrategy.END_OF_BLOCK
+        && table.getPrimaryKeyConstraint() != null) {
+      endOfBlockConstraints.add(
+          constraintDefinitionBuilder.createConstraintDefinitionStatement(
+              table.getPrimaryKeyConstraint())
+      );
+    }
 
-          endOfBlockConstraints.add(
-              constraintDefinitionBuilder.createConstraintDefinitionStatement(
-                  table.getPrimaryKeyConstraint())
-          );
-        }
-        case UNIQUE -> {
-          final List<String> constraintDefinitions = table.getUniqueConstraints()
-              .stream()
-              .map(constraintDefinitionBuilder::createConstraintDefinitionStatement)
-              .toList();
+    if (SyntaxHelper.getForeignKeyStrategy(syntax) == ConstraintDefinitionStrategy.END_OF_BLOCK) {
+      final List<String> constraintDefinitions = table.getForeignKeyConstraints().stream()
+          .map(constraintDefinitionBuilder::createConstraintDefinitionStatement).toList();
 
-          if (constraintDefinitions.isEmpty()) {
-            break;
-          }
+      endOfBlockConstraints.addAll(constraintDefinitions);
+    }
 
-          endOfBlockConstraints.addAll(constraintDefinitions);
-        }
-        case FOREIGN_KEY -> {
-          final List<String> constraintDefinitions = table.getForeignKeyConstraints().stream()
-              .map(constraintDefinitionBuilder::createConstraintDefinitionStatement).toList();
+    if (SyntaxHelper.getUniqueStrategy(syntax) == ConstraintDefinitionStrategy.END_OF_BLOCK) {
+      final List<String> constraintDefinitions = table.getUniqueConstraints().stream()
+          .map(constraintDefinitionBuilder::createConstraintDefinitionStatement).toList();
 
-          if (constraintDefinitions.isEmpty()) {
-            break;
-          }
-
-          endOfBlockConstraints.addAll(constraintDefinitions);
-        }
-        case CHECK ->
-            throw new SyntaxRenderingException("CHECK constraints are not supported yet!");
-        default -> throw new SyntaxRenderingException("Unsupported end-of-block constraint type: "
-            + inlineConstraintDefinition.getConstraintType());
-      }
+      endOfBlockConstraints.addAll(constraintDefinitions);
     }
 
     params.put(SyntaxPlaceholders.END_OF_BLOCK_CONSTRAINTS,
@@ -109,7 +87,7 @@ public class SyntaxTableDefinitionBuilder implements TableDefinitionBuilder {
     }
 
     final String out = StringSubstitutor.replace(
-        syntax.getTableCreation().getTemplates().getCreateTable(), params, PLACEHOLDER_BEGIN,
+        syntax.getTemplates().getCreateTable(), params, PLACEHOLDER_BEGIN,
         PLACEHOLDER_END);
 
     return log.exit(out);
