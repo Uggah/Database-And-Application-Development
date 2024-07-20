@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.AutoIncrement;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
@@ -105,6 +106,23 @@ class SQLiteColumnReaderIntegrationTest {
 
     columns.stream().filter(column -> column.getName().equals("with_default_value"))
         .forEach(column -> assertEquals("SomeDefaultValue", column.getDefaultValue()));
+
+    sqLiteColumnReader.close();
+  }
+
+  @Test
+  @InitializeDatabase("sqlite/SQLiteColumnReaderIntegrationTest.sql")
+  void testReadColumns_AutoIncrement(final ConnectionManager connectionManager) throws Exception {
+    final ColumnReader sqLiteColumnReader = new SQLiteColumnReader(connectionManager);
+
+    final Table table = new Table(null, "AutoIncrementTest", TableType.TABLE);
+
+    final List<Column> columns = sqLiteColumnReader.readColumns(table);
+    assertEquals(1, columns.size());
+
+    columns.forEach(column -> assertSame(table, column.getTable()));
+
+    assertEquals(AutoIncrement.SERIAL, columns.get(0).getAutoIncrement());
 
     sqLiteColumnReader.close();
   }

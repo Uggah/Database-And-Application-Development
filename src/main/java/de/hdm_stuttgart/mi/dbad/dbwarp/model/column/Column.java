@@ -72,6 +72,11 @@ public class Column {
   private Object defaultValue = null;
 
   /**
+   * If the column is auto increment
+   */
+  private AutoIncrement autoIncrement = AutoIncrement.NONE;
+
+  /**
    * Retrieves the primary key constraint that this column is a part of, if any.
    *
    * @return The {@link PrimaryKeyConstraint} object if this column is part of a primary key;
