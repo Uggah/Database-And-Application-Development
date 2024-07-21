@@ -9,12 +9,14 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.Syntax;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
+import de.hdm_stuttgart.mi.dbad.dbwarp.providers.config.ConfigProvider;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.xml.LoadSyntax;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.xml.SyntaxProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(SyntaxProvider.class)
+@ExtendWith(ConfigProvider.class)
 class SyntaxPrimaryKeyConstraintDefinitionBuilderTest {
 
   @Test

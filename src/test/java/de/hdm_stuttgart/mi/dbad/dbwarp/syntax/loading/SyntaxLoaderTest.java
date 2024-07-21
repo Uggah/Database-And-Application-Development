@@ -38,6 +38,26 @@ class SyntaxLoaderTest {
   }
 
   @Test
+  void testLoadSyntaxFromResources_UppercaseName() {
+    final SyntaxLoader syntaxLoader = new SyntaxLoader();
+    final Syntax syntax = syntaxLoader.loadSyntax("EXAMPLE_SYNTAX");
+
+    assertNotNull(syntax);
+    assertEquals("EXAMPLE_CREATE_SCHEMA", syntax.getTemplates().getCreateSchema());
+    assertEquals("EXAMPLE_CREATE_TABLE", syntax.getTemplates().getCreateTable());
+    assertEquals("EXAMPLE_COLUMN_DEFINITION", syntax.getTemplates().getColumnDefinition());
+    assertEquals("EXAMPLE_NOT_NULL_CONSTRAINT",
+        syntax.getTemplates().getNotNullConstraint().getValue());
+    assertEquals("EXAMPLE_PRIMARY_KEY_CONSTRAINT",
+        syntax.getTemplates().getPrimaryKeyConstraint().getValue());
+    assertEquals("EXAMPLE_FOREIGN_KEY_CONSTRAINT",
+        syntax.getTemplates().getForeignKeyConstraint().getValue());
+    assertEquals("EXAMPLE_UNIQUE_CONSTRAINT",
+        syntax.getTemplates().getUniqueConstraint().getValue());
+    assertEquals("EXAMPLE_COLUMN_DEFAULT", syntax.getTemplates().getColumnDefault());
+  }
+
+  @Test
   void testLoadSyntaxFromResource_InvalidSyntax() {
     final SyntaxLoader syntaxLoader = new SyntaxLoader();
 

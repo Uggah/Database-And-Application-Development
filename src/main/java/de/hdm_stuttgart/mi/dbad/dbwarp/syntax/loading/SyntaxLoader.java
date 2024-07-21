@@ -98,7 +98,8 @@ public class SyntaxLoader {
     final String syntaxFilePath = configuration.getString("syntax");
 
     if (syntaxFilePath == null) {
-      return getClass().getResourceAsStream(String.format("/syntaxes/%s.xml", databaseType));
+      return getClass().getResourceAsStream(
+          String.format("/syntaxes/%s.xml", databaseType.toLowerCase()));
     }
 
     final File syntaxFile = new File(syntaxFilePath);
