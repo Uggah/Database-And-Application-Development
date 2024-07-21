@@ -39,6 +39,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import lombok.Getter;
 import lombok.extern.slf4j.XSlf4j;
@@ -89,12 +90,12 @@ public class DBWarpCLI implements Callable<Integer> {
    */
   @SuppressWarnings("unused")
   @Option(names = {"--schema",
-      "-S"}, description = "Schema to migrate, migrates all schemas by default", defaultValue = "")
+      "-S"}, description = "Schema to migrate, migrates all schemas by default", defaultValue = NULL_VALUE)
   private String schema;
 
   @SuppressWarnings("unused")
-  @Option(names = "--syntax", description = "Syntax to use for migration", defaultValue = NULL_VALUE)
-  private String syntax;
+  @Option(names = "--syntax", description = "Syntaxes to use for migration. E.g. --syntax SQLite=./syntaxes/custom_sqlite.xml", defaultValue = NULL_VALUE)
+  private Map<String, String> syntax;
 
   /**
    * verbose signals whether debug logging should be enabled. It will be automatically injected by
@@ -202,7 +203,12 @@ public class DBWarpCLI implements Callable<Integer> {
     final Map<String, Object> configuration = new HashMap<>();
 
     configuration.put("schema", this.schema);
-    configuration.put("syntax", this.syntax);
+
+    // This TreeMap is used to ensure that the syntax map is case-insensitive.
+    final TreeMap<String, String> syntaxTreeMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    syntaxTreeMap.putAll(this.syntax);
+
+    configuration.put("syntax", syntaxTreeMap);
 
     Configuration.getInstance().configure(configuration);
   }

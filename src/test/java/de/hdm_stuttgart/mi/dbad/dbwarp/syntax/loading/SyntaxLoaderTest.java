@@ -74,7 +74,8 @@ class SyntaxLoaderTest {
     }
 
     final Configuration configuration = Configuration.getInstance();
-    configuration.configure(Map.of("syntax", "./example_syntax.xml"));
+    configuration.configure(
+        Map.of("syntax", Map.of("some_random_database", "./example_syntax.xml")));
 
     final SyntaxLoader syntaxLoader = new SyntaxLoader();
 
@@ -107,7 +108,8 @@ class SyntaxLoaderTest {
     }
 
     final Configuration configuration = Configuration.getInstance();
-    configuration.configure(Map.of("syntax", "./invalid_syntax.xml"));
+    configuration.configure(
+        Map.of("syntax", Map.of("some_random_database", "./invalid_syntax.xml")));
 
     final SyntaxLoader syntaxLoader = new SyntaxLoader();
 

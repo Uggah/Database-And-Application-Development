@@ -28,4 +28,5 @@ public interface TableWriter {
 
   void writeTable(Table table) throws Exception;
 
+  void writeConstraints(Table table) throws Exception;
 }

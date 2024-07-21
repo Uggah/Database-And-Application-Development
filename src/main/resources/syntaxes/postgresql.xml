@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <syntax>
+  <defaultSchema>
+    public
+  </defaultSchema>
   <templates>
     <createSchema>
       CREATE SCHEMA IF NOT EXISTS ${schema_name};
@@ -31,5 +34,11 @@
     <columnDefault>
       DEFAULT ${default_value}
     </columnDefault>
+    <selectData>
+      SELECT ${column_names} FROM ${schema_name}.${table_name};
+    </selectData>
+    <insertData>
+      INSERT INTO ${schema_name}.${table_name} (${column_names}) VALUES (${column_values});
+    </insertData>
   </templates>
 </syntax>

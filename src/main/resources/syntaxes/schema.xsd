@@ -34,12 +34,15 @@
       <xs:element name="uniqueConstraint" type="constraintDefinition"/>
       <xs:element name="notNullConstraint" type="constraintDefinition"/>
       <xs:element name="columnDefault" type="xs:string"/>
+      <xs:element name="selectData" type="xs:string"/>
+      <xs:element name="insertData" type="xs:string"/>
     </xs:all>
   </xs:complexType>
 
   <!-- Model -->
   <xs:complexType name="syntax">
     <xs:sequence>
+      <xs:element name="defaultSchema" type="xs:string" minOccurs="0"/>
       <xs:element name="templates" type="templateDefinition"/>
     </xs:sequence>
   </xs:complexType>

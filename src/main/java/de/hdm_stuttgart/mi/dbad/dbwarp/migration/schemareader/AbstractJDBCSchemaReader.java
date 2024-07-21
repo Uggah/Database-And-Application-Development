@@ -22,7 +22,6 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader;
  * #L%
  */
 
-import de.hdm_stuttgart.mi.dbad.dbwarp.config.Configuration;
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.columnreader.ColumnReader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.constraintreader.ConstraintReader;
@@ -64,21 +63,7 @@ public abstract class AbstractJDBCSchemaReader implements SchemaReader {
   public List<Table> readSchema() throws SQLException {
     log.entry();
 
-    final Configuration configuration = Configuration.getInstance();
-
-    final List<Table> tables = tableReader.readTables().stream()
-        .filter(table -> {
-          final String configuredSchema = configuration.getString("schema");
-
-          if (configuredSchema == null) {
-            return true;
-          }
-
-          return table.getSchema().equals(configuration.getString("schema"));
-        })
-        .toList();
-
-    log.debug("Migrating tables: {}", tables);
+    final List<Table> tables = tableReader.readTables();
 
     for (final Table table : tables) {
       final List<Column> columns = columnReader.readColumns(table);

@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -95,7 +96,14 @@ public class SyntaxLoader {
    */
   private InputStream getSyntaxInputStream(final String databaseType) {
     final Configuration configuration = Configuration.getInstance();
-    final String syntaxFilePath = configuration.getString("syntax");
+
+    final Map<String, String> syntaxFileMap = configuration.getMap("syntax");
+
+    String syntaxFilePath = null;
+
+    if (syntaxFileMap != null) {
+      syntaxFilePath = syntaxFileMap.get(databaseType.toLowerCase());
+    }
 
     if (syntaxFilePath == null) {
       return getClass().getResourceAsStream(

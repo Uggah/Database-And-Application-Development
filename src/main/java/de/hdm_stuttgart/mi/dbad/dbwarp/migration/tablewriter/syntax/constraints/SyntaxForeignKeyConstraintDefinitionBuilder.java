@@ -10,6 +10,7 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.Syntax;
 import de.hdm_stuttgart.mi.dbad.dbwarp.syntax.SyntaxPlaceholders;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.XSlf4j;
@@ -57,7 +58,8 @@ public class SyntaxForeignKeyConstraintDefinitionBuilder implements
 
     params.put(
         SyntaxPlaceholders.CHILD_TABLE_SCHEMA_NAME,
-        foreignKeyConstraint.getChildTable().getSchema()
+        Objects.requireNonNullElse(foreignKeyConstraint.getParentTable().getSchema(),
+            syntax.getDefaultSchema())
     );
 
     params.put(
@@ -72,7 +74,8 @@ public class SyntaxForeignKeyConstraintDefinitionBuilder implements
 
     params.put(
         SyntaxPlaceholders.PARENT_TABLE_SCHEMA_NAME,
-        foreignKeyConstraint.getParentTable().getSchema()
+        Objects.requireNonNullElse(foreignKeyConstraint.getParentTable().getSchema(),
+            syntax.getDefaultSchema())
     );
 
     params.put(

@@ -23,7 +23,10 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration;
  */
 
 
+import de.hdm_stuttgart.mi.dbad.dbwarp.config.Configuration;
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.datawriter.DataWriter;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.datawriter.DataWriterFactory;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader.SchemaReader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader.SchemaReaderFactory;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.TableWriter;
@@ -67,7 +70,11 @@ public final class MigrationManager {
    */
   public void migrate() throws Exception {
     log.entry();
-    this.migrate(null);
+
+    final Configuration configuration = Configuration.getInstance();
+    final String configuredSchema = configuration.getString("schema");
+    this.migrate(configuredSchema);
+
     log.exit();
   }
 
@@ -99,9 +106,13 @@ public final class MigrationManager {
 
     final TableWriterFactory tableWriterFactory = new TableWriterFactory(connectionManager);
     final TableWriter tableWriter = tableWriterFactory.getTableWriter();
+    final DataWriterFactory dataWriterFactory = new DataWriterFactory(connectionManager);
+    final DataWriter dataWriter = dataWriterFactory.getDataWriter();
 
     for (final Table table : tables) {
       tableWriter.writeTable(table);
+      dataWriter.transferData(table);
+      tableWriter.writeConstraints(table);
     }
 
     log.exit();

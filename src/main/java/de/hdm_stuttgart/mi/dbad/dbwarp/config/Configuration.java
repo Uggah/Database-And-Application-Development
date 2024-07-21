@@ -64,7 +64,7 @@ public class Configuration {
    * @param property The property name.
    * @return The property value.
    */
-  public int getInt(final String property) {
+  public Integer getInt(final String property) {
     return (Integer) getValue(property, Integer.class);
   }
 
@@ -74,7 +74,7 @@ public class Configuration {
    * @param property The property name.
    * @return The property value.
    */
-  public long getLong(final String property) {
+  public Long getLong(final String property) {
     return (Long) getValue(property, Long.class);
   }
 
@@ -84,7 +84,7 @@ public class Configuration {
    * @param property The property name.
    * @return The property value.
    */
-  public double getDouble(final String property) {
+  public Double getDouble(final String property) {
     return (Double) getValue(property, Double.class);
   }
 
@@ -96,8 +96,21 @@ public class Configuration {
    * @param property The property name.
    * @return The property value.
    */
-  public boolean getBoolean(final String property) {
+  public Boolean getBoolean(final String property) {
     return (Boolean) getValue(property, Boolean.class);
+  }
+
+  // Property Map
+
+  /**
+   * Get a map property from the configuration.
+   *
+   * @param property The property name.
+   * @return The property value.
+   */
+  @SuppressWarnings("unchecked")
+  public Map<String, String> getMap(final String property) {
+    return (Map<String, String>) getValue(property, Map.class);
   }
 
   /**

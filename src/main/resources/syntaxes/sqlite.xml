@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <syntax>
+  <defaultSchema>
+    <!-- EMPTY TAG -->
+  </defaultSchema>
   <templates>
     <createTable>
       CREATE TABLE ${table_name} (${column_definitions} ${end_of_block_constraints});
@@ -23,5 +26,11 @@
     <columnDefault>
       DEFAULT '${default_value}'
     </columnDefault>
+    <selectData>
+      SELECT ${column_names} FROM ${table_name};
+    </selectData>
+    <insertData>
+      INSERT INTO ${table_name} (${column_names}) VALUES (${column_values});
+    </insertData>
   </templates>
 </syntax>

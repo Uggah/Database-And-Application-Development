@@ -40,6 +40,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import lombok.extern.slf4j.XSlf4j;
 import org.apache.commons.text.StringSubstitutor;
 
@@ -72,20 +73,14 @@ public class SyntaxTableWriter implements TableWriter {
   @Override
   public void writeTable(final Table table) throws Exception {
     log.entry(table);
-    this.writeTableDefinition(table);
-    this.writeTableConstraints(table);
-    log.exit();
-  }
-
-  public void writeTableDefinition(final Table table) throws Exception {
-    log.entry(table);
 
     if (syntax.getTemplates().getCreateSchema() != null && !syntax.getTemplates().getCreateSchema()
-        .isBlank()) {
+        .isBlank() && table.getSchema() != null) {
       try (final Statement stmt = this.connection.createStatement()) {
         final String schemaCommand = StringSubstitutor.replace(
             syntax.getTemplates().getCreateSchema(),
-            Map.of(SyntaxPlaceholders.SCHEMA_NAME, table.getSchema()),
+            Map.of(SyntaxPlaceholders.SCHEMA_NAME,
+                Objects.requireNonNullElse(table.getSchema(), syntax.getDefaultSchema())),
             SyntaxPlaceholders.PLACEHOLDER_BEGIN,
             SyntaxPlaceholders.PLACEHOLDER_END
         );
@@ -103,7 +98,8 @@ public class SyntaxTableWriter implements TableWriter {
     log.exit();
   }
 
-  public void writeTableConstraints(final Table table) throws Exception {
+  @Override
+  public void writeConstraints(final Table table) throws Exception {
     log.entry(table);
 
     final List<String> standaloneConstraints = new ArrayList<>();

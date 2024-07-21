@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.XSlf4j;
 import org.apache.commons.text.StringSubstitutor;
@@ -79,7 +80,8 @@ public class SyntaxTableDefinitionBuilder implements TableDefinitionBuilder {
       endOfBlockConstraints.addAll(constraintDefinitions);
     }
 
-    params.put(SyntaxPlaceholders.SCHEMA_NAME, table.getSchema());
+    params.put(SyntaxPlaceholders.SCHEMA_NAME,
+        Objects.requireNonNullElse(table.getSchema(), syntax.getDefaultSchema()));
 
     params.put(SyntaxPlaceholders.END_OF_BLOCK_CONSTRAINTS,
         String.join(", ", endOfBlockConstraints));

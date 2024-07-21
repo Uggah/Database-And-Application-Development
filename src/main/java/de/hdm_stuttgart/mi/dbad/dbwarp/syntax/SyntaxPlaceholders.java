@@ -107,4 +107,10 @@ public final class SyntaxPlaceholders {
    */
   public static final String PARENT_COLUMN_NAMES = "parent_column_names";
 
+  // INSERT STATEMENT
+
+  /**
+   * Placeholder for the column values.
+   */
+  public static final String COLUMN_VALUES = "column_values";
 }

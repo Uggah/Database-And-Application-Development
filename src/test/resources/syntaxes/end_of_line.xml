@@ -22,5 +22,11 @@
     <columnDefault>
       DEFAULT '${default_value}'
     </columnDefault>
+    <selectData>
+      SELECT ${column_names} FROM ${table_name};
+    </selectData>
+    <insertData>
+      INSERT INTO ${table_name} (${column_names}) VALUES (${column_values});
+    </insertData>
   </templates>
 </syntax>

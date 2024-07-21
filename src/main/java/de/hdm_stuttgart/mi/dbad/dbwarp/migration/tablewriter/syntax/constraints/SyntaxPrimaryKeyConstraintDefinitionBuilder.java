@@ -10,6 +10,7 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.Syntax;
 import de.hdm_stuttgart.mi.dbad.dbwarp.syntax.SyntaxPlaceholders;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.XSlf4j;
@@ -44,7 +45,9 @@ public class SyntaxPrimaryKeyConstraintDefinitionBuilder implements
 
     final Map<String, String> params = new HashMap<>();
 
-    params.put(SyntaxPlaceholders.SCHEMA_NAME, primaryKeyConstraint.getTable().getSchema());
+    params.put(SyntaxPlaceholders.SCHEMA_NAME,
+        Objects.requireNonNullElse(primaryKeyConstraint.getTable().getSchema(),
+            syntax.getDefaultSchema()));
 
     params.put(SyntaxPlaceholders.CONSTRAINT_NAME, primaryKeyConstraint.getName());
 
