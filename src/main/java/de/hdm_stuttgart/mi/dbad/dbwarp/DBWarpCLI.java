@@ -22,6 +22,8 @@ package de.hdm_stuttgart.mi.dbad.dbwarp;
  * #L%
  */
 
+import static picocli.CommandLine.Parameters.NULL_VALUE;
+
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import de.hdm_stuttgart.mi.dbad.dbwarp.config.Configuration;
@@ -85,9 +87,14 @@ public class DBWarpCLI implements Callable<Integer> {
   /**
    * schema defines the schema to migrate. It will be automatically injected by PicoCLI.
    */
+  @SuppressWarnings("unused")
   @Option(names = {"--schema",
       "-S"}, description = "Schema to migrate, migrates all schemas by default", defaultValue = "")
   private String schema;
+
+  @SuppressWarnings("unused")
+  @Option(names = "--syntax", description = "Syntax to use for migration", defaultValue = NULL_VALUE)
+  private String syntax;
 
   /**
    * verbose signals whether debug logging should be enabled. It will be automatically injected by
@@ -195,6 +202,7 @@ public class DBWarpCLI implements Callable<Integer> {
     final Map<String, Object> configuration = new HashMap<>();
 
     configuration.put("schema", this.schema);
+    configuration.put("syntax", this.syntax);
 
     Configuration.getInstance().configure(configuration);
   }

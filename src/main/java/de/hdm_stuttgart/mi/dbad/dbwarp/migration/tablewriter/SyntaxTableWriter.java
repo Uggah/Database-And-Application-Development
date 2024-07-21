@@ -55,8 +55,8 @@ public class SyntaxTableWriter implements TableWriter {
     log.entry(connectionManager);
     this.connection = connectionManager.getTargetDatabaseConnection();
 
-    this.syntax = SyntaxLoader.getInstance()
-        .loadSyntax(this.connection.getMetaData().getDatabaseProductName());
+    this.syntax = new SyntaxLoader().loadSyntax(
+        this.connection.getMetaData().getDatabaseProductName());
 
     this.constraintDefinitionBuilder = new DelegatingSyntaxConstraintDefinitionBuilder(syntax);
 

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<syntax>
+  <templates>
+    <createSchema>
+      EXAMPLE_CREATE_SCHEMA
+    </createSchema>
+    <createTable>
+      EXAMPLE_CREATE_TABLE
+    </createTable>
+    <columnDefinition>
+      EXAMPLE_COLUMN_DEFINITION
+    </columnDefinition>
+    <notNullConstraint strategy="END_OF_LINE">
+      EXAMPLE_NOT_NULL_CONSTRAINT
+    </notNullConstraint>
+    <primaryKeyConstraint strategy="END_OF_LINE">
+      EXAMPLE_PRIMARY_KEY_CONSTRAINT
+    </primaryKeyConstraint>
+    <foreignKeyConstraint strategy="END_OF_LINE">
+      EXAMPLE_FOREIGN_KEY_CONSTRAINT
+    </foreignKeyConstraint>
+    <uniqueConstraint strategy="END_OF_LINE">
+      EXAMPLE_UNIQUE_CONSTRAINT
+    </uniqueConstraint>
+    <columnDefault>
+      EXAMPLE_COLUMN_DEFAULT
+    </columnDefault>
+  </templates>
+</syntax>

@@ -27,7 +27,7 @@ public class SyntaxProvider implements ParameterResolver {
   @Override
   public Object resolveParameter(ParameterContext parameterContext,
       ExtensionContext extensionContext) throws ParameterResolutionException {
-    final SyntaxLoader syntaxLoader = SyntaxLoader.getInstance();
+    final SyntaxLoader syntaxLoader = new SyntaxLoader();
 
     final Method testMethod = extensionContext.getTestMethod().orElseThrow();
     final LoadSyntax loadSyntax = testMethod.getAnnotation(LoadSyntax.class);

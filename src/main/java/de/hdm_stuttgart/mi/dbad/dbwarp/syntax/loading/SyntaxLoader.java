@@ -1,5 +1,6 @@
 package de.hdm_stuttgart.mi.dbad.dbwarp.syntax.loading;
 
+import de.hdm_stuttgart.mi.dbad.dbwarp.config.Configuration;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.exception.SyntaxLoadException;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.ObjectFactory;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.Syntax;
@@ -7,6 +8,8 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.xml.XMLConstants;
@@ -18,34 +21,33 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * Loads the syntax for the given database type.
+ * Provides functionality to load database syntax configurations from XML files.
+ * This class encapsulates the process of loading and validating syntax definitions for different database types,
+ * ensuring that the syntax is securely parsed to prevent XML External Entity (XXE) attacks.
  */
 public class SyntaxLoader {
 
-  private static final SyntaxLoader INSTANCE = new SyntaxLoader();
-
-  public static SyntaxLoader getInstance() {
-    return INSTANCE;
-  }
-
   /**
-   * Load the syntax for the given database type.
+   * Loads and returns the syntax for a specified database type.
+   * This method first validates the syntax file against the XML schema
+   * and then parses it to construct a Syntax object.
    *
-   * @param databaseType The database type
-   * @return The syntax
+   * @param databaseType The type of the database for which the syntax is to be loaded.
+   * @return The loaded Syntax object representing the database syntax.
+   * @throws SyntaxLoadException If there is an error in loading or validating the syntax file.
    */
   public Syntax loadSyntax(String databaseType) {
     final String resourcePath = String.format("/syntaxes/%s.xml", databaseType.toLowerCase());
 
     parseSecure(resourcePath);
 
-    try (final InputStream inputStream = getClass().getResourceAsStream(resourcePath)) {
+    try (final InputStream inputStream = getSyntaxInputStream(databaseType)) {
       new SyntaxValidatorFactory().createValidator().validate(new StreamSource(inputStream));
     } catch (IOException | SAXException e) {
       throw new SyntaxLoadException("Could not validate syntax!", e);
     }
 
-    try (final InputStream inputStream = getClass().getResourceAsStream(resourcePath)) {
+    try (final InputStream inputStream = getSyntaxInputStream(databaseType)) {
 
       final JAXBContext context = JAXBContext.newInstance(ObjectFactory.class);
       final Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -76,6 +78,34 @@ public class SyntaxLoader {
 
       new SAXSource(spf.newSAXParser().getXMLReader(), new InputSource(inputStream));
     } catch (IOException | SAXException | ParserConfigurationException e) {
+      throw new SyntaxLoadException("Could not load syntax", e);
+    }
+  }
+
+  /**
+   * Retrieves an input stream for the syntax file of a given database type. This method first
+   * attempts to find the syntax file path from the application's configuration. If the path is not
+   * specified in the configuration, it defaults to loading the syntax file from the classpath. This
+   * allows for flexible syntax file sourcing, either from external files or embedded resources.
+   *
+   * @param databaseType The type of the database for which the syntax file input stream is to be
+   *                     retrieved.
+   * @return An InputStream of the syntax file for the specified database type.
+   * @throws SyntaxLoadException If the syntax file cannot be loaded due to an IOException.
+   */
+  private InputStream getSyntaxInputStream(final String databaseType) {
+    final Configuration configuration = Configuration.getInstance();
+    final String syntaxFilePath = configuration.getString("syntax");
+
+    if (syntaxFilePath == null) {
+      return getClass().getResourceAsStream(String.format("/syntaxes/%s.xml", databaseType));
+    }
+
+    final File syntaxFile = new File(syntaxFilePath);
+
+    try {
+      return new FileInputStream(syntaxFile);
+    } catch (IOException e) {
       throw new SyntaxLoadException("Could not load syntax", e);
     }
   }
