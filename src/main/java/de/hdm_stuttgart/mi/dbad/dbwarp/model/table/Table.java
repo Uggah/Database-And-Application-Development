@@ -23,18 +23,15 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.model.table;
  */
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.XSlf4j;
-import org.hibernate.validator.cfg.ConstraintDef;
 
 /**
  * This is the internal representation of a database table. It is used as an intermediate format for
