@@ -27,6 +27,7 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.migration.helper.types.TypeConversionHelp
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.AutoIncrement;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
+import java.sql.JDBCType;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -96,7 +97,8 @@ public class SQLiteColumnReader extends AbstractColumnReader {
     final ResultSet primaryKeyResultSet = this.isPrimaryKeyPreparedStatement.executeQuery();
     primaryKeyResultSet.next();
     boolean isPrimaryKey = primaryKeyResultSet.getBoolean("primary_key");
-    if (isPrimaryKey) {
+    if (column.getType() == JDBCType.INTEGER && isPrimaryKey) {
+      column.setAutoIncrement(AutoIncrement.IDENTITY);
       this.isAutoIncrementPreparedStatement.setString(1, table.getName());
       final ResultSet autoIncrementResultSet = this.isAutoIncrementPreparedStatement.executeQuery();
       if (autoIncrementResultSet.next()) {
