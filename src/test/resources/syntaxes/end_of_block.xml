@@ -29,7 +29,7 @@
     <columnDefinition>
       ${column_name} ${column_type} ${end_of_line_constraints}
     </columnDefinition>
-    <notNullConstraint strategy="END_OF_LINE">
+    <notNullConstraint strategy="END_OF_BLOCK">
       NOT NULL
     </notNullConstraint>
     <primaryKeyConstraint strategy="END_OF_BLOCK">
@@ -50,5 +50,11 @@
     <insertData>
       INSERT INTO ${table_name} (${column_names}) VALUES (${column_values});
     </insertData>
+    <generateSerial strategy="END_OF_BLOCK">
+      EXAMPLE_SERIAL_GENERATION
+    </generateSerial>
+    <generateIdentity strategy="END_OF_BLOCK">
+      EXAMPLE_IDENTITY_GENERATION
+    </generateIdentity>
   </templates>
 </syntax>

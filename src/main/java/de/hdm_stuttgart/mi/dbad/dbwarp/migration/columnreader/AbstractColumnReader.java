@@ -24,6 +24,7 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.columnreader;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.GenerationStrategy;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.Connection;
 import java.sql.JDBCType;
@@ -94,26 +95,37 @@ public abstract class AbstractColumnReader implements ColumnReader {
     final String name = resultSet.getString("COLUMN_NAME");
     final int type = resultSet.getInt("DATA_TYPE");
 
-    final int nullability = resultSet.getInt("IS_NULLABLE");
+    final String isNullable = resultSet.getString("IS_NULLABLE");
     final int size = resultSet.getInt("COLUMN_SIZE");
+
+    final String isAutoincrement = resultSet.getString("IS_AUTOINCREMENT");
 
     final Boolean nullable;
 
-    switch (nullability) {
-      case 0 -> nullable = false;
-      case 1 -> nullable = true;
-      case 2 -> nullable = null;
+    switch (isNullable) {
+      case "NO" -> nullable = false;
+      case "YES" -> nullable = true;
+      case "" -> nullable = null;
       default -> throw new IllegalArgumentException(
-          String.format("Unknown nullability: %s", nullability));
+          String.format("Unknown nullability: %s", isNullable));
     }
 
-    return log.exit(new Column(
+    final Column column = new Column(
         table,
         name,
         JDBCType.valueOf(type),
         nullable,
         size
-    ));
+    );
+
+    if (isAutoincrement.equals("YES")) {
+      // If auto increment is returned as yes, the column has either GenerationStrategy SERIAL or IDENTITY.
+      // Support for GenerationStrategy IDENTITY is vendor specific and must therefore be handled
+      // in the specific implementation.
+      column.setGenerationStrategy(GenerationStrategy.SERIAL);
+    }
+
+    return log.exit(column);
   }
 
   @Override

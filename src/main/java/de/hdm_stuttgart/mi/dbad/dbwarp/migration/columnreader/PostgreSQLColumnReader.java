@@ -24,6 +24,7 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.columnreader;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.GenerationStrategy;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.JDBCType;
 import java.sql.PreparedStatement;
@@ -62,34 +63,17 @@ public class PostgreSQLColumnReader extends AbstractColumnReader {
   @Override
   protected Column readColumn(final Table table, final ResultSet resultSet) throws SQLException {
     log.entry(table, resultSet);
+    final Column column = super.readColumn(table, resultSet);
 
-    final String name = resultSet.getString("COLUMN_NAME");
-    final int type = resultSet.getInt("DATA_TYPE");
-
-    final String nullability = resultSet.getString("IS_NULLABLE");
-    final int size = resultSet.getInt("COLUMN_SIZE");
-
-    final Boolean nullable;
-
-    switch (nullability) {
-      case "NO" -> nullable = false;
-      case "YES" -> nullable = true;
-      case null -> nullable = null;
-      default -> throw new IllegalArgumentException(
-          String.format("Unknown nullability: %s", nullability));
+    if (column.getGenerationStrategy() == GenerationStrategy.SERIAL) {
+      // PostgreSQL will always use a sequence for auto incrementing
+      // Postgres' sequences will never emit the same value twice.
+      // So, the IDENTITY strategy is the only strategy possible in PostgreSQL.
+      column.setGenerationStrategy(GenerationStrategy.IDENTITY);
     }
 
     columnDefaultPreparedStatement.setString(1, table.getName());
-    columnDefaultPreparedStatement.setString(2, name);
-
-    final Column column = new Column(
-        table,
-        name,
-        JDBCType.valueOf(type),
-        nullable,
-        size
-    );
-
+    columnDefaultPreparedStatement.setString(2, column.getName());
     final ResultSet columnDefaultResultSet = columnDefaultPreparedStatement.executeQuery();
 
     if (columnDefaultResultSet.next()) {
@@ -98,8 +82,6 @@ public class PostgreSQLColumnReader extends AbstractColumnReader {
       if (isPostgresFunction(defaultValueUncasted)) {
         return log.exit(column);
       }
-
-      log.error(defaultValueUncasted);
 
       try (final Statement castStatement = this.connection.createStatement()) {
         final ResultSet castResultSet = castStatement.executeQuery(

@@ -27,8 +27,15 @@ import static de.hdm_stuttgart.mi.dbad.dbwarp.syntax.SyntaxPlaceholders.PLACEHOL
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ColumnDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ConstraintDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.GenerationStrategyDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.NotNullDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.TableDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.GenerationStrategy;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.ConstraintDefinitionStrategy;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.Syntax;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
@@ -54,7 +61,11 @@ public class SyntaxTableDefinitionBuilder implements TableDefinitionBuilder {
 
   private final Syntax syntax;
   private final ColumnDefinitionBuilder columnDefinitionBuilder;
-  private final ConstraintDefinitionBuilder<Constraint> constraintDefinitionBuilder;
+  private final ConstraintDefinitionBuilder<PrimaryKeyConstraint> primaryKeyConstraintConstraintDefinitionBuilder;
+  private final ConstraintDefinitionBuilder<ForeignKeyConstraint> foreignKeyConstraintConstraintDefinitionBuilder;
+  private final ConstraintDefinitionBuilder<UniqueConstraint> uniqueConstraintConstraintDefinitionBuilder;
+  private final NotNullDefinitionBuilder notNullDefinitionBuilder;
+  private final GenerationStrategyDefinitionBuilder generationStrategyDefinitionBuilder;
 
   /**
    * Generates a SQL table definition statement for a given table. This method takes into account
@@ -80,26 +91,59 @@ public class SyntaxTableDefinitionBuilder implements TableDefinitionBuilder {
 
     final List<String> endOfBlockConstraints = new ArrayList<>();
 
+    // PRIMARY KEY
+
     if (SyntaxHelper.getPrimaryKeyStrategy(syntax) == ConstraintDefinitionStrategy.END_OF_BLOCK
         && table.getPrimaryKeyConstraint() != null) {
       endOfBlockConstraints.add(
-          constraintDefinitionBuilder.createConstraintDefinitionStatement(
+          primaryKeyConstraintConstraintDefinitionBuilder.createConstraintDefinitionStatement(
               table.getPrimaryKeyConstraint())
       );
     }
 
+    // FOREIGN KEYS
+
     if (SyntaxHelper.getForeignKeyStrategy(syntax) == ConstraintDefinitionStrategy.END_OF_BLOCK) {
       final List<String> constraintDefinitions = table.getForeignKeyConstraints().stream()
-          .map(constraintDefinitionBuilder::createConstraintDefinitionStatement).toList();
+          .map(foreignKeyConstraintConstraintDefinitionBuilder::createConstraintDefinitionStatement)
+          .toList();
 
       endOfBlockConstraints.addAll(constraintDefinitions);
     }
 
+    // UNIQUE
+
     if (SyntaxHelper.getUniqueStrategy(syntax) == ConstraintDefinitionStrategy.END_OF_BLOCK) {
       final List<String> constraintDefinitions = table.getUniqueConstraints().stream()
-          .map(constraintDefinitionBuilder::createConstraintDefinitionStatement).toList();
+          .map(uniqueConstraintConstraintDefinitionBuilder::createConstraintDefinitionStatement)
+          .toList();
 
       endOfBlockConstraints.addAll(constraintDefinitions);
+    }
+
+    // NOT NULL
+
+    if (SyntaxHelper.getNotNullStrategy(syntax) == ConstraintDefinitionStrategy.END_OF_BLOCK) {
+      final List<String> constraintDefinitions = table.getColumns().stream()
+          .filter(column -> Boolean.FALSE.equals(column.getNullable()))
+          .map(notNullDefinitionBuilder::createNotNullDefinitionStatement).toList();
+
+      endOfBlockConstraints.addAll(constraintDefinitions);
+    }
+
+    // GENERATION STRATEGY
+
+    for (final Column column : table.getColumns()) {
+      final GenerationStrategy generationStrategy = column.getGenerationStrategy();
+
+      if (generationStrategy != GenerationStrategy.NONE &&
+          SyntaxHelper.getGenerationStrategy(syntax, generationStrategy)
+              == ConstraintDefinitionStrategy.END_OF_BLOCK) {
+        final String generationConstraint = generationStrategyDefinitionBuilder
+            .createGenerationStrategyDefinitionStatement(column);
+
+        endOfBlockConstraints.add(generationConstraint);
+      }
     }
 
     params.put(SyntaxPlaceholders.SCHEMA_NAME,

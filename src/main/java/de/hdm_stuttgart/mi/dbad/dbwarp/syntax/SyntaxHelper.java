@@ -22,6 +22,8 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.syntax;
  * #L%
  */
 
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.GenerationStrategy;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.ConstraintDefinition;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.ConstraintDefinitionStrategy;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.Syntax;
 
@@ -44,6 +46,26 @@ public class SyntaxHelper {
 
   public static ConstraintDefinitionStrategy getUniqueStrategy(final Syntax syntax) {
     return syntax.getTemplates().getUniqueConstraint().getStrategy();
+  }
+
+  public static ConstraintDefinition getGenerationTemplate(final Syntax syntax,
+      final GenerationStrategy generationStrategy) {
+    return switch (generationStrategy) {
+      case IDENTITY -> syntax.getTemplates().getGenerateIdentity();
+      case SERIAL -> syntax.getTemplates().getGenerateSerial();
+      default ->
+          throw new IllegalArgumentException("Unknown generation strategy: " + generationStrategy);
+    };
+  }
+
+  public static ConstraintDefinitionStrategy getGenerationStrategy(final Syntax syntax,
+      final GenerationStrategy generationStrategy) {
+    return switch (generationStrategy) {
+      case IDENTITY -> syntax.getTemplates().getGenerateIdentity().getStrategy();
+      case SERIAL -> syntax.getTemplates().getGenerateSerial().getStrategy();
+      default ->
+          throw new IllegalArgumentException("Unknown generation strategy: " + generationStrategy);
+    };
   }
 
 }

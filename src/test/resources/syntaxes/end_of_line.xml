@@ -27,7 +27,8 @@
       CREATE TABLE ${table_name} (${column_definitions} ${end_of_block_constraints});
     </createTable>
     <columnDefinition>
-      ${column_name} ${column_type} ${column_default} ${end_of_line_constraints}
+      ${column_name} ${column_type} ${column_default} ${column_generation}
+      ${end_of_line_constraints}
     </columnDefinition>
     <notNullConstraint strategy="END_OF_LINE">
       EXAMPLE_NOT_NULL_CONSTRAINT
@@ -50,5 +51,11 @@
     <insertData>
       INSERT INTO ${table_name} (${column_names}) VALUES (${column_values});
     </insertData>
+    <generateSerial strategy="END_OF_LINE">
+      EXAMPLE_SERIAL_GENERATION
+    </generateSerial>
+    <generateIdentity strategy="END_OF_LINE">
+      EXAMPLE_IDENTITY_GENERATION
+    </generateIdentity>
   </templates>
 </syntax>

@@ -9,6 +9,116 @@ Stuttgart Media University, course Computer Science and Media (B.Sc.).
 
 See [USAGE.md](./USAGE.md)
 
+## Features
+
+Our goal with this application was to be able to migrate as many constraints as possible.
+However, migrating all constraints is not possible due to the differences in the SQL dialects.
+Therefore, DBWarp only offers a selection of constraints that can be migrated.
+
+The following table shows the features that are supported by DBMS (Database Management System).
+
+| Feature                                                        | PostgreSQL | SQLite | MariaDB | MySQL |
+|----------------------------------------------------------------|------------|--------|---------|-------|
+| Database Creation (no constraints, column generation, ...)     | ✅          | ✅      | ❌       | ❌     |
+| Primary Key Constraints                                        | ✅          | ✅      | ❌       | ❌     |
+| Foreign Key Constraints                                        | ✅          | ✅      | ❌       | ❌     |
+| Unique Constraints                                             | ✅          | ✅      | ❌       | ❌     |
+| Not Null Constraints                                           | ✅          | ✅      | ❌       | ❌     |
+| Check Constraints                                              | ❌          | ❌      | ❌       | ❌     |
+| Column Generation                                              | ✳️         | ✳️     | ❌       | ❌     |
+| - Auto Increment                                               | ✅          | ✅(*)   | ❌       | ❌     |
+| - Default Values                                               | ✅          | ✅      | ❌       | ❌     |
+| - Generation from functions (e.g. `DEFAULT gen_random_uuid()`) | ❌          | ❌      | ❌       | ❌     |
+
+A cross (❌) means, that the feature is completely unsupported.
+
+A checkmark (✅) means, that the feature is fully supported.
+
+A star (✳️) means, that the feature is partially supported.
+
+### Notable exclusions
+
+#### Indexes
+
+(Non-Unique) Indexes are not migrated as we do not consider them migratable.
+The implementation of them vastly differ between DBMS.
+So, an index created in PostgreSQL might not have the same positive effect,
+or in many cases even a negative effect, in SQLite and vice versa.
+
+As always, do only create the indexes that are obviously needed and add
+more indexes whenever you see a performance issue.
+
+#### Triggers (and other procedural code)
+
+Triggers and other procedural code are not migrated as they are not
+part of the schema but rather part of the database logic. We recommend
+to manually migrate the procedural code.
+
+#### Check Constraints
+
+Migrating check constraints has not been implemented yet (and probably will never be implemented).
+The reason for this is that a) check constraints' expressions are highly dependent on the underlying
+DBMS
+and b) there is no unified way to retrieve check constraints from the database.
+
+For example, in SQLite the only possibility would be to manually parse the `CREATE TABLE` statement
+from the `sqlite_master` table and extract the check constraints from there.
+
+#### Column Generation
+
+Column generation is partially supported.
+While default values and automatic incrementation are migrated, generation from functions is not.
+
+**Special case for SQLite:**
+
+Writing auto incrementing columns to SQLite is not enabled by default. This is due to the way auto
+incrementing works with SQLite. In SQLite all columns declared as `INTEGER PRIMARY KEY` are
+automatically
+incrementing. However, when adding the `AUTOINCREMENT` keyword, the column's value is guaranteed to
+be
+unique even if a column has previously been deleted.
+
+As SQLite only supports auto incrementing primary keys, and we cannot assume that the user wants all
+auto incrementing column to be a primary key (this would not even be possible),
+we decided to not migrate explicit auto incrementing to SQLite.
+
+Keep in mind that implicit auto incrementing as implemented by SQLite will still be in effect.
+So, if all your auto incrementing columns are primary keys, you probably do not have to worry about
+this.
+If you however desire to include the `AUTOINCREMENT` keyword in your migrated SQLite schema,
+you can define your own syntax definition including the following:
+
+```xml
+<syntax>
+  <!-- ... -->
+  <columnDefinition>
+    ${column_name} ${column_type} ${column_generation} ${column_default} ${end_of_line_constraints}
+  </columnDefinition>
+  <generateIdentity strategy="END_OF_LINE">
+    <!-- 
+        This will be applied at the end of each column definition where
+        the column is auto incrementing and the source database
+        was configured so that the auto generated value will be unique
+        even among deleted rows.  
+    -->
+    AUTOINCREMENT
+  </generateIdentity>
+  <!-- ... -->
+</syntax>
+```
+
+## Loading own JDBC drivers
+
+To load your own JDBC drivers, use the `-D` or `--driver` option.
+The option takes a comma-separated list of paths to JAR files containing the JDBC drivers.
+The drivers will be loaded dynamically at runtime.
+
+Please note that the drivers may not collide with a driver already shaded into the JAR file.
+If a driver is already shaded into the JAR file,
+it will not be loaded again, but the shaded version will be used nonetheless.
+To use a different version of the driver, you have to build the JAR file with the driver removed
+from the maven dependencies specified in the `pom.xml`.
+
 # Building
 
 ## Prerequisites

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.AutoIncrement;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.GenerationStrategy;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
@@ -112,17 +112,36 @@ class SQLiteColumnReaderIntegrationTest {
 
   @Test
   @InitializeDatabase("sqlite/SQLiteColumnReaderIntegrationTest.sql")
-  void testReadColumns_AutoIncrement(final ConnectionManager connectionManager) throws Exception {
+  void testReadColumns_ImplicitAutoIncrement(final ConnectionManager connectionManager)
+      throws Exception {
     final ColumnReader sqLiteColumnReader = new SQLiteColumnReader(connectionManager);
 
-    final Table table = new Table(null, "AutoIncrementTest", TableType.TABLE);
+    final Table table = new Table(null, "ImplicitAutoIncrementTest", TableType.TABLE);
 
     final List<Column> columns = sqLiteColumnReader.readColumns(table);
     assertEquals(1, columns.size());
 
     columns.forEach(column -> assertSame(table, column.getTable()));
 
-    assertEquals(AutoIncrement.SERIAL, columns.get(0).getAutoIncrement());
+    assertEquals(GenerationStrategy.SERIAL, columns.getFirst().getGenerationStrategy());
+
+    sqLiteColumnReader.close();
+  }
+
+  @Test
+  @InitializeDatabase("sqlite/SQLiteColumnReaderIntegrationTest.sql")
+  void testReadColumns_ExplicitAutoIncrement(final ConnectionManager connectionManager)
+      throws Exception {
+    final ColumnReader sqLiteColumnReader = new SQLiteColumnReader(connectionManager);
+
+    final Table table = new Table(null, "ExplicitAutoIncrementTest", TableType.TABLE);
+
+    final List<Column> columns = sqLiteColumnReader.readColumns(table);
+    assertEquals(1, columns.size());
+
+    columns.forEach(column -> assertSame(table, column.getTable()));
+
+    assertEquals(GenerationStrategy.IDENTITY, columns.getFirst().getGenerationStrategy());
 
     sqLiteColumnReader.close();
   }

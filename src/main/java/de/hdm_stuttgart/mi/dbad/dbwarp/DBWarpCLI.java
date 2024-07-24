@@ -90,7 +90,7 @@ public class DBWarpCLI implements Callable<Integer> {
    */
   @SuppressWarnings("unused")
   @Option(names = {"--schema",
-      "-S"}, description = "Schema to migrate, migrates all schemas by default", defaultValue = NULL_VALUE)
+      "-S"}, description = "Schema to migrate, migrates all schemas by default. Setting this option is mandatory if migrating towards an SQLite database as it only supports a single schema.", defaultValue = NULL_VALUE)
   private String schema;
 
   @SuppressWarnings("unused")

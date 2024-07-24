@@ -50,5 +50,11 @@
     <insertData>
       INSERT INTO ${table_name} (${column_names}) VALUES (${column_values});
     </insertData>
+    <generateSerial>
+      <!-- empty as SQLite only supports auto generated primary keys -->
+    </generateSerial>
+    <generateIdentity>
+      <!-- empty as SQLite only supports auto generated primary keys -->
+    </generateIdentity>
   </templates>
 </syntax>

@@ -29,87 +29,140 @@ import static org.mockito.Mockito.when;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ColumnDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ConstraintDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.GenerationStrategyDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.NotNullDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.GenerationStrategy;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.Syntax;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
+import de.hdm_stuttgart.mi.dbad.dbwarp.providers.config.ConfigProvider;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.xml.LoadSyntax;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.xml.SyntaxProvider;
 import java.sql.JDBCType;
 import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(ConfigProvider.class)
 @ExtendWith(SyntaxProvider.class)
 class SyntaxColumnDefinitionBuilderTest {
 
-  private ConstraintDefinitionBuilder<Constraint> constraintDefinitionBuilder;
+  private ConstraintDefinitionBuilder<PrimaryKeyConstraint> primaryKeyConstraintConstraintDefinitionBuilder;
+  private ConstraintDefinitionBuilder<ForeignKeyConstraint> foreignKeyConstraintConstraintDefinitionBuilder;
+  private ConstraintDefinitionBuilder<UniqueConstraint> uniqueConstraintConstraintDefinitionBuilder;
+  private NotNullDefinitionBuilder notNullDefinitionBuilder;
+  private GenerationStrategyDefinitionBuilder generationStrategyDefinitionBuilder;
 
   @BeforeEach
+  @SuppressWarnings("unchecked")
   void beforeEach() {
-    this.constraintDefinitionBuilder = mock(ConstraintDefinitionBuilder.class);
+    this.primaryKeyConstraintConstraintDefinitionBuilder = mock(ConstraintDefinitionBuilder.class);
+    this.foreignKeyConstraintConstraintDefinitionBuilder = mock(ConstraintDefinitionBuilder.class);
+    this.uniqueConstraintConstraintDefinitionBuilder = mock(ConstraintDefinitionBuilder.class);
+    this.notNullDefinitionBuilder = mock(NotNullDefinitionBuilder.class);
+    this.generationStrategyDefinitionBuilder = mock(GenerationStrategyDefinitionBuilder.class);
   }
 
   @Test
   @LoadSyntax("end_of_line")
   void testCreateColumnDefinitionStatement(final Syntax syntax) {
     final ColumnDefinitionBuilder columnDefinitionBuilder = new SyntaxColumnDefinitionBuilder(
-        syntax, this.constraintDefinitionBuilder);
+        syntax,
+        this.primaryKeyConstraintConstraintDefinitionBuilder,
+        this.foreignKeyConstraintConstraintDefinitionBuilder,
+        this.uniqueConstraintConstraintDefinitionBuilder,
+        this.notNullDefinitionBuilder,
+        this.generationStrategyDefinitionBuilder
+    );
 
     final Table table = new Table("some_schema", "some_table", TableType.TABLE);
     final Column column = new Column(table, "some_column", JDBCType.VARCHAR, true, 255);
 
-    final String renderedDefinition = columnDefinitionBuilder.createColumnDefinitionStatement(
-        column);
+    final List<String> renderedDefinition = getDefinitionParts(
+        columnDefinitionBuilder.createColumnDefinitionStatement(
+            column));
 
-    assertEquals("some_column VARCHAR  ", renderedDefinition);
+    assertEquals(2, renderedDefinition.size());
+    assertEquals("some_column", renderedDefinition.getFirst());
+    assertEquals("VARCHAR", renderedDefinition.get(1));
   }
 
   @Test
   @LoadSyntax("end_of_line")
   void testCreateColumnDefinitionStatement_NotNull(final Syntax syntax) {
     final ColumnDefinitionBuilder columnDefinitionBuilder = new SyntaxColumnDefinitionBuilder(
-        syntax, this.constraintDefinitionBuilder);
+        syntax,
+        this.primaryKeyConstraintConstraintDefinitionBuilder,
+        this.foreignKeyConstraintConstraintDefinitionBuilder,
+        this.uniqueConstraintConstraintDefinitionBuilder,
+        this.notNullDefinitionBuilder,
+        this.generationStrategyDefinitionBuilder
+    );
 
     final Table table = new Table("some_schema", "some_table", TableType.TABLE);
     final Column column = new Column(table, "some_column", JDBCType.VARCHAR, false, 255);
 
-    final String renderedDefinition = columnDefinitionBuilder.createColumnDefinitionStatement(
-        column);
+    when(this.notNullDefinitionBuilder.createNotNullDefinitionStatement(
+        any(Column.class))).thenReturn(
+        "EXAMPLE_NOT_NULL_CONSTRAINT");
 
-    assertEquals("some_column VARCHAR  EXAMPLE_NOT_NULL_CONSTRAINT", renderedDefinition);
+    final List<String> renderedDefinition = getDefinitionParts(
+        columnDefinitionBuilder.createColumnDefinitionStatement(
+            column));
+
+    assertEquals(3, renderedDefinition.size());
+    assertEquals("some_column", renderedDefinition.getFirst());
+    assertEquals("VARCHAR", renderedDefinition.get(1));
+    assertEquals("EXAMPLE_NOT_NULL_CONSTRAINT", renderedDefinition.get(2));
   }
 
   @Test
   @LoadSyntax("end_of_line")
   void testCreateColumnDefinitionStatement_PrimaryKey(final Syntax syntax) {
     final ColumnDefinitionBuilder columnDefinitionBuilder = new SyntaxColumnDefinitionBuilder(
-        syntax, this.constraintDefinitionBuilder);
+        syntax,
+        this.primaryKeyConstraintConstraintDefinitionBuilder,
+        this.foreignKeyConstraintConstraintDefinitionBuilder,
+        this.uniqueConstraintConstraintDefinitionBuilder,
+        this.notNullDefinitionBuilder,
+        this.generationStrategyDefinitionBuilder
+    );
 
     final Table table = new Table("some_schema", "some_table", TableType.TABLE);
     final Column column = new Column(table, "some_column", JDBCType.VARCHAR, true, 255);
 
     table.setPrimaryKeyConstraint(new PrimaryKeyConstraint("PK_first", table, List.of(column)));
 
-    when(this.constraintDefinitionBuilder.createConstraintDefinitionStatement(
+    when(this.primaryKeyConstraintConstraintDefinitionBuilder.createConstraintDefinitionStatement(
         any(PrimaryKeyConstraint.class))).thenReturn("EXAMPLE_PRIMARY_KEY_CONSTRAINT");
 
-    final String renderedDefinition = columnDefinitionBuilder.createColumnDefinitionStatement(
-        column);
+    final List<String> renderedDefinition = getDefinitionParts(
+        columnDefinitionBuilder.createColumnDefinitionStatement(
+            column));
 
-    assertEquals("some_column VARCHAR  EXAMPLE_PRIMARY_KEY_CONSTRAINT", renderedDefinition);
+    assertEquals(3, renderedDefinition.size());
+    assertEquals("some_column", renderedDefinition.getFirst());
+    assertEquals("VARCHAR", renderedDefinition.get(1));
+    assertEquals("EXAMPLE_PRIMARY_KEY_CONSTRAINT", renderedDefinition.get(2));
   }
 
   @Test
   @LoadSyntax("end_of_line")
   void testCreateColumnDefinitionStatement_ForeignKey(final Syntax syntax) {
     final ColumnDefinitionBuilder columnDefinitionBuilder = new SyntaxColumnDefinitionBuilder(
-        syntax, this.constraintDefinitionBuilder);
+        syntax,
+        this.primaryKeyConstraintConstraintDefinitionBuilder,
+        this.foreignKeyConstraintConstraintDefinitionBuilder,
+        this.uniqueConstraintConstraintDefinitionBuilder,
+        this.notNullDefinitionBuilder,
+        this.generationStrategyDefinitionBuilder
+    );
 
     final Table table = new Table("some_schema", "some_table", TableType.TABLE);
     final Column column = new Column(table, "some_column", JDBCType.VARCHAR, true, 255);
@@ -120,20 +173,31 @@ class SyntaxColumnDefinitionBuilderTest {
 
     table.addForeignKeyConstraint(foreignKeyConstraint);
 
-    when(this.constraintDefinitionBuilder.createConstraintDefinitionStatement(any(
+    when(this.foreignKeyConstraintConstraintDefinitionBuilder.createConstraintDefinitionStatement(
+        any(
         ForeignKeyConstraint.class))).thenReturn("EXAMPLE_FOREIGN_KEY_CONSTRAINT");
 
-    final String renderedDefinition = columnDefinitionBuilder.createColumnDefinitionStatement(
-        column);
+    final List<String> renderedDefinition = getDefinitionParts(
+        columnDefinitionBuilder.createColumnDefinitionStatement(
+            column));
 
-    assertEquals("some_column VARCHAR  EXAMPLE_FOREIGN_KEY_CONSTRAINT", renderedDefinition);
+    assertEquals(3, renderedDefinition.size());
+    assertEquals("some_column", renderedDefinition.getFirst());
+    assertEquals("VARCHAR", renderedDefinition.get(1));
+    assertEquals("EXAMPLE_FOREIGN_KEY_CONSTRAINT", renderedDefinition.get(2));
   }
 
   @Test
   @LoadSyntax("end_of_line")
   void testCreateColumnDefinitionStatement_Unique(final Syntax syntax) {
     final ColumnDefinitionBuilder columnDefinitionBuilder = new SyntaxColumnDefinitionBuilder(
-        syntax, this.constraintDefinitionBuilder);
+        syntax,
+        this.primaryKeyConstraintConstraintDefinitionBuilder,
+        this.foreignKeyConstraintConstraintDefinitionBuilder,
+        this.uniqueConstraintConstraintDefinitionBuilder,
+        this.notNullDefinitionBuilder,
+        this.generationStrategyDefinitionBuilder
+    );
 
     final Table table = new Table("some_schema", "some_table", TableType.TABLE);
     final Column column = new Column(table, "some_column", JDBCType.VARCHAR, true, 255);
@@ -142,29 +206,108 @@ class SyntaxColumnDefinitionBuilderTest {
     uniqueConstraint.addColumn(column);
     table.addUniqueConstraint(uniqueConstraint);
 
-    when(this.constraintDefinitionBuilder.createConstraintDefinitionStatement(any(
+    when(this.uniqueConstraintConstraintDefinitionBuilder.createConstraintDefinitionStatement(any(
         UniqueConstraint.class))).thenReturn("EXAMPLE_UNIQUE_CONSTRAINT");
 
-    final String renderedDefinition = columnDefinitionBuilder.createColumnDefinitionStatement(
-        column);
+    final List<String> renderedDefinition = getDefinitionParts(
+        columnDefinitionBuilder.createColumnDefinitionStatement(
+            column));
 
-    assertEquals("some_column VARCHAR  EXAMPLE_UNIQUE_CONSTRAINT", renderedDefinition);
+    assertEquals(3, renderedDefinition.size());
+    assertEquals("some_column", renderedDefinition.getFirst());
+    assertEquals("VARCHAR", renderedDefinition.get(1));
+    assertEquals("EXAMPLE_UNIQUE_CONSTRAINT", renderedDefinition.get(2));
   }
 
   @Test
   @LoadSyntax("end_of_line")
   void testCreateColumnDefinitionStatement_DefaultValue(final Syntax syntax) {
     final ColumnDefinitionBuilder columnDefinitionBuilder = new SyntaxColumnDefinitionBuilder(
-        syntax, this.constraintDefinitionBuilder);
+        syntax,
+        this.primaryKeyConstraintConstraintDefinitionBuilder,
+        this.foreignKeyConstraintConstraintDefinitionBuilder,
+        this.uniqueConstraintConstraintDefinitionBuilder,
+        this.notNullDefinitionBuilder,
+        this.generationStrategyDefinitionBuilder
+    );
 
     final Table table = new Table("some_schema", "some_table", TableType.TABLE);
     final Column column = new Column(table, "some_column", JDBCType.VARCHAR, true, 255);
-    column.setDefaultValue("some default value");
+    column.setDefaultValue("some_default_value");
 
-    final String renderedDefinition = columnDefinitionBuilder.createColumnDefinitionStatement(
-        column);
+    final List<String> renderedDefinition = getDefinitionParts(
+        columnDefinitionBuilder.createColumnDefinitionStatement(
+            column));
 
-    assertEquals("some_column VARCHAR DEFAULT 'some default value' ", renderedDefinition);
+    assertEquals(4, renderedDefinition.size());
+    assertEquals("some_column", renderedDefinition.getFirst());
+    assertEquals("VARCHAR", renderedDefinition.get(1));
+    assertEquals("DEFAULT", renderedDefinition.get(2));
+    assertEquals("'some_default_value'", renderedDefinition.get(3));
+  }
+
+  @Test
+  @LoadSyntax("end_of_line")
+  void testCreateColumnDefinitionStatement_Generated_Serial(final Syntax syntax) {
+    final ColumnDefinitionBuilder columnDefinitionBuilder = new SyntaxColumnDefinitionBuilder(
+        syntax,
+        this.primaryKeyConstraintConstraintDefinitionBuilder,
+        this.foreignKeyConstraintConstraintDefinitionBuilder,
+        this.uniqueConstraintConstraintDefinitionBuilder,
+        this.notNullDefinitionBuilder,
+        this.generationStrategyDefinitionBuilder
+    );
+
+    final Table table = new Table("some_schema", "some_table", TableType.TABLE);
+    final Column column = new Column(table, "some_column", JDBCType.VARCHAR, true, 255);
+    column.setGenerationStrategy(GenerationStrategy.SERIAL);
+
+    when(this.generationStrategyDefinitionBuilder.createGenerationStrategyDefinitionStatement(
+        column)).thenReturn("EXAMPLE_GENERATED_STRATEGY");
+
+    final List<String> renderedDefinition = getDefinitionParts(
+        columnDefinitionBuilder.createColumnDefinitionStatement(
+            column));
+
+    assertEquals(3, renderedDefinition.size());
+    assertEquals("some_column", renderedDefinition.getFirst());
+    assertEquals("VARCHAR", renderedDefinition.get(1));
+    assertEquals("EXAMPLE_GENERATED_STRATEGY", renderedDefinition.get(2));
+  }
+
+  @Test
+  @LoadSyntax("end_of_line")
+  void testCreateColumnDefinitionStatement_Generated_Identity(final Syntax syntax) {
+    final ColumnDefinitionBuilder columnDefinitionBuilder = new SyntaxColumnDefinitionBuilder(
+        syntax,
+        this.primaryKeyConstraintConstraintDefinitionBuilder,
+        this.foreignKeyConstraintConstraintDefinitionBuilder,
+        this.uniqueConstraintConstraintDefinitionBuilder,
+        this.notNullDefinitionBuilder,
+        this.generationStrategyDefinitionBuilder
+    );
+
+    final Table table = new Table("some_schema", "some_table", TableType.TABLE);
+    final Column column = new Column(table, "some_column", JDBCType.VARCHAR, true, 255);
+    column.setGenerationStrategy(GenerationStrategy.IDENTITY);
+
+    when(this.generationStrategyDefinitionBuilder.createGenerationStrategyDefinitionStatement(
+        column)).thenReturn("EXAMPLE_GENERATED_STRATEGY");
+
+    final List<String> renderedDefinition = getDefinitionParts(
+        columnDefinitionBuilder.createColumnDefinitionStatement(
+            column));
+
+    assertEquals(3, renderedDefinition.size());
+    assertEquals("some_column", renderedDefinition.getFirst());
+    assertEquals("VARCHAR", renderedDefinition.get(1));
+    assertEquals("EXAMPLE_GENERATED_STRATEGY", renderedDefinition.get(2));
+  }
+
+  private List<String> getDefinitionParts(String renderedDefinition) {
+    return Stream.of(renderedDefinition.split(" "))
+        .filter(part -> !part.isBlank())
+        .toList();
   }
 
 

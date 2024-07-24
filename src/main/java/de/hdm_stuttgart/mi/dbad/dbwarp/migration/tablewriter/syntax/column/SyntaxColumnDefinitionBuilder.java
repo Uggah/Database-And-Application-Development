@@ -24,9 +24,13 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.column;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ColumnDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ConstraintDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.GenerationStrategyDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.NotNullDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.GenerationStrategy;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.ConstraintDefinitionStrategy;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.Syntax;
@@ -50,7 +54,11 @@ import org.apache.commons.text.StringSubstitutor;
 public class SyntaxColumnDefinitionBuilder implements ColumnDefinitionBuilder {
 
   private final Syntax syntax;
-  private final ConstraintDefinitionBuilder<Constraint> constraintDefinitionBuilder;
+  private final ConstraintDefinitionBuilder<PrimaryKeyConstraint> primaryKeyConstraintConstraintDefinitionBuilder;
+  private final ConstraintDefinitionBuilder<ForeignKeyConstraint> foreignKeyConstraintConstraintDefinitionBuilder;
+  private final ConstraintDefinitionBuilder<UniqueConstraint> uniqueConstraintConstraintDefinitionBuilder;
+  private final NotNullDefinitionBuilder notNullDefinitionBuilder;
+  private final GenerationStrategyDefinitionBuilder generationStrategyDefinitionBuilder;
 
   /**
    * Generates a SQL column definition statement for a given column. This method takes into account
@@ -70,7 +78,8 @@ public class SyntaxColumnDefinitionBuilder implements ColumnDefinitionBuilder {
     if (SyntaxHelper.getPrimaryKeyStrategy(syntax) == ConstraintDefinitionStrategy.END_OF_LINE
         && column.getPrimaryKey() != null) {
       endOfLineConstraints.add(
-          constraintDefinitionBuilder.createConstraintDefinitionStatement(column.getPrimaryKey())
+          primaryKeyConstraintConstraintDefinitionBuilder.createConstraintDefinitionStatement(
+              column.getPrimaryKey())
       );
     }
 
@@ -80,7 +89,8 @@ public class SyntaxColumnDefinitionBuilder implements ColumnDefinitionBuilder {
 
       foreignKeyConstraints.forEach(foreignKey ->
           endOfLineConstraints.add(
-              constraintDefinitionBuilder.createConstraintDefinitionStatement(foreignKey)
+              foreignKeyConstraintConstraintDefinitionBuilder.createConstraintDefinitionStatement(
+                  foreignKey)
           )
       );
     }
@@ -91,7 +101,8 @@ public class SyntaxColumnDefinitionBuilder implements ColumnDefinitionBuilder {
 
       uniqueConstraints.forEach(uniqueConstraint ->
           endOfLineConstraints.add(
-              constraintDefinitionBuilder.createConstraintDefinitionStatement(uniqueConstraint)
+              uniqueConstraintConstraintDefinitionBuilder.createConstraintDefinitionStatement(
+                  uniqueConstraint)
           )
       );
     }
@@ -99,7 +110,9 @@ public class SyntaxColumnDefinitionBuilder implements ColumnDefinitionBuilder {
     // NOT NULL CONSTRAINT
     if (SyntaxHelper.getNotNullStrategy(syntax) == ConstraintDefinitionStrategy.END_OF_LINE
         && Boolean.FALSE.equals(column.getNullable())) {
-      endOfLineConstraints.add(syntax.getTemplates().getNotNullConstraint().getValue());
+      endOfLineConstraints.add(
+          notNullDefinitionBuilder.createNotNullDefinitionStatement(column)
+      );
     }
 
     final Map<String, String> params = new HashMap<>();
@@ -117,6 +130,21 @@ public class SyntaxColumnDefinitionBuilder implements ColumnDefinitionBuilder {
       params.put(SyntaxPlaceholders.COLUMN_DEFAULT, defaultValueDefinition);
     } else {
       params.put(SyntaxPlaceholders.COLUMN_DEFAULT, "");
+    }
+
+    // GENERATION STRATEGY
+
+    final GenerationStrategy generationStrategy = column.getGenerationStrategy();
+
+    if (generationStrategy != GenerationStrategy.NONE &&
+        SyntaxHelper.getGenerationStrategy(syntax, generationStrategy)
+            == ConstraintDefinitionStrategy.END_OF_LINE) {
+      params.put(
+          SyntaxPlaceholders.COLUMN_GENERATION,
+          generationStrategyDefinitionBuilder.createGenerationStrategyDefinitionStatement(column)
+      );
+    } else {
+      params.put(SyntaxPlaceholders.COLUMN_GENERATION, "");
     }
 
     params.put(SyntaxPlaceholders.COLUMN_NAME, column.getName());

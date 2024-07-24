@@ -40,5 +40,15 @@
     <insertData>
       INSERT INTO ${schema_name}.${table_name} (${column_names}) VALUES (${column_values});
     </insertData>
+    <generateSerial>
+      <!-- PostgreSQL does not support non-identity auto increment. Also, columns generated must be not null -->
+      ALTER TABLE ${schema_name}.${table_name} ALTER COLUMN ${column_name} SET NOT NULL; ALTER TABLE
+      ${schema_name}.${table_name} ALTER COLUMN ${column_name} ADD GENERATED ALWAYS AS IDENTITY;
+    </generateSerial>
+    <generateIdentity>
+      <!-- PostgreSQL does not support non-identity auto increment. Also, columns generated must be not null -->
+      ALTER TABLE ${schema_name}.${table_name} ALTER COLUMN ${column_name} SET NOT NULL; ALTER TABLE
+      ${schema_name}.${table_name} ALTER COLUMN ${column_name} ADD GENERATED ALWAYS AS IDENTITY;
+    </generateIdentity>
   </templates>
 </syntax>

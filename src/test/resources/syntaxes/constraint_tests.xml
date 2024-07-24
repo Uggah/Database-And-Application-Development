@@ -29,8 +29,8 @@
     <columnDefinition>
       ${column_name} ${column_type} ${end_of_line_constraints}
     </columnDefinition>
-    <notNullConstraint strategy="END_OF_LINE">
-      EXAMPLE_NOT_NULL_CONSTRAINT
+    <notNullConstraint>
+      SCHEMA_NAME: ${schema_name}, TABLE_NAME: ${table_name}, COLUMN_NAME: ${column_name}
     </notNullConstraint>
     <primaryKeyConstraint>
       CONSTRAINT_NAME: ${constraint_name}, TABLE_NAME: ${table_name}, COLUMN_NAMES: ${column_names}
@@ -52,5 +52,11 @@
     <insertData>
       INSERT INTO ${table_name} (${column_names}) VALUES (${column_values});
     </insertData>
+    <generateSerial>
+      SCHEMA_NAME: ${schema_name}, TABLE_NAME: ${table_name}, COLUMN_NAME: ${column_name}
+    </generateSerial>
+    <generateIdentity>
+      SCHEMA_NAME: ${schema_name}, TABLE_NAME: ${table_name}, COLUMN_NAME: ${column_name}
+    </generateIdentity>
   </templates>
 </syntax>

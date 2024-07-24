@@ -51,12 +51,18 @@ The following tables will give you an overview of the placeholders:
 
 #### Not Null Constraints
 
-Not null constraints currently do not have any placeholders. It is best to define them
-as `END_OF_LINE` constraints.
+Not Null Constraints are special in that they do not have a constraint name and only affect one
+column:
+
+| Placeholder      | Description                                             |
+|------------------|---------------------------------------------------------|
+| `${schema_name}` | The name of the schema the affected table is defined in |
+| `${table_name}`  | The name of the table this constraint affects           |
+| `${column_name}` | Name of the affected column                             |
 
 #### Foreign Key Constraints
 
-Due to their nature, foreign key constraints have differenct placeholders:
+Due to their nature, foreign key constraints have different placeholders:
 
 | Placeholder              | Description                                                                          |
 |--------------------------|--------------------------------------------------------------------------------------|

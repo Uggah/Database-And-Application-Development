@@ -74,7 +74,7 @@ public class Column {
   /**
    * If the column is auto increment
    */
-  private AutoIncrement autoIncrement = AutoIncrement.NONE;
+  private GenerationStrategy generationStrategy = GenerationStrategy.NONE;
 
   /**
    * Retrieves the primary key constraint that this column is a part of, if any.

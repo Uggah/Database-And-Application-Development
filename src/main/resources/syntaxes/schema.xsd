@@ -36,6 +36,8 @@
       <xs:element name="columnDefault" type="xs:string"/>
       <xs:element name="selectData" type="xs:string"/>
       <xs:element name="insertData" type="xs:string"/>
+      <xs:element name="generateSerial" type="constraintDefinition"/>
+      <xs:element name="generateIdentity" type="constraintDefinition"/>
     </xs:all>
   </xs:complexType>
 

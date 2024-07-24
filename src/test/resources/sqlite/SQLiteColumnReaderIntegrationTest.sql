@@ -44,7 +44,12 @@ CREATE TABLE TextDefaultValue
     with_default_value text DEFAULT 'SomeDefaultValue'
 );
 
-CREATE TABLE AutoIncrementTest
+CREATE TABLE ImplicitAutoIncrementTest
+(
+    id INTEGER PRIMARY KEY
+);
+
+CREATE TABLE ExplicitAutoIncrementTest
 (
     id INTEGER PRIMARY KEY AUTOINCREMENT
 );

@@ -23,12 +23,21 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter;
  */
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ColumnDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ConstraintDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.GenerationStrategyDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.NotNullDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.TableDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.SyntaxGenerationStrategyDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.SyntaxNotNullDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.column.SyntaxColumnDefinitionBuilder;
-import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.constraints.DelegatingSyntaxConstraintDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.constraints.SyntaxForeignKeyConstraintDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.constraints.SyntaxPrimaryKeyConstraintDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.constraints.SyntaxUniqueConstraintDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.table.SyntaxTableDefinitionBuilder;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.ConstraintDefinitionStrategy;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.Syntax;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
@@ -47,10 +56,15 @@ import org.apache.commons.text.StringSubstitutor;
 @XSlf4j
 public class SyntaxTableWriter implements TableWriter {
 
-  protected final Connection connection;
-  protected final Syntax syntax;
-  protected final TableDefinitionBuilder definitionBuilder;
-  protected final ConstraintDefinitionBuilder<Constraint> constraintDefinitionBuilder;
+  private final Connection connection;
+
+  private final Syntax syntax;
+  private final TableDefinitionBuilder definitionBuilder;
+  private final ConstraintDefinitionBuilder<PrimaryKeyConstraint> primaryKeyConstraintDefinitionBuilder;
+  private final ConstraintDefinitionBuilder<ForeignKeyConstraint> foreignKeyConstraintDefinitionBuilder;
+  private final ConstraintDefinitionBuilder<UniqueConstraint> uniqueConstraintDefinitionBuilder;
+  private final NotNullDefinitionBuilder notNullDefinitionBuilder;
+  private final GenerationStrategyDefinitionBuilder generationStrategyDefinitionBuilder;
 
   protected SyntaxTableWriter(final ConnectionManager connectionManager) throws SQLException {
     log.entry(connectionManager);
@@ -59,12 +73,32 @@ public class SyntaxTableWriter implements TableWriter {
     this.syntax = new SyntaxLoader().loadSyntax(
         this.connection.getMetaData().getDatabaseProductName());
 
-    this.constraintDefinitionBuilder = new DelegatingSyntaxConstraintDefinitionBuilder(syntax);
+    this.primaryKeyConstraintDefinitionBuilder = new SyntaxPrimaryKeyConstraintDefinitionBuilder(
+        syntax);
+    this.foreignKeyConstraintDefinitionBuilder = new SyntaxForeignKeyConstraintDefinitionBuilder(
+        syntax);
+    this.uniqueConstraintDefinitionBuilder = new SyntaxUniqueConstraintDefinitionBuilder(syntax);
+    this.notNullDefinitionBuilder = new SyntaxNotNullDefinitionBuilder(syntax);
+    this.generationStrategyDefinitionBuilder = new SyntaxGenerationStrategyDefinitionBuilder(
+        syntax);
+
+    final ColumnDefinitionBuilder columnDefinitionBuilder = new SyntaxColumnDefinitionBuilder(
+        syntax,
+        this.primaryKeyConstraintDefinitionBuilder,
+        this.foreignKeyConstraintDefinitionBuilder,
+        this.uniqueConstraintDefinitionBuilder,
+        this.notNullDefinitionBuilder,
+        this.generationStrategyDefinitionBuilder
+    );
 
     this.definitionBuilder = new SyntaxTableDefinitionBuilder(
         syntax,
-        new SyntaxColumnDefinitionBuilder(syntax, constraintDefinitionBuilder),
-        constraintDefinitionBuilder
+        columnDefinitionBuilder,
+        this.primaryKeyConstraintDefinitionBuilder,
+        this.foreignKeyConstraintDefinitionBuilder,
+        this.uniqueConstraintDefinitionBuilder,
+        this.notNullDefinitionBuilder,
+        this.generationStrategyDefinitionBuilder
     );
 
     log.exit(this);
@@ -99,6 +133,7 @@ public class SyntaxTableWriter implements TableWriter {
   }
 
   @Override
+  @SuppressWarnings("java:S6912")
   public void writeConstraints(final Table table) throws Exception {
     log.entry(table);
 
@@ -108,7 +143,7 @@ public class SyntaxTableWriter implements TableWriter {
     if (syntax.getTemplates().getPrimaryKeyConstraint().getStrategy()
         == ConstraintDefinitionStrategy.STANDALONE && table.getPrimaryKeyConstraint() != null) {
       standaloneConstraints.add(
-          this.constraintDefinitionBuilder.createConstraintDefinitionStatement(
+          this.primaryKeyConstraintDefinitionBuilder.createConstraintDefinitionStatement(
               table.getPrimaryKeyConstraint()));
     }
 
@@ -116,7 +151,7 @@ public class SyntaxTableWriter implements TableWriter {
     if (syntax.getTemplates().getUniqueConstraint().getStrategy()
         == ConstraintDefinitionStrategy.STANDALONE) {
       table.getUniqueConstraints().stream()
-          .map(this.constraintDefinitionBuilder::createConstraintDefinitionStatement)
+          .map(this.uniqueConstraintDefinitionBuilder::createConstraintDefinitionStatement)
           .forEach(standaloneConstraints::add);
     }
 
@@ -124,12 +159,15 @@ public class SyntaxTableWriter implements TableWriter {
     if (syntax.getTemplates().getForeignKeyConstraint().getStrategy()
         == ConstraintDefinitionStrategy.STANDALONE) {
       table.getForeignKeyConstraints().stream()
-          .map(this.constraintDefinitionBuilder::createConstraintDefinitionStatement)
+          .map(this.foreignKeyConstraintDefinitionBuilder::createConstraintDefinitionStatement)
           .forEach(standaloneConstraints::add);
     }
 
-    for (String constraint : standaloneConstraints) {
-      try (final Statement stmt = this.connection.createStatement()) {
+    try (final Statement stmt = this.connection.createStatement()) {
+      for (String constraint : standaloneConstraints) {
+        // The statements cannot be executed in a batch as adding multiple, comma-separated
+        // SQL statements using a single addBatch() call is not supported in some JDBC drivers.
+        // See: https://www.postgresql.org/message-id/373352.78463.qm@web32701.mail.mud.yahoo.com
         stmt.execute(constraint);
       }
     }
