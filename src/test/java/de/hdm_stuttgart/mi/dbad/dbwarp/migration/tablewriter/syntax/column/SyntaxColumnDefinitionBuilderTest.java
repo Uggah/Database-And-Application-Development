@@ -307,6 +307,7 @@ class SyntaxColumnDefinitionBuilderTest {
   private List<String> getDefinitionParts(String renderedDefinition) {
     return Stream.of(renderedDefinition.split(" "))
         .filter(part -> !part.isBlank())
+        .map(String::trim)
         .toList();
   }
 
