@@ -22,8 +22,13 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.model.column;
  * #L%
  */
 
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.JDBCType;
+import java.util.Collections;
+import java.util.List;
 import lombok.Data;
 import lombok.ToString;
 
@@ -69,6 +74,51 @@ public class Column {
   /**
    * If the column is auto increment
    */
-  private AutoIncrement autoIncrement = AutoIncrement.NONE;
+  private GenerationStrategy generationStrategy = GenerationStrategy.NONE;
 
+  /**
+   * Retrieves the primary key constraint that this column is a part of, if any.
+   *
+   * @return The {@link PrimaryKeyConstraint} object if this column is part of a primary key;
+   * otherwise, null.
+   */
+  public PrimaryKeyConstraint getPrimaryKey() {
+    if (table == null || table.getPrimaryKeyConstraint() == null || !table.getPrimaryKeyConstraint()
+        .getColumns().contains(this)) {
+      return null;
+    }
+
+    return table.getPrimaryKeyConstraint();
+  }
+
+  /**
+   * Retrieves the foreign key constraints that this column is a part of, if any.
+   *
+   * @return The list of {@link ForeignKeyConstraint} objects if this column is part of a foreign
+   * key; otherwise, an empty list.
+   */
+  public List<ForeignKeyConstraint> getReferencingForeignKeys() {
+    if (table == null) {
+      return Collections.emptyList();
+    }
+
+    return table.getForeignKeyConstraints().stream()
+        .filter(foreignKeyConstraint -> foreignKeyConstraint.getChildColumns().contains(this))
+        .toList();
+  }
+
+  /**
+   * Retrieves the unique constraints that this column is a part of, if any.
+   *
+   * @return The list of {@link UniqueConstraint} objects if this column is part of a unique
+   */
+  public List<UniqueConstraint> getUniqueConstraints() {
+    if (table == null) {
+      return Collections.emptyList();
+    }
+
+    return table.getUniqueConstraints().stream()
+        .filter(uniqueConstraint -> uniqueConstraint.getColumns().contains(this))
+        .toList();
+  }
 }

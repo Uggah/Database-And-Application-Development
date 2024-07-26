@@ -23,10 +23,10 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.model.table;
  */
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -70,9 +70,14 @@ public class Table {
   private final List<Column> columns = new ArrayList<>();
 
   /**
-   * {@link List} of all {@link Constraint} definitions in this table.
+   * {@link PrimaryKeyConstraint} in this table.
    */
-  private final List<Constraint> constraints = new ArrayList<>();
+  private PrimaryKeyConstraint primaryKeyConstraint;
+
+  /**
+   * {@link List} of all {@link UniqueConstraint} definitions in this table.
+   */
+  private final List<UniqueConstraint> uniqueConstraints = new ArrayList<>();
 
   /**
    * {@link List} of all {@link ForeignKeyConstraint} definitions in this table.
@@ -102,17 +107,6 @@ public class Table {
   }
 
   /**
-   * Adds a {@link Constraint Constraint} to the model.
-   *
-   * @param constraint {@link Iterable} of {@link Constraint Constraints} to add
-   */
-  public void addConstraint(Constraint constraint) {
-    log.entry(constraint);
-    constraints.add(constraint);
-    log.exit();
-  }
-
-  /**
    * Adds a {@link ForeignKeyConstraint ForeignKeyConstraint} to the model.
    *
    * @param constraint {@link ForeignKeyConstraint} to add
@@ -120,17 +114,6 @@ public class Table {
   public void addForeignKeyConstraint(ForeignKeyConstraint constraint) {
     log.entry(constraint);
     foreignKeyConstraints.add(constraint);
-    log.exit();
-  }
-
-  /**
-   * Adds multiple {@link Constraint Constraints} to the model.
-   *
-   * @param constraints {@link Iterable} of {@link Constraint Constraints} to add
-   */
-  public void addConstraints(Iterable<? extends Constraint> constraints) {
-    log.entry(constraints);
-    constraints.forEach(this::addConstraint);
     log.exit();
   }
 
@@ -143,6 +126,28 @@ public class Table {
   public void addForeignKeyConstraints(Iterable<ForeignKeyConstraint> constraints) {
     log.entry(constraints);
     constraints.forEach(this::addForeignKeyConstraint);
+    log.exit();
+  }
+
+  /**
+   * Adds a single {@link UniqueConstraint} to the model.
+   *
+   * @param constraint {@link UniqueConstraint} to add
+   */
+  public void addUniqueConstraint(UniqueConstraint constraint) {
+    log.entry(constraint);
+    uniqueConstraints.add(constraint);
+    log.exit();
+  }
+
+  /**
+   * Adds multiple {@link UniqueConstraint UniqueConstraints} to the model.
+   *
+   * @param constraints {@link Iterable} of {@link UniqueConstraint UniqueConstraints} to add
+   */
+  public void addUniqueConstraints(Iterable<UniqueConstraint> constraints) {
+    log.entry(constraints);
+    constraints.forEach(this::addUniqueConstraint);
     log.exit();
   }
 

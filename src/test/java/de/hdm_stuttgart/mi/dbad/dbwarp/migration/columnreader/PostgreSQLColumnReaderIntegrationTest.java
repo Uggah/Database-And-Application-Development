@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.GenerationStrategy;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.InitializeDatabase;
@@ -117,6 +118,72 @@ class PostgreSQLColumnReaderIntegrationTest {
 
     assertNull(idColumn.getDefaultValue());
     assertNull(nameColumn.getDefaultValue());
+
+    postgreSQLColumnReader.close();
+  }
+
+  @Test
+  @InitializeDatabase("postgreSQL/PostgreSQLColumnReaderIntegrationTest_AutoIncrement.sql")
+  void testReadColumns_GeneratedAlways(final ConnectionManager connectionManager)
+      throws Exception {
+    final ColumnReader postgreSQLColumnReader = new PostgreSQLColumnReader(connectionManager);
+
+    final Table table = new Table("public", "generatedalwaystesttable", TableType.TABLE);
+
+    final List<Column> columns = postgreSQLColumnReader.readColumns(table);
+    assertEquals(1, columns.size());
+
+    columns.forEach(column -> assertSame(table, column.getTable()));
+
+    final Column idColumn = columns.getFirst();
+
+    assertNull(idColumn.getDefaultValue());
+
+    assertEquals(GenerationStrategy.IDENTITY, idColumn.getGenerationStrategy());
+
+    postgreSQLColumnReader.close();
+  }
+
+  @Test
+  @InitializeDatabase("postgreSQL/PostgreSQLColumnReaderIntegrationTest_AutoIncrement.sql")
+  void testReadColumns_GeneratedByDefault(final ConnectionManager connectionManager)
+      throws Exception {
+    final ColumnReader postgreSQLColumnReader = new PostgreSQLColumnReader(connectionManager);
+
+    final Table table = new Table("public", "generatedbydefaulttesttable", TableType.TABLE);
+
+    final List<Column> columns = postgreSQLColumnReader.readColumns(table);
+    assertEquals(1, columns.size());
+
+    columns.forEach(column -> assertSame(table, column.getTable()));
+
+    final Column idColumn = columns.getFirst();
+
+    assertNull(idColumn.getDefaultValue());
+
+    assertEquals(GenerationStrategy.IDENTITY, idColumn.getGenerationStrategy());
+
+    postgreSQLColumnReader.close();
+  }
+
+  @Test
+  @InitializeDatabase("postgreSQL/PostgreSQLColumnReaderIntegrationTest_AutoIncrement.sql")
+  void testReadColumns_Serial(final ConnectionManager connectionManager)
+      throws Exception {
+    final ColumnReader postgreSQLColumnReader = new PostgreSQLColumnReader(connectionManager);
+
+    final Table table = new Table("public", "serialtesttable", TableType.TABLE);
+
+    final List<Column> columns = postgreSQLColumnReader.readColumns(table);
+    assertEquals(1, columns.size());
+
+    columns.forEach(column -> assertSame(table, column.getTable()));
+
+    final Column idColumn = columns.getFirst();
+
+    assertNull(idColumn.getDefaultValue());
+
+    assertEquals(GenerationStrategy.IDENTITY, idColumn.getGenerationStrategy());
 
     postgreSQLColumnReader.close();
   }

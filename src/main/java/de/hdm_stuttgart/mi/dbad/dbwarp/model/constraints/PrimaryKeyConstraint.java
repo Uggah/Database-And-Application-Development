@@ -24,6 +24,7 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -48,6 +49,30 @@ public class PrimaryKeyConstraint extends Constraint {
   /**
    * {@link List} of {@link Column columns} which the constraint includes.
    */
-  private final List<Column> columns;
+  private final List<Column> columns = new ArrayList<>();
 
+  public PrimaryKeyConstraint(String name, Table table) {
+    this.name = name;
+    this.table = table;
+  }
+
+  public PrimaryKeyConstraint(String name, Table table, List<Column> columns) {
+    this(name, table);
+    this.columns.addAll(columns);
+  }
+
+  /**
+   * Gets the name of the primary key constraint. If no name is set, a default name is generated.
+   *
+   * @return Name of the primary key constraint.
+   */
+  public String getName() {
+    if (name == null || name.isBlank()) {
+      return String.format("PK_%s",
+          table.getName()
+      );
+    }
+
+    return name;
+  }
 }

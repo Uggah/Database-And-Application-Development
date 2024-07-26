@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  #%L
+  DBWarp
+  %%
+  Copyright (C) 2024 Kay Knöpfle, Lucca Greschner and contributors
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+
+<syntax>
+  <templates>
+    <createTable>
+      CREATE TABLE ${table_name} (${column_definitions} ${end_of_block_constraints});
+    </createTable>
+    <columnDefinition>
+      ${column_name} ${column_type} ${column_default} ${column_generation}
+      ${end_of_line_constraints}
+    </columnDefinition>
+    <notNullConstraint strategy="END_OF_LINE">
+      EXAMPLE_NOT_NULL_CONSTRAINT
+    </notNullConstraint>
+    <primaryKeyConstraint strategy="END_OF_LINE">
+      EXAMPLE_PRIMARY_KEY_CONSTRAINT
+    </primaryKeyConstraint>
+    <foreignKeyConstraint strategy="END_OF_LINE">
+      EXAMPLE_FOREIGN_KEY_CONSTRAINT
+    </foreignKeyConstraint>
+    <uniqueConstraint strategy="END_OF_LINE">
+      EXAMPLE_UNIQUE_CONSTRAINT
+    </uniqueConstraint>
+    <columnDefault>
+      DEFAULT '${default_value}'
+    </columnDefault>
+    <selectData>
+      SELECT ${column_names} FROM ${table_name};
+    </selectData>
+    <insertData>
+      INSERT INTO ${table_name} (${column_names}) VALUES (${column_values});
+    </insertData>
+    <generateSerial strategy="END_OF_LINE">
+      EXAMPLE_SERIAL_GENERATION
+    </generateSerial>
+    <generateIdentity strategy="END_OF_LINE">
+      EXAMPLE_IDENTITY_GENERATION
+    </generateIdentity>
+  </templates>
+</syntax>

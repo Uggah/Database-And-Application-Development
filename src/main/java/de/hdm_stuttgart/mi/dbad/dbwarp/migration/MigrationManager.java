@@ -23,9 +23,14 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration;
  */
 
 
+import de.hdm_stuttgart.mi.dbad.dbwarp.config.Configuration;
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.datawriter.DataWriter;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.datawriter.DataWriterFactory;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader.SchemaReader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader.SchemaReaderFactory;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.TableWriter;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.TableWriterFactory;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import java.sql.SQLException;
 import java.util.List;
@@ -60,9 +65,28 @@ public final class MigrationManager {
 
   /**
    * Starts a migration from source database to target database.
+   * Equivalent to calling {@link this#migrate(String)} with null schema.
    * @throws SQLException when an SQL error occurs while reading from the source database or writing to the target database.
    */
-  public void migrate() throws SQLException {
+  public void migrate() throws Exception {
+    log.entry();
+
+    final Configuration configuration = Configuration.getInstance();
+    final String configuredSchema = configuration.getString("schema");
+    this.migrate(configuredSchema);
+
+    log.exit();
+  }
+
+
+  /**
+   * Starts a migration from source database to target database.
+   *
+   * @param schema Schema to migrate, will migrate all schemas if unspecified.
+   * @throws SQLException when an SQL error occurs while reading from the source database or writing
+   *                      to the target database.
+   */
+  public void migrate(final String schema) throws Exception {
     log.entry();
 
     SchemaReaderFactory schemaReaderFactory = new SchemaReaderFactory(connectionManager);
@@ -75,6 +99,21 @@ public final class MigrationManager {
             .map(Table::toString)
             .collect(Collectors.joining(", "))
     );
+
+    if (schema != null) {
+      tables = tables.stream().filter(table -> table.getSchema().equals(schema)).toList();
+    }
+
+    final TableWriterFactory tableWriterFactory = new TableWriterFactory(connectionManager);
+    final TableWriter tableWriter = tableWriterFactory.getTableWriter();
+    final DataWriterFactory dataWriterFactory = new DataWriterFactory(connectionManager);
+    final DataWriter dataWriter = dataWriterFactory.getDataWriter();
+
+    for (final Table table : tables) {
+      tableWriter.writeTable(table);
+      dataWriter.transferData(table);
+      tableWriter.writeConstraints(table);
+    }
 
     log.exit();
   }

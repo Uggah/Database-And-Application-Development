@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="syntax" type="syntax"/>
+
+  <!-- ConstraintDefinition -->
+  <xs:complexType name="constraintDefinition">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="strategy" default="STANDALONE" type="ConstraintDefinitionStrategy"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:simpleType name="ConstraintDefinitionStrategy">
+    <xs:restriction base="xs:string">
+      <!-- Constraint is defined at the end of a line -->
+      <xs:enumeration value="END_OF_LINE"/>
+      <!-- Constraint is defined at the end of the table creation block -->
+      <xs:enumeration value="END_OF_BLOCK"/>
+      <!-- Constraint is defined standalone after data is migrated -->
+      <xs:enumeration value="STANDALONE"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- TemplateDefinition -->
+  <xs:complexType name="templateDefinition">
+    <xs:all>
+      <xs:element name="createSchema" type="xs:string" minOccurs="0"/>
+      <xs:element name="createTable" type="xs:string"/>
+      <xs:element name="columnDefinition" type="xs:string"/>
+      <xs:element name="primaryKeyConstraint" type="constraintDefinition"/>
+      <xs:element name="foreignKeyConstraint" type="constraintDefinition"/>
+      <xs:element name="uniqueConstraint" type="constraintDefinition"/>
+      <xs:element name="notNullConstraint" type="constraintDefinition"/>
+      <xs:element name="columnDefault" type="xs:string"/>
+      <xs:element name="selectData" type="xs:string"/>
+      <xs:element name="insertData" type="xs:string"/>
+      <xs:element name="generateSerial" type="constraintDefinition"/>
+      <xs:element name="generateIdentity" type="constraintDefinition"/>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- Model -->
+  <xs:complexType name="syntax">
+    <xs:sequence>
+      <xs:element name="defaultSchema" type="xs:string" minOccurs="0"/>
+      <xs:element name="templates" type="templateDefinition"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

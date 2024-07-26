@@ -62,11 +62,9 @@ class PostgreSQLConstraintReaderIntegrationTest {
 
     postgreSQLConstraintReader.retrieveUniqueConstraints(List.of(table));
 
-    // should contain explicit unique constraint and implicit primary key constraint
-    assertEquals(2, table.getConstraints().size());
+    assertEquals(2, table.getUniqueConstraints().size());
 
-    final UniqueConstraint constraint = table.getConstraints().stream()
-        .map(UniqueConstraint.class::cast)
+    final UniqueConstraint constraint = table.getUniqueConstraints().stream()
         .filter(
             c -> c.getName().equals("test_table1_something_unique_key")
         )
@@ -99,10 +97,9 @@ class PostgreSQLConstraintReaderIntegrationTest {
 
     postgreSQLConstraintReader.retrieveUniqueConstraints(List.of(table));
 
-    // should contain explicit unique constraint and implicit primary key constraint
-    assertEquals(2, table.getConstraints().size());
+    assertEquals(2, table.getUniqueConstraints().size());
 
-    final UniqueConstraint constraint = (UniqueConstraint) table.getConstraints().getFirst();
+    final UniqueConstraint constraint = table.getUniqueConstraints().getFirst();
 
     assertSame(table, constraint.getTable());
     assertEquals("test_table2_something_unique_something_else_key", constraint.getName());
@@ -131,11 +128,9 @@ class PostgreSQLConstraintReaderIntegrationTest {
 
     postgreSQLConstraintReader.retrieveUniqueConstraints(List.of(table));
 
-    // Should contain explicit unique constraint and implicit primary key constraint
-    assertEquals(2, table.getConstraints().size());
+    assertEquals(2, table.getUniqueConstraints().size());
 
-    final UniqueConstraint constraint = table.getConstraints().stream()
-        .map(UniqueConstraint.class::cast)
+    final UniqueConstraint constraint = table.getUniqueConstraints().stream()
         .filter(
             c -> c.getName().equals("custom_constraint_name")
         )

@@ -22,8 +22,11 @@ package de.hdm_stuttgart.mi.dbad.dbwarp;
  * #L%
  */
 
+import static picocli.CommandLine.Parameters.NULL_VALUE;
+
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+import de.hdm_stuttgart.mi.dbad.dbwarp.config.Configuration;
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.DefaultConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.jdbc.DriverLoader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.jdbc.JarDriverLoader;
@@ -34,7 +37,11 @@ import jakarta.validation.constraints.NotBlank;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.Callable;
+import lombok.Getter;
 import lombok.extern.slf4j.XSlf4j;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine.Command;
@@ -53,6 +60,7 @@ import picocli.CommandLine.Spec;
     version = "0.0.1-alpha",
     mixinStandardHelpOptions = true
 )
+@Getter
 public class DBWarpCLI implements Callable<Integer> {
 
   @SuppressWarnings("unused")
@@ -76,6 +84,18 @@ public class DBWarpCLI implements Callable<Integer> {
   @NotBlank
   @Parameters(index = "1", description = "JDBC connection URL of target database")
   private String target;
+
+  /**
+   * schema defines the schema to migrate. It will be automatically injected by PicoCLI.
+   */
+  @SuppressWarnings("unused")
+  @Option(names = {"--schema",
+      "-S"}, description = "Schema to migrate, migrates all schemas by default. Setting this option is mandatory if migrating towards an SQLite database as it only supports a single schema.", defaultValue = NULL_VALUE)
+  private String schema;
+
+  @SuppressWarnings("unused")
+  @Option(names = "--syntax", description = "Syntaxes to use for migration. E.g. --syntax SQLite=./syntaxes/custom_sqlite.xml", defaultValue = NULL_VALUE)
+  private Map<String, String> syntax;
 
   /**
    * verbose signals whether debug logging should be enabled. It will be automatically injected by
@@ -116,6 +136,7 @@ public class DBWarpCLI implements Callable<Integer> {
     log.entry();
     setupLogging();
     setupDrivers();
+    setupConfiguration();
 
     new DBWarpCLIValidator(spec.commandLine()).validate(this);
 
@@ -124,7 +145,7 @@ public class DBWarpCLI implements Callable<Integer> {
 
     try {
       MigrationManager.getInstance().migrate();
-    } catch (SQLException ex) {
+    } catch (Exception ex) {
       log.error("Exception thrown:", ex);
 
       return log.exit(1);
@@ -159,7 +180,7 @@ public class DBWarpCLI implements Callable<Integer> {
   /**
    * Dynamically loads drivers as specified in the command line options.
    */
-  public void setupDrivers() {
+  private void setupDrivers() {
     log.entry();
     log.debug("Loading drivers");
 
@@ -173,5 +194,22 @@ public class DBWarpCLI implements Callable<Integer> {
             throw new DriverLoadingException("Exception upon trying to register driver!", e);
           }
         });
+  }
+
+  /**
+   * Configures the application based on the command line options used.
+   */
+  private void setupConfiguration() {
+    final Map<String, Object> configuration = new HashMap<>();
+
+    configuration.put("schema", this.schema);
+
+    // This TreeMap is used to ensure that the syntax map is case-insensitive.
+    final TreeMap<String, String> syntaxTreeMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    syntaxTreeMap.putAll(this.syntax);
+
+    configuration.put("syntax", syntaxTreeMap);
+
+    Configuration.getInstance().configure(configuration);
   }
 }

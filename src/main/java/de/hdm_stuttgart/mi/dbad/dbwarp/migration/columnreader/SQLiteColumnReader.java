@@ -24,9 +24,10 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.columnreader;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.helper.types.TypeConversionHelper;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.AutoIncrement;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.GenerationStrategy;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
+import java.sql.JDBCType;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -52,7 +53,7 @@ public class SQLiteColumnReader extends AbstractColumnReader {
             """);
 
     this.isAutoIncrementPreparedStatement = this.connection.prepareStatement(
-        "SELECT * FROM sqlite_master WHERE tbl_name=? AND sql LIKE '%AUTOINCREMENT%';"
+        "SELECT * FROM sqlite_master WHERE tbl_name=? AND sql LIKE '%INTEGER PRIMARY KEY AUTOINCREMENT%';"
     );
 
     this.isPrimaryKeyPreparedStatement = this.connection.prepareStatement(
@@ -93,14 +94,24 @@ public class SQLiteColumnReader extends AbstractColumnReader {
 
     this.isPrimaryKeyPreparedStatement.setString(1, table.getName());
     this.isPrimaryKeyPreparedStatement.setString(2, column.getName());
+
     final ResultSet primaryKeyResultSet = this.isPrimaryKeyPreparedStatement.executeQuery();
     primaryKeyResultSet.next();
+
     boolean isPrimaryKey = primaryKeyResultSet.getBoolean("primary_key");
-    if (isPrimaryKey) {
+
+    // For reference: https://www.sqlite.org/autoinc.html
+    if (isPrimaryKey && column.getType() == JDBCType.INTEGER) {
+      // Columns with type INTEGER that are part of the primary key are implicitly auto incrementing in SQLite.
+      column.setGenerationStrategy(GenerationStrategy.SERIAL);
+
       this.isAutoIncrementPreparedStatement.setString(1, table.getName());
       final ResultSet autoIncrementResultSet = this.isAutoIncrementPreparedStatement.executeQuery();
+
       if (autoIncrementResultSet.next()) {
-        column.setAutoIncrement(AutoIncrement.SERIAL);
+        // The AUTOINCREMENT keyword makes sure that the column's value is not only incrementing but also
+        // unique among all rows that ever existed.
+        column.setGenerationStrategy(GenerationStrategy.IDENTITY);
       }
     }
 

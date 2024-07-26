@@ -98,14 +98,18 @@ public abstract class AbstractConstraintReader implements ConstraintReader {
               table.getName()
           );
 
-      while (resultSet.next()) {
-        final String columnName = resultSet.getString("COLUMN_NAME");
-        columns.add(table.getColumnByName(columnName));
+      if (!resultSet.next()) {
+        continue;
       }
 
       final String name = resultSet.getString("PK_NAME");
 
-      table.addConstraint(new PrimaryKeyConstraint(name, table, columns));
+      do {
+        final String columnName = resultSet.getString("COLUMN_NAME");
+        columns.add(table.getColumnByName(columnName));
+      } while (resultSet.next());
+
+      table.setPrimaryKeyConstraint(new PrimaryKeyConstraint(name, table, columns));
     }
 
     log.exit(tableList);
@@ -185,9 +189,14 @@ public abstract class AbstractConstraintReader implements ConstraintReader {
         final String indexName = indexResultSet.getString("INDEX_NAME");
         final Column column = table.getColumnByName(indexResultSet.getString("COLUMN_NAME"));
 
+        if (table.getPrimaryKeyConstraint() != null && indexName.equals(
+            table.getPrimaryKeyConstraint().getName())) {
+          continue;
+        }
+
         uniqueConstraints.compute(indexName, (k, v) -> {
           if (v == null) {
-            v = new UniqueConstraint(table, indexName);
+            v = new UniqueConstraint(indexName, table);
           }
 
           v.addColumn(column);
@@ -196,7 +205,7 @@ public abstract class AbstractConstraintReader implements ConstraintReader {
         });
       }
 
-      table.addConstraints(uniqueConstraints.values());
+      table.addUniqueConstraints(uniqueConstraints.values());
     }
 
     log.exit(tableList);

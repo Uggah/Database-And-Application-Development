@@ -28,34 +28,18 @@ import java.sql.SQLException;
 import lombok.extern.slf4j.XSlf4j;
 
 @XSlf4j
-public class PostgreSQLConstraintReader extends AbstractConstraintReader implements AutoCloseable {
-
-  private final PreparedStatement preparedStatementUniqueConstraints;
+public class PostgreSQLConstraintReader extends AbstractConstraintReader {
 
   public PostgreSQLConstraintReader(
-      ConnectionManager connectionManager) throws SQLException {
+      ConnectionManager connectionManager) {
     super(connectionManager);
     log.entry(connectionManager);
-
-    preparedStatementUniqueConstraints = this.connection.prepareStatement(
-        """
-            SELECT
-              at.attname AS column_name,
-              cn.conname AS constraint_name
-              FROM pg_catalog.pg_constraint cn
-              LEFT JOIN pg_catalog.pg_attribute at ON at.attrelid = cn.conrelid AND at.attnum = ANY(cn.conkey)
-                WHERE cn.conrelid = (SELECT oid FROM pg_catalog.pg_class WHERE relname LIKE ?)
-                AND cn.contype = 'u';
-            """
-    );
-
     log.exit();
   }
 
   @Override
   public void close() throws Exception {
     log.entry();
-    this.preparedStatementUniqueConstraints.close();
     log.exit();
   }
 }

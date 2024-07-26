@@ -25,6 +25,7 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.constraintreader;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
@@ -62,7 +63,7 @@ class SQLiteConstraintReaderIntegrationTest {
 
     sqLiteConstraintReader.retrieveUniqueConstraints(List.of(table));
 
-    final List<Constraint> constraints = new ArrayList<>(table.getConstraints());
+    final List<Constraint> constraints = new ArrayList<>(table.getUniqueConstraints());
 
     assertEquals(1, constraints.size());
 
@@ -97,8 +98,8 @@ class SQLiteConstraintReaderIntegrationTest {
 
     sqLiteConstraintReader.retrievePrimaryKeyConstraint(List.of(table));
 
-    final PrimaryKeyConstraint constraint = (PrimaryKeyConstraint) table.getConstraints()
-        .getFirst();
+    final PrimaryKeyConstraint constraint = table.getPrimaryKeyConstraint();
+    assertNotNull(constraint);
 
     assertSame(table, constraint.getTable());
     assertEquals(1, constraint.getColumns().size());

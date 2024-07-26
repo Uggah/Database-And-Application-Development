@@ -24,6 +24,7 @@
         <jdbc.mariadb.version>3.4.0</jdbc.mariadb.version>
         <jdbc.postgresql.version>42.7.3</jdbc.postgresql.version>
         <jdbc.sqlite.version>3.46.0.0</jdbc.sqlite.version>
+        <jaxb2Plugin.version>3.2.0</jaxb2Plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -67,6 +68,19 @@
             <artifactId>postgresql</artifactId>
             <version>${testcontainers.postgres.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Configuration -->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>4.0.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.12.0</version>
         </dependency>
 
         <!-- Lombok -->
@@ -404,6 +418,51 @@
                 <configuration>
                     <sourceDirectory>${project.build.directory}/generated-adocs</sourceDirectory>
                 </configuration>
+            </plugin>
+
+            <!-- Class generation for Syntax -->
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <version>${jaxb2Plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>xjc</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- The package of your generated sources -->
+                    <packageName>de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax</packageName>
+                    <sources>
+                        <source>
+                            src/main/resources/syntaxes/schema.xsd
+                        </source>
+                    </sources>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-test-sources/jaxb
+                                </source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>
