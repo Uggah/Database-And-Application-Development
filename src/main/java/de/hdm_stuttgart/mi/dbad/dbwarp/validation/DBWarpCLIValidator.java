@@ -75,6 +75,12 @@ public class DBWarpCLIValidator implements ClassValidator<DBWarpCLI> {
         );
       }
 
+      if (cli.getSource().startsWith("jdbc:sqlite") && cli.getSchema() != null) {
+        errors.add(
+            "SQLite does not support multiple schemas. Therefore, you may not provide the --schema option when the source is an SQLite database."
+        );
+      }
+
       if (cli.getSource().equals(cli.getTarget())) {
         errors.add(
             "The source and target database must not be the same."

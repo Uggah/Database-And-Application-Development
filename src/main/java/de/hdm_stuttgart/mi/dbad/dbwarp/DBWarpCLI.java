@@ -73,7 +73,7 @@ public class DBWarpCLI implements Callable<Integer> {
    */
   @SuppressWarnings("unused")
   @NotBlank
-  @Parameters(index = "0", description = "JDBC connection URL of source database")
+  @Parameters(index = "0", description = "JDBC connection URL of source database. Must contain all credentials required to connect to the source database. Example: 'jdbc:postgresql://127.0.0.1:5432/backwards?user=USERNAME&password=PASSWORD' or 'jdbc:sqlite:./database.sqlite'. Use single quotes to escape preprocessing by the shell.")
   private String source;
 
   /**
@@ -82,7 +82,7 @@ public class DBWarpCLI implements Callable<Integer> {
    */
   @SuppressWarnings("unused")
   @NotBlank
-  @Parameters(index = "1", description = "JDBC connection URL of target database")
+  @Parameters(index = "1", description = "JDBC connection URL of target database. Must contain all credentials required to connect to the target database. Example: 'jdbc:postgresql://127.0.0.1:5432/backwards?user=USERNAME&password=PASSWORD' or 'jdbc:sqlite:./database.sqlite'. Use single quotes to escape preprocessing by the shell.")
   private String target;
 
   /**
@@ -204,9 +204,15 @@ public class DBWarpCLI implements Callable<Integer> {
 
     configuration.put("schema", this.schema);
 
+    log.debug("Got schema: {}", this.schema);
+
     // This TreeMap is used to ensure that the syntax map is case-insensitive.
     final TreeMap<String, String> syntaxTreeMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    syntaxTreeMap.putAll(this.syntax);
+
+    if (this.syntax != null) {
+      log.debug("Got custom syntax: {}", this.syntax);
+      syntaxTreeMap.putAll(this.syntax);
+    }
 
     configuration.put("syntax", syntaxTreeMap);
 
