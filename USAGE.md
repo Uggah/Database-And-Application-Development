@@ -34,7 +34,9 @@ dynamically
 Show this help message and exit.
 
 **-S**, **--schema**=*&lt;schema&gt;*  
-Schema to migrate, migrates all schemas by default
+Schema to migrate, migrates all schemas by default. Setting this option
+is mandatory if migrating towards an SQLite database as it only supports
+a single schema.
 
 **--syntax**=*&lt;String=String&gt;*  
 Syntaxes to use for migration. E.g. --syntax
@@ -52,7 +54,15 @@ Tracing output
 # Arguments
 
 *&lt;source&gt;*  
-JDBC connection URL of source database
+JDBC connection URL of source database. Must contain all credentials
+required to connect to the source database. Example:
+'jdbc:postgresql://127.0.0.1:5432/backwards?user=USERNAME&password=PASSWORD'
+or 'jdbc:sqlite:./database.sqlite'. Use single quotes to escape
+preprocessing by the shell.
 
 *&lt;target&gt;*  
-JDBC connection URL of target database
+JDBC connection URL of target database. Must contain all credentials
+required to connect to the target database. Example:
+'jdbc:postgresql://127.0.0.1:5432/backwards?user=USERNAME&password=PASSWORD'
+or 'jdbc:sqlite:./database.sqlite'. Use single quotes to escape
+preprocessing by the shell.
