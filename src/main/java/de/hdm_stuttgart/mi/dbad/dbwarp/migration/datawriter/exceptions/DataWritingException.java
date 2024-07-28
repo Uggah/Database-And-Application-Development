@@ -22,6 +22,9 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.datawriter.exceptions;
  * #L%
  */
 
+/**
+ * RuntimeException thrown when an error occurs during data writing.
+ */
 public class DataWritingException extends RuntimeException {
 
   public DataWritingException(final String message) {

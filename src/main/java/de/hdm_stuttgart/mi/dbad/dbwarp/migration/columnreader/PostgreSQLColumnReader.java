@@ -60,6 +60,20 @@ public class PostgreSQLColumnReader extends AbstractColumnReader {
     log.exit();
   }
 
+  /**
+   * Reads a {@link Column} from the given {@link Table} and {@link ResultSet}. This method will
+   * call {@link AbstractColumnReader#readColumn(Table, ResultSet)} and then additionally read the
+   * default value of the column from the database. Also, it will adjust the read GenerationStrategy
+   * to match the PostgreSQL behavior. This means, that if the column is auto incrementing, the
+   * GenerationStrategy will always be set to {@link GenerationStrategy#IDENTITY} as PostgreSQL will
+   * always use a sequence for auto incrementing.
+   *
+   * @param table     {@link Table} to read the {@link Column} from.
+   * @param resultSet {@link ResultSet} containing information about the column. Is obtained using
+   *                  {@link java.sql.DatabaseMetaData#getColumns(String, String, String, String)}.
+   * @return the read {@link Column}.
+   * @throws SQLException if an SQL error occurs while reading the {@link Column}.
+   */
   @Override
   protected Column readColumn(final Table table, final ResultSet resultSet) throws SQLException {
     log.entry(table, resultSet);

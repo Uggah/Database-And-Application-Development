@@ -2,6 +2,9 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 
+/**
+ * Interface for classes that build SQL NOT NULL definition statements for columns.
+ */
 public interface NotNullDefinitionBuilder {
 
   /**

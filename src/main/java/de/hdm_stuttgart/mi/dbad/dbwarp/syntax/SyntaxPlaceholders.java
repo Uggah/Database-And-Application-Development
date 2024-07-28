@@ -22,6 +22,10 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.syntax;
  * #L%
  */
 
+/**
+ * Class containing all syntax placeholders used in the syntax templates. This class cannot be
+ * instantiated.
+ */
 public final class SyntaxPlaceholders {
 
   private SyntaxPlaceholders() {

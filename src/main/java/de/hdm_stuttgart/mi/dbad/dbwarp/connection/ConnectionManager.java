@@ -30,8 +30,18 @@ import java.sql.Connection;
  */
 public interface ConnectionManager {
 
+  /**
+   * Gets a connection to the source database.
+   *
+   * @return The connection to the source database.
+   */
   Connection getSourceDatabaseConnection();
 
+  /**
+   * Gets a connection to the target database.
+   *
+   * @return The connection to the target database.
+   */
   Connection getTargetDatabaseConnection();
 
 }

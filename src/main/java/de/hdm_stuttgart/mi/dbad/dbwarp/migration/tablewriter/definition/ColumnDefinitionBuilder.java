@@ -24,6 +24,9 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 
+/**
+ * A column definition builder is used to create a column definition statement for a given column.
+ */
 public interface ColumnDefinitionBuilder {
 
   /**

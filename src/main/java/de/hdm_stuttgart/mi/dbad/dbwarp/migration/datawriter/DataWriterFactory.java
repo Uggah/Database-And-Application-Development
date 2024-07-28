@@ -27,6 +27,10 @@ import java.sql.SQLException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.XSlf4j;
 
+/**
+ * Factory for creating {@link DataWriter} instances. The factory decides which {@link DataWriter}
+ * implementation to use based on the target database.
+ */
 @XSlf4j
 @RequiredArgsConstructor
 public class DataWriterFactory {

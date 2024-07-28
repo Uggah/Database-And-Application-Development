@@ -40,8 +40,9 @@ public class SyntaxValidatorFactory {
   /**
    * Creates a new {@link Validator} instance configured with the XML Schema located at
    * "/syntaxes/syntax.xsd" within the classpath.
+   * The used SchemaFactory is configured to disallow doctype declarations and to enable secure processing.
    *
-   * @return A {@link Validator} instance for validating XML documents against the specified XSD.
+   * @return A {@link Validator} instance for validating XML documents against the syntax XSD.
    * @throws SAXException If any SAX errors occur during the creation of the validator.
    */
   public Validator createValidator() throws SAXException {

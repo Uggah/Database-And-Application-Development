@@ -40,6 +40,9 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.text.StringSubstitutor;
 
+/**
+ * Writes data to a database using the syntax of the source and target database.
+ */
 @RequiredArgsConstructor
 public class SyntaxDataWriter implements DataWriter {
 
@@ -60,6 +63,11 @@ public class SyntaxDataWriter implements DataWriter {
         this.targetConnection.getMetaData().getDatabaseProductName());
   }
 
+  /**
+   * Transfers data from the source database to the target database.
+   *
+   * @param table The table to transfer data from.
+   */
   @Override
   public void transferData(final Table table) {
     final List<Column> columnList = table.getColumns();
@@ -84,6 +92,13 @@ public class SyntaxDataWriter implements DataWriter {
     }
   }
 
+  /**
+   * Prepares a select statement on the source database for the given table. This method will use
+   * the source syntax to generate the statement.
+   *
+   * @param table The table to prepare the statement for.
+   * @return The prepared statement.
+   */
   private PreparedStatement prepareSelectStatement(final Table table) {
     final String selectStatementTemplate = sourceSyntax.getTemplates().getSelectData();
 
@@ -115,6 +130,13 @@ public class SyntaxDataWriter implements DataWriter {
     }
   }
 
+  /**
+   * Prepares an insert statement on the target database for the given table. This method will use
+   * the target syntax to generate the statement.
+   *
+   * @param table The table to prepare the statement for.
+   * @return The prepared statement.
+   */
   private PreparedStatement prepareInsertStatement(final Table table) {
     final String insertStatementTemplate = targetSyntax.getTemplates().getInsertData();
 

@@ -1,4 +1,4 @@
-package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.exception;
+package de.hdm_stuttgart.mi.dbad.dbwarp.syntax.exception;
 
 /*-
  * #%L
@@ -22,13 +22,16 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.exception;
  * #L%
  */
 
-public class SyntaxRenderingException extends RuntimeException {
+/**
+ * SyntaxLoadException is thrown when an error occurs while loading a syntax.
+ */
+public class SyntaxLoadException extends RuntimeException {
 
-  public SyntaxRenderingException(String message) {
+  public SyntaxLoadException(String message) {
     super(message);
   }
 
-  public SyntaxRenderingException(String message, Throwable cause) {
+  public SyntaxLoadException(String message, Throwable cause) {
     super(message, cause);
   }
 

@@ -23,7 +23,7 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.syntax.loading;
  */
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.config.Configuration;
-import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.exception.SyntaxLoadException;
+import de.hdm_stuttgart.mi.dbad.dbwarp.syntax.exception.SyntaxLoadException;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.ObjectFactory;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.Syntax;
 import jakarta.xml.bind.JAXBContext;

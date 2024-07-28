@@ -27,6 +27,9 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.ConstraintDefinition;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.ConstraintDefinitionStrategy;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.Syntax;
 
+/**
+ * Helper class for syntax related operations.
+ */
 public class SyntaxHelper {
 
   private SyntaxHelper() {

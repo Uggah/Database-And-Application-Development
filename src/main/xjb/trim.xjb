@@ -1,3 +1,4 @@
+<!-- This XJB-File will configure JAXB to use the StringTrimAdapter for String-typed fields -->
 <jaxb:bindings
   version="3.0"
   xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
