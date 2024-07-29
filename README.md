@@ -204,6 +204,15 @@ included in the final
 JAR (`META-INF/DBWarp-THIRD-PARTY.txt`, `META-INF/licenses.xml`, `META-INF/licenses`).
 You can preview the files in `./target/generated-sources/licenses`.
 
+## Architecture documentation
+
+A small architecture documentation can be found in `./docs/architecture`.
+It can be built using the included `build.sh` bash script.
+
+For this script to work, it is required to have podman ([Installation Instructions](https://podman.io/docs/installation)) installed.
+If you desire to use docker instead, you will find instructions
+on how to modify the script to run on docker inside it.
+
 # Copyright
 
 (c) Kay Knöpfle, Lucca Greschner and contributors
