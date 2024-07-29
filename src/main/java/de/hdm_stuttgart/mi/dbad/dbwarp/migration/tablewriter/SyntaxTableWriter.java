@@ -138,13 +138,10 @@ public class SyntaxTableWriter implements TableWriter {
   }
 
   @Override
-  @SuppressWarnings("java:S6912")
-  public void writeConstraints(final Table table) throws Exception {
+  public void writePrimaryKey(Table table) throws Exception {
     log.entry(table);
-
     final List<String> standaloneConstraints = new ArrayList<>();
 
-    // PRIMARY KEY CONSTRAINT
     if (syntax.getTemplates().getPrimaryKeyConstraint().getStrategy()
         == ConstraintDefinitionStrategy.STANDALONE && table.getPrimaryKeyConstraint() != null) {
       standaloneConstraints.add(
@@ -152,7 +149,22 @@ public class SyntaxTableWriter implements TableWriter {
               table.getPrimaryKeyConstraint()));
     }
 
-    // UNIQUE CONSTRAINTS
+    try (final Statement stmt = this.connection.createStatement()) {
+      for (String constraint : standaloneConstraints) {
+        // The statements cannot be executed in a batch as adding multiple, comma-separated
+        // SQL statements using a single addBatch() call is not supported in some JDBC drivers.
+        // See: https://www.postgresql.org/message-id/373352.78463.qm@web32701.mail.mud.yahoo.com
+        stmt.execute(constraint);
+      }
+    }
+    log.exit();
+  }
+
+  @Override
+  public void writeUniqueConstraints(Table table) throws Exception {
+    log.entry(table);
+    final List<String> standaloneConstraints = new ArrayList<>();
+
     if (syntax.getTemplates().getUniqueConstraint().getStrategy()
         == ConstraintDefinitionStrategy.STANDALONE) {
       table.getUniqueConstraints().stream()
@@ -160,7 +172,22 @@ public class SyntaxTableWriter implements TableWriter {
           .forEach(standaloneConstraints::add);
     }
 
-    // FOREIGN KEY CONSTRAINTS
+    try (final Statement stmt = this.connection.createStatement()) {
+      for (String constraint : standaloneConstraints) {
+        // The statements cannot be executed in a batch as adding multiple, comma-separated
+        // SQL statements using a single addBatch() call is not supported in some JDBC drivers.
+        // See: https://www.postgresql.org/message-id/373352.78463.qm@web32701.mail.mud.yahoo.com
+        stmt.execute(constraint);
+      }
+    }
+    log.exit();
+  }
+
+  @Override
+  public void writeForeignKeys(Table table) throws Exception {
+    log.entry(table);
+    final List<String> standaloneConstraints = new ArrayList<>();
+
     if (syntax.getTemplates().getForeignKeyConstraint().getStrategy()
         == ConstraintDefinitionStrategy.STANDALONE) {
       table.getForeignKeyConstraints().stream()
@@ -176,7 +203,7 @@ public class SyntaxTableWriter implements TableWriter {
         stmt.execute(constraint);
       }
     }
-
     log.exit();
   }
+
 }

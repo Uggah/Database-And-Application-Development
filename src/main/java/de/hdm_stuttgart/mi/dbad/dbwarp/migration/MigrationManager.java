@@ -124,7 +124,12 @@ public final class MigrationManager {
     }
 
     for (final Table table : tables) {
-      tableWriter.writeConstraints(table);
+      tableWriter.writePrimaryKey(table);
+      tableWriter.writeUniqueConstraints(table);
+    }
+
+    for (final Table table : tables) {
+      tableWriter.writeForeignKeys(table);
     }
 
     log.exit();

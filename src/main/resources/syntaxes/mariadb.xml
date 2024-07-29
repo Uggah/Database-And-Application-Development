@@ -20,9 +20,8 @@
     </primaryKeyConstraint>
     <foreignKeyConstraint>
       ALTER TABLE ${child_table_schema_name}.${child_table_name} ADD CONSTRAINT ${constraint_name}
-      FOREIGN KEY
-      (${child_column_names}) REFERENCES ${parent_table_schema_name}.${parent_table_name}
-      (${parent_column_names});
+      FOREIGN KEY (${child_column_names}) REFERENCES
+      ${child_table_schema_name}.${parent_table_name}(${parent_column_names});
     </foreignKeyConstraint>
     <uniqueConstraint>
       ALTER TABLE ${schema_name}.${table_name} ADD CONSTRAINT ${constraint_name} UNIQUE
@@ -52,5 +51,6 @@
   <typeMappings>
     <typeMapping JDBCType="VARCHAR">VARCHAR(${column_size})</typeMapping>
     <typeMapping JDBCType="CHAR">CHAR(${column_size})</typeMapping>
+    <typeMapping JDBCType="DECIMAL">DECIMAL(${column_size})</typeMapping>
   </typeMappings>
 </syntax>

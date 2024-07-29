@@ -28,5 +28,9 @@ public interface TableWriter {
 
   void writeTable(Table table) throws Exception;
 
-  void writeConstraints(Table table) throws Exception;
+  void writePrimaryKey(Table table) throws Exception;
+
+  void writeUniqueConstraints(Table table) throws Exception;
+
+  void writeForeignKeys(Table table) throws Exception;
 }
