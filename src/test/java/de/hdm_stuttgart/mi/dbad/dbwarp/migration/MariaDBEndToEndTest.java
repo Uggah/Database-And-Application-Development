@@ -22,13 +22,17 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration;
  * #L%
  */
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.config.ConfigProvider;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.EndToEndProvider;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.InitializeDatabase;
-import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.PostgreSQLProvider;
+import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.MariaDBProvider;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.ProvideDatabases;
-import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.SQLiteProvider;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -38,12 +42,64 @@ public class MariaDBEndToEndTest {
 
   @Test
   @ProvideDatabases(
-      sourceProvider = PostgreSQLProvider.class,
-      targetProvider = SQLiteProvider.class
+      sourceProvider = MariaDBProvider.class,
+      targetProvider = MariaDBProvider.class
   )
-  @InitializeDatabase("postgreSQL/PostgreSQLEndToEndTest.sql")
-  void testToSQLite_ReproducibleSchema(final ConnectionManager connectionManager) throws Exception {
+  @InitializeDatabase("mariaDB/MariaDBEndToEndTest.sql")
+  void testToMariaDB(final ConnectionManager connectionManager) throws Exception {
+    final MigrationManager migrationManager = MigrationManager.getInstance();
+    migrationManager.setConnectionManager(connectionManager);
+    migrationManager.migrate();
 
+    final Connection targetConnection = connectionManager.getTargetDatabaseConnection();
+
+    final Statement stmt = targetConnection.createStatement();
+
+    final ResultSet ownerResultSet = stmt.executeQuery("SELECT * FROM test.owner");
+
+    ownerResultSet.next();
+
+    assertEquals(1, ownerResultSet.getInt("id"));
+    assertEquals("Alice", ownerResultSet.getString("full_name"));
+    assertEquals("1990-01-01", ownerResultSet.getString("birth_date"));
+    assertEquals("Wonderland", ownerResultSet.getString("address"));
+
+    ownerResultSet.next();
+
+    assertEquals(2, ownerResultSet.getInt("id"));
+    assertEquals("Bob", ownerResultSet.getString("full_name"));
+    assertEquals("1990-01-02", ownerResultSet.getString("birth_date"));
+    assertEquals("Bobsville", ownerResultSet.getString("address"));
+
+    final ResultSet petResultSet = stmt.executeQuery("SELECT * FROM test.pet");
+
+    petResultSet.next();
+
+    assertEquals(1, petResultSet.getInt("id"));
+    assertEquals("Fluffy", petResultSet.getString("name"));
+    assertEquals("2010-01-01", petResultSet.getString("birth_date"));
+    assertEquals(1, petResultSet.getInt("owner_id"));
+
+    petResultSet.next();
+
+    assertEquals(2, petResultSet.getInt("id"));
+    assertEquals("Spot", petResultSet.getString("name"));
+    assertEquals("2010-01-02", petResultSet.getString("birth_date"));
+    assertEquals(1, petResultSet.getInt("owner_id"));
+
+    petResultSet.next();
+
+    assertEquals(3, petResultSet.getInt("id"));
+    assertEquals("Rex", petResultSet.getString("name"));
+    assertEquals("2010-01-03", petResultSet.getString("birth_date"));
+    assertEquals(2, petResultSet.getInt("owner_id"));
+
+    petResultSet.next();
+
+    assertEquals(4, petResultSet.getInt("id"));
+    assertEquals("Fido", petResultSet.getString("name"));
+    assertEquals("2010-01-04", petResultSet.getString("birth_date"));
+    assertEquals(2, petResultSet.getInt("owner_id"));
   }
 
 }

@@ -52,5 +52,6 @@
     <typeMapping JDBCType="VARCHAR">VARCHAR(${column_size})</typeMapping>
     <typeMapping JDBCType="CHAR">CHAR(${column_size})</typeMapping>
     <typeMapping JDBCType="DECIMAL">DECIMAL(${column_size})</typeMapping>
+    <typeMapping JDBCType="LONGVARCHAR">MEDIUMTEXT</typeMapping>
   </typeMappings>
 </syntax>
