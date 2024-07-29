@@ -49,6 +49,12 @@ The following tables will give you an overview of the placeholders:
 | `${table_name}`      | The name of the table this constraint affects             |
 | `${column_names}`    | A comma-separated list of columns this constraint affects |
 
+### Placeholders for Type-Mappings
+
+| Placeholder      | Description            |
+|------------------|------------------------|
+| `${column_size}` | The size of the column |
+
 #### Not Null Constraints
 
 Not Null Constraints are special in that they do not have a constraint name and only affect one
