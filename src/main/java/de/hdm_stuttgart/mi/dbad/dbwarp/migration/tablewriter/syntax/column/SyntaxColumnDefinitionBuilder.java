@@ -26,9 +26,9 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ColumnDe
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ConstraintDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.GenerationStrategyDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.NotNullDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.column.type.ColumnTypeMapper;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.GenerationStrategy;
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.PrimaryKeyConstraint;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
@@ -59,6 +59,7 @@ public class SyntaxColumnDefinitionBuilder implements ColumnDefinitionBuilder {
   private final ConstraintDefinitionBuilder<UniqueConstraint> uniqueConstraintConstraintDefinitionBuilder;
   private final NotNullDefinitionBuilder notNullDefinitionBuilder;
   private final GenerationStrategyDefinitionBuilder generationStrategyDefinitionBuilder;
+  private final ColumnTypeMapper columnTypeMapper;
 
   /**
    * Generates a SQL column definition statement for a given column. This method takes into account
@@ -148,8 +149,10 @@ public class SyntaxColumnDefinitionBuilder implements ColumnDefinitionBuilder {
     }
 
     params.put(SyntaxPlaceholders.COLUMN_NAME, column.getName());
-    params.put(SyntaxPlaceholders.COLUMN_TYPE,
-        column.getType().getName()); // TODO: Implement configurable type mappings!
+    params.put(
+        SyntaxPlaceholders.COLUMN_TYPE,
+        columnTypeMapper.map(column)
+    );
     params.put(SyntaxPlaceholders.END_OF_LINE_CONSTRAINTS, String.join(" ", endOfLineConstraints));
 
     final String out = StringSubstitutor.replace(

@@ -31,6 +31,8 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.TableDef
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.SyntaxGenerationStrategyDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.SyntaxNotNullDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.column.SyntaxColumnDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.column.type.ColumnTypeMapper;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.column.type.SyntaxColumnTypeMapper;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.constraints.SyntaxForeignKeyConstraintDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.constraints.SyntaxPrimaryKeyConstraintDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.constraints.SyntaxUniqueConstraintDefinitionBuilder;
@@ -65,6 +67,7 @@ public class SyntaxTableWriter implements TableWriter {
   private final ConstraintDefinitionBuilder<UniqueConstraint> uniqueConstraintDefinitionBuilder;
   private final NotNullDefinitionBuilder notNullDefinitionBuilder;
   private final GenerationStrategyDefinitionBuilder generationStrategyDefinitionBuilder;
+  private final ColumnTypeMapper columnTypeMapper;
 
   protected SyntaxTableWriter(final ConnectionManager connectionManager) throws SQLException {
     log.entry(connectionManager);
@@ -81,6 +84,7 @@ public class SyntaxTableWriter implements TableWriter {
     this.notNullDefinitionBuilder = new SyntaxNotNullDefinitionBuilder(syntax);
     this.generationStrategyDefinitionBuilder = new SyntaxGenerationStrategyDefinitionBuilder(
         syntax);
+    this.columnTypeMapper = new SyntaxColumnTypeMapper(syntax);
 
     final ColumnDefinitionBuilder columnDefinitionBuilder = new SyntaxColumnDefinitionBuilder(
         syntax,
@@ -88,7 +92,8 @@ public class SyntaxTableWriter implements TableWriter {
         this.foreignKeyConstraintDefinitionBuilder,
         this.uniqueConstraintDefinitionBuilder,
         this.notNullDefinitionBuilder,
-        this.generationStrategyDefinitionBuilder
+        this.generationStrategyDefinitionBuilder,
+        this.columnTypeMapper
     );
 
     this.definitionBuilder = new SyntaxTableDefinitionBuilder(

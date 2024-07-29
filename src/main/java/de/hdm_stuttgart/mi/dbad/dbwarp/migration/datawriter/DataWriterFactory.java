@@ -39,7 +39,7 @@ public class DataWriterFactory {
         .getDatabaseProductName();
 
     return log.exit(switch (databaseProductName) {
-      case "SQLite", "PostgreSQL" -> new SyntaxDataWriter(connectionManager);
+      case "SQLite", "PostgreSQL", "MariaDB", "MySQL" -> new SyntaxDataWriter(connectionManager);
       default -> throw new IllegalArgumentException("Database is not supported by DBWarp");
     });
   }
