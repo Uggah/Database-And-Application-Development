@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.XSlf4j;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine.Command;
@@ -65,6 +66,7 @@ import picocli.CommandLine.Spec;
     mixinStandardHelpOptions = true
 )
 @Getter
+@Setter
 public class DBWarpCLI implements Callable<Integer> {
 
   @SuppressWarnings("unused")
@@ -77,7 +79,7 @@ public class DBWarpCLI implements Callable<Integer> {
    */
   @SuppressWarnings("unused")
   @NotBlank
-  @Parameters(index = "0", description = "JDBC connection URL of source database")
+  @Parameters(index = "0", description = "JDBC connection URL of source database. Must contain all credentials required to connect to the source database. Example: 'jdbc:postgresql://127.0.0.1:5432/backwards?user=USERNAME&password=PASSWORD' or 'jdbc:sqlite:./database.sqlite'. Use single quotes to escape preprocessing by the shell.")
   private String source;
 
   /**
@@ -86,7 +88,7 @@ public class DBWarpCLI implements Callable<Integer> {
    */
   @SuppressWarnings("unused")
   @NotBlank
-  @Parameters(index = "1", description = "JDBC connection URL of target database")
+  @Parameters(index = "1", description = "JDBC connection URL of target database. Must contain all credentials required to connect to the target database. Example: 'jdbc:postgresql://127.0.0.1:5432/backwards?user=USERNAME&password=PASSWORD' or 'jdbc:sqlite:./database.sqlite'. Use single quotes to escape preprocessing by the shell.")
   private String target;
 
   /**
@@ -186,7 +188,7 @@ public class DBWarpCLI implements Callable<Integer> {
    */
   private void setupDrivers() {
     log.entry();
-    log.debug("Loading drivers");
+    log.debug("Loading drivers from {}", (Object) this.drivers);
 
     Arrays.stream(this.drivers)
         .map(JarDriverLoader::new)
@@ -198,22 +200,33 @@ public class DBWarpCLI implements Callable<Integer> {
             throw new DriverLoadingException("Exception upon trying to register driver!", e);
           }
         });
+
+    log.exit();
   }
 
   /**
    * Configures the application based on the command line options used.
    */
   private void setupConfiguration() {
+    log.entry();
     final Map<String, Object> configuration = new HashMap<>();
 
-    configuration.put("schema", this.schema);
+    if (this.schema != null) {
+      log.debug("Got schema: {}", this.schema);
+      configuration.put("schema", this.schema);
+    }
 
     // This TreeMap is used to ensure that the syntax map is case-insensitive.
     final TreeMap<String, String> syntaxTreeMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    syntaxTreeMap.putAll(this.syntax);
+
+    if (this.syntax != null) {
+      log.debug("Got custom syntax: {}", this.syntax);
+      syntaxTreeMap.putAll(this.syntax);
+    }
 
     configuration.put("syntax", syntaxTreeMap);
 
     Configuration.getInstance().configure(configuration);
+    log.exit();
   }
 }
