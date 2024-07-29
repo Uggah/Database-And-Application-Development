@@ -51,6 +51,9 @@ The following tables will give you an overview of the placeholders:
 
 ### Placeholders for Type-Mappings
 
+The Type-Mappings are for the conversion of the JDBC-Types into your vendor specific Data-Types, for variable sized Types you can use the `${column_size}` placeholder.
+An example how to use the Type-Mappings can be found in [./src/main/resources/syntaxes/postgresql.xml](./src/main/resources/syntaxes/postgresql.xml).
+
 | Placeholder      | Description            |
 |------------------|------------------------|
 | `${column_size}` | The size of the column |
