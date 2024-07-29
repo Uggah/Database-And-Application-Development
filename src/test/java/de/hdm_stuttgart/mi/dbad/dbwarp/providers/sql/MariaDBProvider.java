@@ -31,7 +31,7 @@ import org.testcontainers.containers.MariaDBContainer;
 public class MariaDBProvider extends DatabaseProvider {
 
   private final MariaDBContainer<?> mariaDBContainer = new MariaDBContainer<>(
-      "mariadb:11.5.1-noble-rc");
+      "11.4.2-noble");
   private Connection connection;
 
   @Override
