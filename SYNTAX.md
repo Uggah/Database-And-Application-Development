@@ -7,6 +7,9 @@ in [./src/main/resources/syntaxes/schema.xsd](./src/main/resources/syntaxes/sche
 An exemplary syntax file is found
 in [./src/main/resources/syntaxes/postgresql.xml](./src/main/resources/syntaxes/postgresql.xml).
 
+The default Syntaxes aim to be as compartible as possible, this leads to Datatype conversions that are verry inefficient.
+It is reccomended to write your own Syntaxfile, with Type Mappings adjusted to your usecase.
+
 ## Defining your own syntax
 
 If you want to customize an existing syntax or create a new one,
