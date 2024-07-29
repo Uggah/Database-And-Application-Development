@@ -29,6 +29,7 @@ import jakarta.validation.ValidationException;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -65,17 +66,28 @@ public class DBWarpCLIValidator implements ClassValidator<DBWarpCLI> {
       final Set<ConstraintViolation<DBWarpCLI>> violationSet = validator.validate(cli);
 
       final List<String> errors = violationSet.stream()
-          .map(ConstraintViolation::getMessage)
+          .map(violation -> violation.getPropertyPath() + " " + violation.getMessage())
           .collect(Collectors.toList());
 
+      final boolean sourceIsSQLite =
+          cli.getSource() != null && cli.getSource().startsWith("jdbc:sqlite");
+      final boolean targetIsSQLite =
+          cli.getTarget() != null && cli.getTarget().startsWith("jdbc:sqlite");
+
       // Check if target DBMS is SQLite and no schema is set.
-      if (cli.getTarget().startsWith("jdbc:sqlite") && cli.getSchema() == null) {
+      if (targetIsSQLite && !sourceIsSQLite && cli.getSchema() == null) {
         errors.add(
             "SQLite does not support multiple schemas. You must provide the --schema option when the target is an SQLite database."
         );
       }
 
-      if (cli.getSource().equals(cli.getTarget())) {
+      if (sourceIsSQLite && cli.getSchema() != null) {
+        errors.add(
+            "SQLite does not support multiple schemas. Therefore, you may not provide the --schema option when the source is an SQLite database."
+        );
+      }
+
+      if (Objects.equals(cli.getSource(), cli.getTarget())) {
         errors.add(
             "The source and target database must not be the same."
         );

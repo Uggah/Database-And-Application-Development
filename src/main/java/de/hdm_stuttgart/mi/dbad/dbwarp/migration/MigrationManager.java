@@ -32,6 +32,7 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader.SchemaReaderFactor
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.TableWriter;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.TableWriterFactory;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -100,16 +101,24 @@ public final class MigrationManager {
             .collect(Collectors.joining(", "))
     );
 
-    if (schema != null) {
-      tables = tables.stream().filter(table -> table.getSchema().equals(schema)).toList();
-    }
-
     final TableWriterFactory tableWriterFactory = new TableWriterFactory(connectionManager);
     final TableWriter tableWriter = tableWriterFactory.getTableWriter();
     final DataWriterFactory dataWriterFactory = new DataWriterFactory(connectionManager);
     final DataWriter dataWriter = dataWriterFactory.getDataWriter();
 
     for (final Table table : tables) {
+      if (schema != null && !table.getSchema().equals(schema)) {
+        log.warn("Skipping {} because it is not in the schema {}.", table.getName(), schema);
+        continue;
+      }
+
+      if (table.getType() != TableType.TABLE) {
+        log.warn(
+            "Skipping {} because it is of type {}. Migrating objects of this type is not supported yet. It will be skipped.",
+            table.getName(), table.getType().toString());
+        continue;
+      }
+
       tableWriter.writeTable(table);
       dataWriter.transferData(table);
       tableWriter.writeConstraints(table);
