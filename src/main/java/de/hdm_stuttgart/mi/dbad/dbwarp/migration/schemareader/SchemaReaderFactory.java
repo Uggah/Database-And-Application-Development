@@ -52,6 +52,7 @@ public final class SchemaReaderFactory {
     return log.exit(switch (databaseProductName) {
       case "SQLite" -> new SQLiteSchemaReader(connectionManager);
       case "PostgreSQL" -> new PostgreSQLSchemaReader(connectionManager);
+      case "MariaDB", "MySQL" -> new MariaDBSchemaReader(connectionManager);
       default -> throw new IllegalArgumentException("Database is not supported by DBWarp");
     });
   }

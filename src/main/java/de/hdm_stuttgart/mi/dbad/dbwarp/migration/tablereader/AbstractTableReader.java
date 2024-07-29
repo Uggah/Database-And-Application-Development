@@ -42,7 +42,7 @@ import lombok.extern.slf4j.XSlf4j;
 @RequiredArgsConstructor
 public abstract class AbstractTableReader implements TableReader {
 
-  private final Connection connection;
+  protected final Connection connection;
 
   protected AbstractTableReader(ConnectionManager connectionManager) {
     log.entry(connectionManager);

@@ -23,6 +23,13 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader;
  */
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import lombok.extern.slf4j.XSlf4j;
 
 @XSlf4j
@@ -32,6 +39,28 @@ public class MariaDBTableReader extends AbstractTableReader {
     super(connectionManager);
     log.entry(connectionManager);
     log.exit();
+  }
+
+  @Override
+  public List<Table> readTables() throws SQLException {
+    log.entry();
+
+    final ResultSet tables = connection.getMetaData()
+        .getTables(null, null, "%", new String[]{"TABLE"});
+
+    final List<Table> outTables = new ArrayList<>();
+
+    while (tables.next()) {
+      final Table outTable = new Table(
+          tables.getString("TABLE_CAT"),
+          tables.getString("TABLE_NAME"),
+          TableType.byTableTypeString(tables.getString("TABLE_TYPE"))
+      );
+
+      outTables.add(outTable);
+    }
+
+    return log.exit(Collections.unmodifiableList(outTables));
   }
 
 }
