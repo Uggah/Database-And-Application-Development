@@ -93,10 +93,21 @@ public final class MigrationManager {
     SchemaReaderFactory schemaReaderFactory = new SchemaReaderFactory(connectionManager);
     final SchemaReader schemaReader = schemaReaderFactory.getSchemaReader();
     List<Table> tables = schemaReader.readSchema();
+    List<Table> filteredTables = tables.parallelStream()
+        .filter(table -> table.getType() == TableType.TABLE)
+        .filter(table -> schema == null || table.getSchema().equals(schema))
+        .toList();
 
     log.debug(
         "Got tables from source database: {}",
         tables.stream()
+            .map(Table::toString)
+            .collect(Collectors.joining(", "))
+    );
+
+    log.debug(
+        "Filtered tables: {}",
+        filteredTables.stream()
             .map(Table::toString)
             .collect(Collectors.joining(", "))
     );
@@ -106,29 +117,17 @@ public final class MigrationManager {
     final DataWriterFactory dataWriterFactory = new DataWriterFactory(connectionManager);
     final DataWriter dataWriter = dataWriterFactory.getDataWriter();
 
-    for (final Table table : tables) {
-      if (schema != null && !table.getSchema().equals(schema)) {
-        log.warn("Skipping {} because it is not in the schema {}.", table.getName(), schema);
-        continue;
-      }
-
-      if (table.getType() != TableType.TABLE) {
-        log.warn(
-            "Skipping {} because it is of type {}. Migrating objects of this type is not supported yet. It will be skipped.",
-            table.getName(), table.getType().toString());
-        continue;
-      }
-
+    for (final Table table : filteredTables) {
       tableWriter.writeTable(table);
       dataWriter.transferData(table);
     }
 
-    for (final Table table : tables) {
+    for (final Table table : filteredTables) {
       tableWriter.writePrimaryKey(table);
       tableWriter.writeUniqueConstraints(table);
     }
 
-    for (final Table table : tables) {
+    for (final Table table : filteredTables) {
       tableWriter.writeForeignKeys(table);
     }
 

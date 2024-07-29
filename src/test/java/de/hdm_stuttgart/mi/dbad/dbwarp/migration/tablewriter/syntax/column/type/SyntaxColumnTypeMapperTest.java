@@ -40,7 +40,7 @@ public class SyntaxColumnTypeMapperTest {
   @BeforeEach
   void setUp() {
     Configuration.getInstance().configure(Collections.emptyMap());
-    this.syntax = new SyntaxLoader().loadSyntax("MariaDB");
+    this.syntax = new SyntaxLoader().loadSyntax("testSyntax");
   }
 
   @Test
