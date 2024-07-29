@@ -40,11 +40,12 @@ public class SyntaxColumnTypeMapper implements ColumnTypeMapper {
 
   public SyntaxColumnTypeMapper(Syntax syntax) {
     this.syntax = syntax;
-    if (syntax.getTypeMappings() == null) {
+    if (syntax.getTypeMappings() == null || syntax.getTypeMappings().getTypeMapping() == null) {
       return;
     }
+
     for (TypeMappingDefinition typeMapping : syntax.getTypeMappings().getTypeMapping()) {
-      typeMappings.put(JDBCType.valueOf(typeMapping.getJDBCType().value()), typeMapping.getValue());
+      typeMappings.put(JDBCType.valueOf(typeMapping.getJdbcType().value()), typeMapping.getValue());
     }
   }
 

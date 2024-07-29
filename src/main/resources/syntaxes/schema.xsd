@@ -42,7 +42,7 @@
     </xs:all>
   </xs:complexType>
 
-  <xs:simpleType name="jdbcTypes">
+  <xs:simpleType name="JDBCTypes">
     <xs:restriction base="xs:string">
       <xs:enumeration value="ARRAY"/>
       <xs:enumeration value="BIGINT"/>
@@ -88,7 +88,7 @@
   <xs:complexType name="typeMappingDefinition">
     <xs:simpleContent>
       <xs:extension base="xs:string">
-        <xs:attribute name="jdbcType" type="jdbcTypes"/>
+        <xs:attribute name="jdbcType" type="JDBCTypes"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
