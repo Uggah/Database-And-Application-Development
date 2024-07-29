@@ -25,6 +25,9 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.columnreader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import lombok.extern.slf4j.XSlf4j;
 
+/**
+ * Implementation of a {@link ColumnReader} for MariaDB.
+ */
 @XSlf4j
 public class MariaDBColumnReader extends AbstractColumnReader {
 

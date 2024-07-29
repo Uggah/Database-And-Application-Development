@@ -30,6 +30,9 @@ import java.sql.JDBCType;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Maps a JDBC-Type of a {@link Column} to a vendor specific type using a {@link Syntax}.
+ */
 public class SyntaxColumnTypeMapper implements ColumnTypeMapper {
 
   private final Syntax syntax;
@@ -45,6 +48,12 @@ public class SyntaxColumnTypeMapper implements ColumnTypeMapper {
     }
   }
 
+  /**
+   * Maps a JDBC-Type of a {@link Column} to a vendor specific type.
+   *
+   * @param column The {@link Column} to map.
+   * @return The vendor specific type.
+   */
   @Override
   public String map(Column column) {
     if (typeMappings.containsKey(column.getType())) {

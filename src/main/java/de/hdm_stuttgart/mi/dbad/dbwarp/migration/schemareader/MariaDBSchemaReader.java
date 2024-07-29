@@ -29,6 +29,9 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader.MariaDBTableReader;
 import java.sql.SQLException;
 import lombok.extern.slf4j.XSlf4j;
 
+/**
+ * Implementation of a {@link SchemaReader} for MariaDB.
+ */
 @XSlf4j
 public class MariaDBSchemaReader extends AbstractJDBCSchemaReader {
 

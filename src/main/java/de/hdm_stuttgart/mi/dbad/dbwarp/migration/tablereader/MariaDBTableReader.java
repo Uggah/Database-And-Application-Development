@@ -32,6 +32,10 @@ import java.util.Collections;
 import java.util.List;
 import lombok.extern.slf4j.XSlf4j;
 
+/**
+ * Implementation of a {@link TableReader} for MariaDB. Customized for MariaDB because MariaDB maps
+ * Database to JDBC Catalog.
+ */
 @XSlf4j
 public class MariaDBTableReader extends AbstractTableReader {
 
@@ -41,6 +45,12 @@ public class MariaDBTableReader extends AbstractTableReader {
     log.exit();
   }
 
+  /**
+   * Reads all tables from the database.
+   *
+   * @return A list of all tables in the database.
+   * @throws SQLException If an error occurs while reading the tables.
+   */
   @Override
   public List<Table> readTables() throws SQLException {
     log.entry();

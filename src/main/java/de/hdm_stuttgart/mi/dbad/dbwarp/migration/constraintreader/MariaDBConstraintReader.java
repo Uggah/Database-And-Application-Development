@@ -34,6 +34,9 @@ import java.util.Map;
 import java.util.Objects;
 import lombok.extern.slf4j.XSlf4j;
 
+/**
+ * Implementation of a {@link ConstraintReader} for MariaDB.
+ */
 @XSlf4j
 public class MariaDBConstraintReader extends AbstractConstraintReader {
 
@@ -43,6 +46,13 @@ public class MariaDBConstraintReader extends AbstractConstraintReader {
     log.exit();
   }
 
+  /**
+   * Retrieves the primary key constraints for the given list of tables. Primary key constraints
+   * with the name "PRIMARY" are set to null because this is a common reserved keyword.
+   *
+   * @param tableList List of {@link Table tables} to retrieve the primary key constraints for.
+   * @throws SQLException
+   */
   @Override
   protected void retrievePrimaryKeyConstraint(final List<Table> tableList) throws SQLException {
     super.retrievePrimaryKeyConstraint(tableList);
@@ -54,6 +64,12 @@ public class MariaDBConstraintReader extends AbstractConstraintReader {
         });
   }
 
+  /**
+   * Retrieves the unique constraints for the given list of tables.
+   * Unique constraints with the name "PRIMARY" are ignored because they are already retrieved as primary keys.
+   * @param tableList List of {@link Table tables} to retrieve the unique constraints for.
+   * @throws SQLException
+   */
   @Override
   protected void retrieveUniqueConstraints(List<Table> tableList) throws SQLException {
     log.entry(tableList);

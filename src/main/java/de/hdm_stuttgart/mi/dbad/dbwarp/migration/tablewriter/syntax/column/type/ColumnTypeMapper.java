@@ -24,7 +24,16 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.column.type
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 
+/**
+ * Maps a JDBC-Type of a {@link Column} to a vendor specific type.
+ */
 public interface ColumnTypeMapper {
 
+  /**
+   * Maps a JDBC-Type of a {@link Column} to a vendor specific type.
+   *
+   * @param column The {@link Column} to map.
+   * @return The vendor specific type.
+   */
   String map(Column column);
 }
