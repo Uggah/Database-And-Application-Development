@@ -49,9 +49,9 @@
     </generateIdentity>
   </templates>
   <typeMappings>
-    <typeMapping jdbcType="VARCHAR">VARCHAR(${column_size})</typeMapping>
+    <typeMapping jdbcType="VARCHAR">LONGTEXT</typeMapping>
     <typeMapping jdbcType="CHAR">CHAR(${column_size})</typeMapping>
     <typeMapping jdbcType="DECIMAL">DECIMAL(${column_size})</typeMapping>
-    <typeMapping jdbcType="LONGVARCHAR">MEDIUMTEXT</typeMapping>
+    <typeMapping jdbcType="LONGVARCHAR">LONGTEXT</typeMapping>
   </typeMappings>
 </syntax>
