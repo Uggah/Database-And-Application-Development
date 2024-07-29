@@ -51,4 +51,9 @@
       ${schema_name}.${table_name} ALTER COLUMN ${column_name} ADD GENERATED ALWAYS AS IDENTITY;
     </generateIdentity>
   </templates>
+  <typeMappings>
+    <typeMapping JDBCType="VARCHAR">VARCHAR(${column_size})</typeMapping>
+    <typeMapping JDBCType="CHAR">CHAR(${column_size})</typeMapping>
+    <typeMapping JDBCType="DECIMAL">DECIMAL(${column_size})</typeMapping>
+  </typeMappings>
 </syntax>

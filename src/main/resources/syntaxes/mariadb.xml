@@ -15,7 +15,7 @@
       ${column_name} ${column_type} ${end_of_line_constraints} ${column_default}
     </columnDefinition>
     <primaryKeyConstraint>
-      ALTER TABLE ${schema_name}.${table_name} ADD CONSTRAINT pk_${constraint_name} PRIMARY KEY
+      ALTER TABLE ${schema_name}.${table_name} ADD CONSTRAINT ${constraint_name} PRIMARY KEY
       (${column_names});
     </primaryKeyConstraint>
     <foreignKeyConstraint>

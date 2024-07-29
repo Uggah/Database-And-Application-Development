@@ -23,6 +23,15 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.constraintreader;
  */
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.UniqueConstraint;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import lombok.extern.slf4j.XSlf4j;
 
 @XSlf4j
@@ -32,6 +41,61 @@ public class MariaDBConstraintReader extends AbstractConstraintReader {
     super(connectionManager);
     log.entry(connectionManager);
     log.exit();
+  }
+
+  @Override
+  protected void retrievePrimaryKeyConstraint(final List<Table> tableList) throws SQLException {
+    super.retrievePrimaryKeyConstraint(tableList);
+    tableList.parallelStream().filter(table -> table.getPrimaryKeyConstraint() != null)
+        .forEach(table -> {
+          if (Objects.equals(table.getPrimaryKeyConstraint().getName(), "PRIMARY")) {
+            table.getPrimaryKeyConstraint().setName(null);
+          }
+        });
+  }
+
+  @Override
+  protected void retrieveUniqueConstraints(List<Table> tableList) throws SQLException {
+    log.entry(tableList);
+
+    for (final Table table : tableList) {
+      final ResultSet indexResultSet = connection.getMetaData().getIndexInfo(
+          connection.getCatalog(),
+          table.getSchema(),
+          table.getName(),
+          true,
+          false
+      );
+
+      final Map<String, UniqueConstraint> uniqueConstraints = new HashMap<>();
+
+      while (indexResultSet.next()) {
+        String indexName = indexResultSet.getString("INDEX_NAME");
+        if (indexName.equals("PRIMARY")) {
+          continue;
+        }
+        final Column column = table.getColumnByName(indexResultSet.getString("COLUMN_NAME"));
+
+        if (table.getPrimaryKeyConstraint() != null && indexName.equals(
+            table.getPrimaryKeyConstraint().getName())) {
+          continue;
+        }
+
+        uniqueConstraints.compute(indexName, (k, v) -> {
+          if (v == null) {
+            v = new UniqueConstraint(indexName, table);
+          }
+
+          v.addColumn(column);
+
+          return v;
+        });
+      }
+
+      table.addUniqueConstraints(uniqueConstraints.values());
+    }
+
+    log.exit(tableList);
   }
 
   @Override
