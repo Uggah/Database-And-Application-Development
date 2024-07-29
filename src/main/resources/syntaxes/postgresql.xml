@@ -52,8 +52,8 @@
     </generateIdentity>
   </templates>
   <typeMappings>
-    <typeMapping JDBCType="VARCHAR">TEXT</typeMapping>
-    <typeMapping JDBCType="CHAR">CHAR(${column_size})</typeMapping>
-    <typeMapping JDBCType="DECIMAL">DECIMAL(${column_size})</typeMapping>
+    <typeMapping jdbcType="VARCHAR">TEXT</typeMapping>
+    <typeMapping jdbcType="CHAR">CHAR(${column_size})</typeMapping>
+    <typeMapping jdbcType="DECIMAL">DECIMAL(${column_size})</typeMapping>
   </typeMappings>
 </syntax>
