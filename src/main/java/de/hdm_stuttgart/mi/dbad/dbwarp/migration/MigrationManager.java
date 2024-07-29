@@ -121,6 +121,9 @@ public final class MigrationManager {
 
       tableWriter.writeTable(table);
       dataWriter.transferData(table);
+    }
+
+    for (final Table table : tables) {
       tableWriter.writeConstraints(table);
     }
 
