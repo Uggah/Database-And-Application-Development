@@ -23,22 +23,120 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration;
  */
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader.SchemaReader;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader.SchemaReaderFactory;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.config.ConfigProvider;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.EndToEndProvider;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.InitializeDatabase;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.MariaDBProvider;
+import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.MockConnectionManager;
+import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.PostgreSQLProvider;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.ProvideDatabases;
+import de.hdm_stuttgart.mi.dbad.dbwarp.providers.sql.SQLiteProvider;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(ConfigProvider.class)
 @ExtendWith(EndToEndProvider.class)
-public class MariaDBEndToEndTest {
+class MariaDBEndToEndTest {
+
+  @Test
+  @ProvideDatabases(
+      sourceProvider = MariaDBProvider.class,
+      targetProvider = SQLiteProvider.class
+  )
+  @InitializeDatabase("mariaDB/MariaDBEndToEndTest.sql")
+  void testToSQLite_ReproducibleSchema(final ConnectionManager connectionManager) throws Exception {
+    final MigrationManager migrationManager = MigrationManager.getInstance();
+    migrationManager.setConnectionManager(connectionManager);
+    migrationManager.migrate();
+
+    final ConnectionManager reversedConnectionManager = new MockConnectionManager(
+        connectionManager.getTargetDatabaseConnection(), null);
+
+    final SchemaReader schemaReader = new SchemaReaderFactory(
+        reversedConnectionManager).getSchemaReader();
+    final List<Table> readTables = schemaReader.readSchema();
+
+    assertEquals(2, readTables.size());
+
+    final Table ownerTable = readTables.stream()
+        .filter(table -> table.getName().equals("owner"))
+        .findFirst()
+        .orElseThrow();
+
+    assertNull(ownerTable.getSchema());
+    assertEquals(TableType.TABLE, ownerTable.getType());
+    assertEquals(4, ownerTable.getColumns().size());
+    assertNotNull(ownerTable.getPrimaryKeyConstraint());
+    assertEquals(1, ownerTable.getUniqueConstraints().size());
+
+    final Table petTable = readTables.stream()
+        .filter(table -> table.getName().equals("pet"))
+        .findFirst()
+        .orElseThrow();
+
+    assertNull(petTable.getSchema());
+    assertEquals(TableType.TABLE, petTable.getType());
+    assertEquals(4, petTable.getColumns().size());
+    assertNotNull(petTable.getPrimaryKeyConstraint());
+    assertEquals(1, petTable.getForeignKeyConstraints().size());
+  }
+
+  @Test
+  @ProvideDatabases(
+      sourceProvider = MariaDBProvider.class,
+      targetProvider = PostgreSQLProvider.class
+  )
+  @InitializeDatabase("mariaDB/MariaDBEndToEndTest.sql")
+  void testToPostgreSQL_ReproducibleSchema(final ConnectionManager connectionManager)
+      throws Exception {
+    final MigrationManager migrationManager = MigrationManager.getInstance();
+    migrationManager.setConnectionManager(connectionManager);
+    migrationManager.migrate();
+
+    final ConnectionManager reversedConnectionManager = new MockConnectionManager(
+        connectionManager.getTargetDatabaseConnection(), null);
+
+    final SchemaReader schemaReader = new SchemaReaderFactory(
+        reversedConnectionManager).getSchemaReader();
+    final List<Table> readTables = schemaReader.readSchema();
+
+    assertEquals(2, readTables.size());
+
+    final Table ownerTable = readTables.stream()
+        .filter(table -> table.getName().equals("owner"))
+        .findFirst()
+        .orElseThrow();
+
+    assertEquals("test", ownerTable.getSchema());
+    assertEquals(TableType.TABLE, ownerTable.getType());
+    assertEquals(4, ownerTable.getColumns().size());
+    assertNotNull(ownerTable.getPrimaryKeyConstraint());
+    assertEquals(1, ownerTable.getUniqueConstraints().size());
+
+    final Table petTable = readTables.stream()
+        .filter(table -> table.getName().equals("pet"))
+        .findFirst()
+        .orElseThrow();
+
+    // Schema equals user in MariaDB
+    assertEquals("test", petTable.getSchema());
+    assertEquals(TableType.TABLE, petTable.getType());
+    assertEquals(4, petTable.getColumns().size());
+    assertNotNull(petTable.getPrimaryKeyConstraint());
+    assertEquals(1, petTable.getForeignKeyConstraints().size());
+  }
 
   @Test
   @ProvideDatabases(
@@ -46,7 +144,52 @@ public class MariaDBEndToEndTest {
       targetProvider = MariaDBProvider.class
   )
   @InitializeDatabase("mariaDB/MariaDBEndToEndTest.sql")
-  void testToMariaDB(final ConnectionManager connectionManager) throws Exception {
+  void testToMariaDB_ReproducibleSchema(final ConnectionManager connectionManager)
+      throws Exception {
+    final MigrationManager migrationManager = MigrationManager.getInstance();
+    migrationManager.setConnectionManager(connectionManager);
+    migrationManager.migrate();
+
+    final ConnectionManager reversedConnectionManager = new MockConnectionManager(
+        connectionManager.getTargetDatabaseConnection(), null);
+
+    final SchemaReader schemaReader = new SchemaReaderFactory(
+        reversedConnectionManager).getSchemaReader();
+    final List<Table> readTables = schemaReader.readSchema();
+
+    assertEquals(2,
+        readTables.stream().filter(table -> table.getType().equals(TableType.TABLE)).count());
+
+    final Table ownerTable = readTables.stream()
+        .filter(table -> table.getName().equals("owner"))
+        .findFirst()
+        .orElseThrow();
+
+    assertEquals("test", ownerTable.getSchema());
+    assertEquals(TableType.TABLE, ownerTable.getType());
+    assertEquals(4, ownerTable.getColumns().size());
+    assertNotNull(ownerTable.getPrimaryKeyConstraint());
+    assertEquals(1, ownerTable.getUniqueConstraints().size());
+
+    final Table petTable = readTables.stream()
+        .filter(table -> table.getName().equals("pet"))
+        .findFirst()
+        .orElseThrow();
+
+    assertEquals("test", petTable.getSchema());
+    assertEquals(TableType.TABLE, petTable.getType());
+    assertEquals(4, petTable.getColumns().size());
+    assertNotNull(petTable.getPrimaryKeyConstraint());
+    assertEquals(1, petTable.getForeignKeyConstraints().size());
+  }
+
+  @Test
+  @ProvideDatabases(
+      sourceProvider = MariaDBProvider.class,
+      targetProvider = MariaDBProvider.class
+  )
+  @InitializeDatabase("mariaDB/MariaDBEndToEndTest_WithData.sql")
+  void testToMariaDB_Data(final ConnectionManager connectionManager) throws Exception {
     final MigrationManager migrationManager = MigrationManager.getInstance();
     migrationManager.setConnectionManager(connectionManager);
     migrationManager.migrate();
@@ -101,5 +244,130 @@ public class MariaDBEndToEndTest {
     assertEquals("2010-01-04", petResultSet.getString("birth_date"));
     assertEquals(2, petResultSet.getInt("owner_id"));
   }
+
+  @Test
+  @ProvideDatabases(
+      sourceProvider = MariaDBProvider.class,
+      targetProvider = PostgreSQLProvider.class
+  )
+  @InitializeDatabase("mariaDB/MariaDBEndToEndTest_WithData.sql")
+  void testToPostgreSQL_Data(final ConnectionManager connectionManager) throws Exception {
+    final MigrationManager migrationManager = MigrationManager.getInstance();
+    migrationManager.setConnectionManager(connectionManager);
+    migrationManager.migrate();
+
+    final Connection targetConnection = connectionManager.getTargetDatabaseConnection();
+
+    final Statement stmt = targetConnection.createStatement();
+
+    final ResultSet ownerResultSet = stmt.executeQuery("SELECT * FROM test.owner");
+
+    ownerResultSet.next();
+
+    assertEquals(1, ownerResultSet.getInt("id"));
+    assertEquals("Alice", ownerResultSet.getString("full_name"));
+    assertEquals("1990-01-01", ownerResultSet.getString("birth_date"));
+    assertEquals("Wonderland", ownerResultSet.getString("address"));
+
+    ownerResultSet.next();
+
+    assertEquals(2, ownerResultSet.getInt("id"));
+    assertEquals("Bob", ownerResultSet.getString("full_name"));
+    assertEquals("1990-01-02", ownerResultSet.getString("birth_date"));
+    assertEquals("Bobsville", ownerResultSet.getString("address"));
+
+    final ResultSet petResultSet = stmt.executeQuery("SELECT * FROM test.pet");
+
+    petResultSet.next();
+
+    assertEquals(1, petResultSet.getInt("id"));
+    assertEquals("Fluffy", petResultSet.getString("name"));
+    assertEquals("2010-01-01", petResultSet.getString("birth_date"));
+    assertEquals(1, petResultSet.getInt("owner_id"));
+
+    petResultSet.next();
+
+    assertEquals(2, petResultSet.getInt("id"));
+    assertEquals("Spot", petResultSet.getString("name"));
+    assertEquals("2010-01-02", petResultSet.getString("birth_date"));
+    assertEquals(1, petResultSet.getInt("owner_id"));
+
+    petResultSet.next();
+
+    assertEquals(3, petResultSet.getInt("id"));
+    assertEquals("Rex", petResultSet.getString("name"));
+    assertEquals("2010-01-03", petResultSet.getString("birth_date"));
+    assertEquals(2, petResultSet.getInt("owner_id"));
+
+    petResultSet.next();
+
+    assertEquals(4, petResultSet.getInt("id"));
+    assertEquals("Fido", petResultSet.getString("name"));
+    assertEquals("2010-01-04", petResultSet.getString("birth_date"));
+    assertEquals(2, petResultSet.getInt("owner_id"));
+  }
+
+  @Test
+  @ProvideDatabases(
+      sourceProvider = MariaDBProvider.class,
+      targetProvider = SQLiteProvider.class
+  )
+  @InitializeDatabase("mariaDB/MariaDBEndToEndTest_WithData.sql")
+  void testToSQLite_Data(final ConnectionManager connectionManager) throws Exception {
+    final MigrationManager migrationManager = MigrationManager.getInstance();
+    migrationManager.setConnectionManager(connectionManager);
+    migrationManager.migrate();
+
+    final Connection targetConnection = connectionManager.getTargetDatabaseConnection();
+
+    final Statement stmt = targetConnection.createStatement();
+
+    final ResultSet ownerResultSet = stmt.executeQuery("SELECT * FROM owner");
+
+    ownerResultSet.next();
+
+    assertEquals(1, ownerResultSet.getInt("id"));
+    assertEquals("Alice", ownerResultSet.getString("full_name"));
+    assertEquals("1990-01-01", ownerResultSet.getString("birth_date"));
+    assertEquals("Wonderland", ownerResultSet.getString("address"));
+
+    ownerResultSet.next();
+
+    assertEquals(2, ownerResultSet.getInt("id"));
+    assertEquals("Bob", ownerResultSet.getString("full_name"));
+    assertEquals("1990-01-02", ownerResultSet.getString("birth_date"));
+    assertEquals("Bobsville", ownerResultSet.getString("address"));
+
+    final ResultSet petResultSet = stmt.executeQuery("SELECT * FROM pet");
+
+    petResultSet.next();
+
+    assertEquals(1, petResultSet.getInt("id"));
+    assertEquals("Fluffy", petResultSet.getString("name"));
+    assertEquals("2010-01-01", petResultSet.getString("birth_date"));
+    assertEquals(1, petResultSet.getInt("owner_id"));
+
+    petResultSet.next();
+
+    assertEquals(2, petResultSet.getInt("id"));
+    assertEquals("Spot", petResultSet.getString("name"));
+    assertEquals("2010-01-02", petResultSet.getString("birth_date"));
+    assertEquals(1, petResultSet.getInt("owner_id"));
+
+    petResultSet.next();
+
+    assertEquals(3, petResultSet.getInt("id"));
+    assertEquals("Rex", petResultSet.getString("name"));
+    assertEquals("2010-01-03", petResultSet.getString("birth_date"));
+    assertEquals(2, petResultSet.getInt("owner_id"));
+
+    petResultSet.next();
+
+    assertEquals(4, petResultSet.getInt("id"));
+    assertEquals("Fido", petResultSet.getString("name"));
+    assertEquals("2010-01-04", petResultSet.getString("birth_date"));
+    assertEquals(2, petResultSet.getInt("owner_id"));
+  }
+
 
 }

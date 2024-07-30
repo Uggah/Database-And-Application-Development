@@ -36,3 +36,17 @@ CREATE TABLE pet
     owner_id   INTEGER NOT NULL,
     FOREIGN KEY (owner_id) REFERENCES owner (id)
 );
+
+INSERT INTO owner (id, full_name, birth_date, address)
+VALUES (1, 'Alice', '1990-01-01', 'Wonderland');
+INSERT INTO owner (id, full_name, birth_date, address)
+VALUES (2, 'Bob', '1990-01-02', 'Bobsville');
+
+INSERT INTO pet (id, name, birth_date, owner_id)
+VALUES (1, 'Fluffy', '2010-01-01', 1);
+INSERT INTO pet (id, name, birth_date, owner_id)
+VALUES (2, 'Spot', '2010-01-02', 1);
+INSERT INTO pet (id, name, birth_date, owner_id)
+VALUES (3, 'Rex', '2010-01-03', 2);
+INSERT INTO pet (id, name, birth_date, owner_id)
+VALUES (4, 'Fido', '2010-01-04', 2);
