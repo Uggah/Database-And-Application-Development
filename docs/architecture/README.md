@@ -202,6 +202,7 @@ class SyntaxForeignKeyConstraintDefinitionBuilder {}
 class SyntaxUniqueConstraintDefinitionBuilder {}
 class SyntaxNotNullDefinitionBuilder {}
 class SyntaxGenerationStrategyDefinitionBuilder {}
+class SyntaxColumnTypeMapper {}
 
 SyntaxTableDefinitionBuilder --* SyntaxColumnDefinitionBuilder
 SyntaxTableDefinitionBuilder --* SyntaxPrimaryKeyConstraintDefinitionBuilder
@@ -209,12 +210,14 @@ SyntaxTableDefinitionBuilder --* SyntaxForeignKeyConstraintDefinitionBuilder
 SyntaxTableDefinitionBuilder --* SyntaxUniqueConstraintDefinitionBuilder
 SyntaxTableDefinitionBuilder --* SyntaxNotNullDefinitionBuilder
 SyntaxTableDefinitionBuilder --* SyntaxGenerationStrategyDefinitionBuilder
+SyntaxTableDefinitionBuilder --* SyntaxColumnTypeMapper
 
 SyntaxColumnDefinitionBuilder --* SyntaxPrimaryKeyConstraintDefinitionBuilder
 SyntaxColumnDefinitionBuilder --* SyntaxForeignKeyConstraintDefinitionBuilder
 SyntaxColumnDefinitionBuilder --* SyntaxUniqueConstraintDefinitionBuilder
 SyntaxColumnDefinitionBuilder --* SyntaxNotNullDefinitionBuilder
 SyntaxColumnDefinitionBuilder --* SyntaxGenerationStrategyDefinitionBuilder
+SyntaxColumnDefinitionBuilder --* SyntaxColumnTypeMapper
 
 SyntaxTableWriter --* SyntaxTableDefinitionBuilder
 @enduml
