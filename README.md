@@ -9,6 +9,9 @@ Stuttgart Media University, course Computer Science and Media (B.Sc.).
 
 See [USAGE.md](./USAGE.md)
 
+_NOTE: If you use a JAR file to run the application you must replace the DBWarp command
+with `java -jar <PATH_TO_JAR_FILE> ...`_
+
 ## Features
 
 Our goal with this application was to be able to migrate as many constraints as possible.
