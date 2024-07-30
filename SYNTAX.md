@@ -7,8 +7,13 @@ in [./src/main/resources/syntaxes/schema.xsd](./src/main/resources/syntaxes/sche
 An exemplary syntax file is found
 in [./src/main/resources/syntaxes/postgresql.xml](./src/main/resources/syntaxes/postgresql.xml).
 
-The default Syntaxes aim to be as compartible as possible, this leads to Datatype conversions that are verry inefficient.
-It is reccomended to write your own Syntaxfile, with Type Mappings adjusted to your usecase.
+The default syntaxes aim to be as compatible as possible.
+This will lead to datatype conversions that are very inefficient or even truncate your data (if you
+save **very** long VARCHARs for example).
+It is recommended to create your own syntax file for your specific use case.
+
+This could be done by trying to migrate and then fixing and improving the syntax file
+until the migration is successful and to your likings.
 
 ## Defining your own syntax
 
@@ -51,15 +56,6 @@ The following tables will give you an overview of the placeholders:
 | `${schema_name}`     | The name of the schema the affected table is defined in   |
 | `${table_name}`      | The name of the table this constraint affects             |
 | `${column_names}`    | A comma-separated list of columns this constraint affects |
-
-### Placeholders for Type-Mappings
-
-Type-Mappings are for the conversion of [JDBCTypes](https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/JDBCType.html) into vendor specific type declaration, for type declarations with size (e.g., VARCHAR(20)) you can use the `${column_size}` placeholder.
-An example on how to use the Type-Mappings can be found in [./src/main/resources/syntaxes/postgresql.xml](./src/main/resources/syntaxes/postgresql.xml).
-
-| Placeholder      | Description            |
-|------------------|------------------------|
-| `${column_size}` | The size of the column |
 
 #### Not Null Constraints
 
@@ -106,6 +102,68 @@ definitions.
 Constraints with the strategy `STANDALONE` are placed as standalone statements.
 They will be executed after all data has been transferred.
 This is the default strategy and should be used wherever possible.
+
+### Generation Strategies
+
+GENERATED columns are columns that are automatically filled with a automatically generated value.
+We support the following generation strategies:
+
+**SERIAL:**
+The column is automatically incremented by a sequence. If rows are deleted, the values are not
+guaranteed to be unique (i.e. deleted values may be reused).
+
+**IDENTITY:**
+The column is automatically incremented by a sequence. If rows are deleted, the values are
+guaranteed to be unique (i.e. deleted values will not be reused).
+
+In the syntax you can define their templates separately. They behave like constraints in that they
+also allow you to provide a strategy.
+
+#### Placeholders
+
+| Placeholder          | Description                                               |
+|----------------------|-----------------------------------------------------------|
+| `${constraint_name}` | The name of the constraint                                |
+| `${schema_name}`     | The name of the schema the affected table is defined in   |
+| `${table_name}`      | The name of the table this constraint affects             |
+| `${column_names}`    | A comma-separated list of columns this constraint affects |
+
+## Type Mappings
+
+Type Mappings are for the conversion
+of [JDBCTypes](https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/JDBCType.html)
+into vendor specific type declaration.
+An example on how to use the Type-Mappings can be found
+in [./src/main/resources/syntaxes/postgresql.xml](./src/main/resources/syntaxes/postgresql.xml).
+
+If no type mapping for a type is specified, DBWarp will try to use the value of the `name()` method
+of the JDBCType.
+
+### Placeholders for Type-Mappings
+
+For types with a size (e.g., VARCHAR(20)) you can use the `${column_size}` placeholder.
+
+| Placeholder      | Description            |
+|------------------|------------------------|
+| `${column_size}` | The size of the column |
+
+### Shortcomings
+
+With the default type mappings, the most common types (VARCHAR, TEXT, INTEGER, DOUBLE, FLOAT,
+BOOLEAN, DATE, TIME, TIMESTAMP) _should_ work sufficiently.
+However, there is a major shortcoming in the default type mappings: The size of the VARCHAR type is
+not considered.
+
+This means that if you have a VARCHAR column with a size of 20 in your source database, it will be
+migrated as a VARCHAR/TEXT without a size in the target database.
+This is due to the fact that the maximum size of a VARCHAR column is not standardized across DBMS.
+
+To fix this, you can define your own type mappings in the syntax file.
+
+If we had had time to implement a more sophisticated type mapping, we would have implemented a way
+to
+define types with a minimum size and a maximum size and then choose the type with the smallest size
+that fits the source type.
 
 ## Security considerations
 

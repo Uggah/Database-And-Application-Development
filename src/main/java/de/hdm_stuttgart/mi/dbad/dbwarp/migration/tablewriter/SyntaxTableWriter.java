@@ -161,6 +161,7 @@ public class SyntaxTableWriter implements TableWriter {
   }
 
   @Override
+  @SuppressWarnings("java:S6912")
   public void writeUniqueConstraints(Table table) throws Exception {
     log.entry(table);
     final List<String> standaloneConstraints = new ArrayList<>();

@@ -56,7 +56,7 @@ public class MariaDBTableReader extends AbstractTableReader {
     log.entry();
 
     final ResultSet tables = connection.getMetaData()
-        .getTables(null, null, "%", new String[]{"TABLE"});
+        .getTables(connection.getCatalog(), null, "%", new String[]{"TABLE"});
 
     final List<Table> outTables = new ArrayList<>();
 

@@ -27,7 +27,7 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.Syntax;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.TypeMappingDefinition;
 import de.hdm_stuttgart.mi.dbad.dbwarp.syntax.SyntaxPlaceholders;
 import java.sql.JDBCType;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 /**
@@ -35,11 +35,11 @@ import java.util.Map;
  */
 public class SyntaxColumnTypeMapper implements ColumnTypeMapper {
 
-  private final Syntax syntax;
-  private final Map<JDBCType, String> typeMappings = new HashMap<>();
+  private final Map<JDBCType, String> typeMappings;
 
   public SyntaxColumnTypeMapper(Syntax syntax) {
-    this.syntax = syntax;
+    this.typeMappings = new EnumMap<>(JDBCType.class);
+
     if (syntax.getTypeMappings() == null || syntax.getTypeMappings().getTypeMapping() == null) {
       return;
     }

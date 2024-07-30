@@ -27,17 +27,47 @@
   <!-- TemplateDefinition -->
   <xs:complexType name="templateDefinition">
     <xs:all>
+      <!-- Schema creation template. Is used whenever a new schema has to be created in the target database. -->
       <xs:element name="createSchema" type="xs:string" minOccurs="0"/>
+      <!-- Table creation template. Is used whenever a new table has to be created in the target database. -->
       <xs:element name="createTable" type="xs:string"/>
+      <!-- Column creation template. Is used to create the content of the ${column_definitions} placeholder for createTable. -->
       <xs:element name="columnDefinition" type="xs:string"/>
+      <!-- Primary key constraint creation template.
+       Depending on the defined strategy, this is either used in the ${end_of_line_constraints} or the ${end_of_block_constraints}
+      placeholder in columnDefinition or createTable or as a standalone SQL statement
+      that is executed after all tables have been created. -->
       <xs:element name="primaryKeyConstraint" type="constraintDefinition"/>
+      <!-- Foreign key constraint creation template.
+       Depending on the defined strategy, this is either used in the ${end_of_line_constraints} or the ${end_of_block_constraints}
+      placeholder in columnDefinition or createTable or as a standalone SQL statement
+      that is executed after all tables have been created. -->
       <xs:element name="foreignKeyConstraint" type="constraintDefinition"/>
+      <!-- Unique constraint creation template.
+       Depending on the defined strategy, this is either used in the ${end_of_line_constraints} or the ${end_of_block_constraints}
+      placeholder in columnDefinition or createTable or as a standalone SQL statement
+      that is executed after all tables have been created. -->
       <xs:element name="uniqueConstraint" type="constraintDefinition"/>
+      <!-- Not Null constraint creation template.
+       Depending on the defined strategy, this is either used in the ${end_of_line_constraints} or the ${end_of_block_constraints}
+      placeholder in columnDefinition or createTable or as a standalone SQL statement
+      that is executed after all tables have been created. -->
       <xs:element name="notNullConstraint" type="constraintDefinition"/>
+      <!-- Column default creation template. This is used to create the content of the ${column_default} placeholder for columnDefinition. -->
       <xs:element name="columnDefault" type="xs:string"/>
+      <!-- Template for SELECTing. This template is used to select data from the source database. -->
       <xs:element name="selectData" type="xs:string"/>
+      <!-- Template for INSERTing. This template is used to insert data into the target database. -->
       <xs:element name="insertData" type="xs:string"/>
+      <!-- Serial Generation template.
+      Depending on the defined strategy, this is either used in the ${end_of_line_constraints} or the ${end_of_block_constraints}
+      placeholder in columnDefinition or createTable or as a standalone SQL statement
+      that is executed after all tables have been created. -->
       <xs:element name="generateSerial" type="constraintDefinition"/>
+      <!-- Identity Generation template.
+Depending on the defined strategy, this is either used in the ${end_of_line_constraints} or the ${end_of_block_constraints}
+placeholder in columnDefinition or createTable or as a standalone SQL statement
+that is executed after all tables have been created. -->
       <xs:element name="generateIdentity" type="constraintDefinition"/>
     </xs:all>
   </xs:complexType>

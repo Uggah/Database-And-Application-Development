@@ -112,7 +112,7 @@ public abstract class AbstractConstraintReader implements ConstraintReader {
       table.setPrimaryKeyConstraint(new PrimaryKeyConstraint(name, table, columns));
     }
 
-    log.exit(tableList);
+    log.exit();
   }
 
   /**
@@ -160,7 +160,7 @@ public abstract class AbstractConstraintReader implements ConstraintReader {
       table.addForeignKeyConstraints(constraints.values());
     }
 
-    log.exit(tableList);
+    log.exit();
   }
 
   /**
@@ -208,7 +208,7 @@ public abstract class AbstractConstraintReader implements ConstraintReader {
       table.addUniqueConstraints(uniqueConstraints.values());
     }
 
-    log.exit(tableList);
+    log.exit();
   }
 
 }

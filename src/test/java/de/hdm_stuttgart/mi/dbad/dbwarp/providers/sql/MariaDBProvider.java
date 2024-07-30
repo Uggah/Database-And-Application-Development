@@ -40,6 +40,14 @@ public class MariaDBProvider extends DatabaseProvider {
       mariaDBContainer.withInitScript(initializeDatabase.value());
     }
 
+    // For testing with MariaDB we need access to multiple schemas.
+    // This is only possible with root privileges by default.
+    mariaDBContainer.withUsername("root");
+
+    // The password must be empty because we do not know the password when
+    // switching to a different database.
+    mariaDBContainer.withPassword("");
+
     mariaDBContainer.start();
 
     this.connection = DriverManager.getConnection(
