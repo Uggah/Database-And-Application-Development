@@ -18,17 +18,17 @@ Therefore, DBWarp only offers a selection of constraints that can be migrated.
 The following table shows the features that are supported by DBMS (Database Management System).
 
 | Feature                                                        | PostgreSQL | SQLite | MariaDB | MySQL(**) |
-|----------------------------------------------------------------|------------|--------|---------|-------|
-| Database Creation (no constraints, column generation, ...)     | ✅          | ✅      | ✅       | ❌     |
-| Primary Key Constraints                                        | ✅          | ✅      | ✅       | ❌     |
-| Foreign Key Constraints                                        | ✅          | ✅      | ✅       | ❌     |
-| Unique Constraints                                             | ✅          | ✅      | ✅       | ❌     |
-| Not Null Constraints                                           | ✅          | ✅      | ✅       | ❌     |
-| Check Constraints                                              | ❌          | ❌      | ❌       | ❌     |
-| Column Generation                                              | ✳️         | ✳️     | ✳️       | ❌     |
-| - Auto Increment                                               | ✅          | ✅(*)   | ✅       | ❌     |
-| - Default Values                                               | ✅          | ✅      | ✅       | ❌     |
-| - Generation from functions (e.g. `DEFAULT gen_random_uuid()`) | ❌          | ❌      | ❌       | ❌     |
+|----------------------------------------------------------------|------------|--------|---------|-----------|
+| Database Creation (no constraints, column generation, ...)     | ✅          | ✅      | ✅       | ❌         |
+| Primary Key Constraints                                        | ✅          | ✅      | ✅       | ❌         |
+| Foreign Key Constraints                                        | ✅          | ✅      | ✅       | ❌         |
+| Unique Constraints                                             | ✅          | ✅      | ✅       | ❌         |
+| Not Null Constraints                                           | ✅          | ✅      | ✅       | ❌         |
+| Check Constraints                                              | ❌          | ❌      | ❌       | ❌         |
+| Column Generation                                              | ✳️         | ✳️     | ✳️      | ❌         |
+| - Auto Increment                                               | ✅          | ✅(*)   | ✅       | ❌         |
+| - Default Values                                               | ✅          | ✅      | ✅       | ❌         |
+| - Generation from functions (e.g. `DEFAULT gen_random_uuid()`) | ❌          | ❌      | ❌       | ❌         |
 
 A cross (❌) means, that the feature is completely unsupported.
 
@@ -38,7 +38,7 @@ A star (✳️) means, that the feature is partially supported.
 
 (**) MySQL is unsupported and untested. However, it will _probably_ work when using a custom JDBC driver and loading the included MariaDB schema as a custom schema for MySQL.
 
-### Notable exclusions
+### Notable exceptions
 
 #### Indexes
 
@@ -108,6 +108,28 @@ you can define your own syntax definition including the following:
   <!-- ... -->
 </syntax>
 ```
+
+#### Migration with MariaDB
+
+In MariaDB, database, schema and catalog (in the sense of the JDBC driver) are all synonyms.
+Therefore, when migrating a schema to MariaDB, the schema name will be used as the database name.
+
+If you only migrate a single schema, you can just give the accessing user access to the target
+database.
+However, if you are migrating multiple schemas, you will have to use a user that has the rights to
+access multiple databases (e.g., `root`).
+
+#### Special types
+
+Some types are not supported by all DBMS. For example, PostgreSQL has a `ARRAY` type, which is not
+supported by MariaDB.
+When there is no equivalent type in the target DBMS, the type will not be migrated by default.
+You can try to define your own [syntax](./SYNTAX.md) definition with a matching type mapping to
+migrate the type to a similar type in the target DBMS.
+
+Also, custom
+types ([PostgreSQL: CREATE TYPE](https://www.postgresql.org/docs/current/sql-createtype.html)) are
+not supported at all.
 
 ## Loading own JDBC drivers
 
