@@ -17,17 +17,17 @@ Therefore, DBWarp only offers a selection of constraints that can be migrated.
 
 The following table shows the features that are supported by DBMS (Database Management System).
 
-| Feature                                                        | PostgreSQL | SQLite | MariaDB | MySQL |
+| Feature                                                        | PostgreSQL | SQLite | MariaDB | MySQL(**) |
 |----------------------------------------------------------------|------------|--------|---------|-------|
-| Database Creation (no constraints, column generation, ...)     | ✅          | ✅      | ❌       | ❌     |
-| Primary Key Constraints                                        | ✅          | ✅      | ❌       | ❌     |
-| Foreign Key Constraints                                        | ✅          | ✅      | ❌       | ❌     |
-| Unique Constraints                                             | ✅          | ✅      | ❌       | ❌     |
-| Not Null Constraints                                           | ✅          | ✅      | ❌       | ❌     |
-| Check Constraints                                              | ❌          | ❌      | ❌       | ❌     |
-| Column Generation                                              | ✳️         | ✳️     | ❌       | ❌     |
-| - Auto Increment                                               | ✅          | ✅(*)   | ❌       | ❌     |
-| - Default Values                                               | ✅          | ✅      | ❌       | ❌     |
+| Database Creation (no constraints, column generation, ...)     | ✅          | ✅      | ✅       | ❌     |
+| Primary Key Constraints                                        | ✅          | ✅      | ✅       | ❌     |
+| Foreign Key Constraints                                        | ✅          | ✅      | ✅       | ❌     |
+| Unique Constraints                                             | ✅          | ✅      | ✅       | ❌     |
+| Not Null Constraints                                           | ✅          | ✅      | ✅       | ❌     |
+| Check Constraints                                              | ❌          | ❌      | ✅       | ❌     |
+| Column Generation                                              | ✳️         | ✳️     | ✳️       | ❌     |
+| - Auto Increment                                               | ✅          | ✅(*)   | ✅       | ❌     |
+| - Default Values                                               | ✅          | ✅      | ✅       | ❌     |
 | - Generation from functions (e.g. `DEFAULT gen_random_uuid()`) | ❌          | ❌      | ❌       | ❌     |
 
 A cross (❌) means, that the feature is completely unsupported.
@@ -35,6 +35,8 @@ A cross (❌) means, that the feature is completely unsupported.
 A checkmark (✅) means, that the feature is fully supported.
 
 A star (✳️) means, that the feature is partially supported.
+
+(**) MySQL is unsupported and untested. However, it will _probably_ work when using a custom JDBC driver and loading the included MariaDB schema as a custom schema for MySQL.
 
 ### Notable exclusions
 
