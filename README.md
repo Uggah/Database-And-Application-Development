@@ -24,7 +24,7 @@ The following table shows the features that are supported by DBMS (Database Mana
 | Foreign Key Constraints                                        | ✅          | ✅      | ✅       | ❌     |
 | Unique Constraints                                             | ✅          | ✅      | ✅       | ❌     |
 | Not Null Constraints                                           | ✅          | ✅      | ✅       | ❌     |
-| Check Constraints                                              | ❌          | ❌      | ✅       | ❌     |
+| Check Constraints                                              | ❌          | ❌      | ❌       | ❌     |
 | Column Generation                                              | ✳️         | ✳️     | ✳️       | ❌     |
 | - Auto Increment                                               | ✅          | ✅(*)   | ✅       | ❌     |
 | - Default Values                                               | ✅          | ✅      | ✅       | ❌     |
