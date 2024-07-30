@@ -25,36 +25,31 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader;
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.XSlf4j;
 
 /**
- * Implements a generic approach to reading tables from the source database. It needs to be extended
- * by a DBMS specific {@link TableReader} that adjusts to implementation details.
+ * Implementation of a {@link TableReader} for MariaDB. Customized for MariaDB because MariaDB maps
+ * Database to JDBC Catalog.
  */
 @XSlf4j
-@RequiredArgsConstructor
-public abstract class AbstractTableReader implements TableReader {
+public class MariaDBTableReader extends AbstractTableReader {
 
-  protected final Connection connection;
-
-  protected AbstractTableReader(ConnectionManager connectionManager) {
+  public MariaDBTableReader(ConnectionManager connectionManager) {
+    super(connectionManager);
     log.entry(connectionManager);
-    this.connection = connectionManager.getSourceDatabaseConnection();
     log.exit();
   }
 
   /**
-   * Retrieves all non-system tables {@link Table}, that are neither temporary nor views.
+   * Reads all tables from the database.
    *
-   * @return an unmodifiable {@link List} of all retrieved {@link Table Tables}
-   * @throws SQLException if a database access error occurs
+   * @return A list of all tables in the database.
+   * @throws SQLException If an error occurs while reading the tables.
    */
   @Override
   public List<Table> readTables() throws SQLException {
@@ -67,7 +62,7 @@ public abstract class AbstractTableReader implements TableReader {
 
     while (tables.next()) {
       final Table outTable = new Table(
-          tables.getString("TABLE_SCHEM"),
+          tables.getString("TABLE_CAT"),
           tables.getString("TABLE_NAME"),
           TableType.byTableTypeString(tables.getString("TABLE_TYPE"))
       );
@@ -76,12 +71,6 @@ public abstract class AbstractTableReader implements TableReader {
     }
 
     return log.exit(Collections.unmodifiableList(outTables));
-  }
-
-  @Override
-  public void close() throws Exception {
-    log.entry();
-    log.exit();
   }
 
 }

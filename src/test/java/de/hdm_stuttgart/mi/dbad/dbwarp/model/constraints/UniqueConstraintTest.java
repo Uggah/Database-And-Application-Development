@@ -28,6 +28,7 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.TableType;
 import java.sql.JDBCType;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter;
+package de.hdm_stuttgart.mi.dbad.dbwarp.migration.columnreader;
 
 /*-
  * #%L
@@ -22,15 +22,19 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter;
  * #L%
  */
 
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
+import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
+import lombok.extern.slf4j.XSlf4j;
 
-public interface TableWriter {
+/**
+ * Implementation of a {@link ColumnReader} for MariaDB.
+ */
+@XSlf4j
+public class MariaDBColumnReader extends AbstractColumnReader {
 
-  void writeTable(Table table) throws Exception;
+  public MariaDBColumnReader(ConnectionManager connectionManager) {
+    super(connectionManager);
+    log.entry(connectionManager);
+    log.exit();
+  }
 
-  void writePrimaryKey(Table table) throws Exception;
-
-  void writeUniqueConstraints(Table table) throws Exception;
-
-  void writeForeignKeys(Table table) throws Exception;
 }

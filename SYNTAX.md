@@ -52,6 +52,15 @@ The following tables will give you an overview of the placeholders:
 | `${table_name}`      | The name of the table this constraint affects             |
 | `${column_names}`    | A comma-separated list of columns this constraint affects |
 
+### Placeholders for Type-Mappings
+
+Type-Mappings are for the conversion of [JDBCTypes](https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/JDBCType.html) into vendor specific type declaration, for type declarations with size (e.g., VARCHAR(20)) you can use the `${column_size}` placeholder.
+An example on how to use the Type-Mappings can be found in [./src/main/resources/syntaxes/postgresql.xml](./src/main/resources/syntaxes/postgresql.xml).
+
+| Placeholder      | Description            |
+|------------------|------------------------|
+| `${column_size}` | The size of the column |
+
 #### Not Null Constraints
 
 Not Null Constraints are special in that they do not have a constraint name and only affect one
