@@ -1,4 +1,4 @@
-package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter;
+package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.column.type;
 
 /*-
  * #%L
@@ -22,15 +22,18 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter;
  * #L%
  */
 
-import de.hdm_stuttgart.mi.dbad.dbwarp.model.table.Table;
+import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 
-public interface TableWriter {
+/**
+ * Maps a JDBC-Type of a {@link Column} to a vendor specific type.
+ */
+public interface ColumnTypeMapper {
 
-  void writeTable(Table table) throws Exception;
-
-  void writePrimaryKey(Table table) throws Exception;
-
-  void writeUniqueConstraints(Table table) throws Exception;
-
-  void writeForeignKeys(Table table) throws Exception;
+  /**
+   * Maps a JDBC-Type of a {@link Column} to a vendor specific type.
+   *
+   * @param column The {@link Column} to map.
+   * @return The vendor specific type.
+   */
+  String map(Column column);
 }

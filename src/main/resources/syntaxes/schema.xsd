@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- Created with Liquid Studio (https://www.liquid-technologies.com) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:element name="syntax" type="syntax"/>
@@ -41,11 +42,69 @@
     </xs:all>
   </xs:complexType>
 
+  <xs:simpleType name="JDBCTypes">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ARRAY"/>
+      <xs:enumeration value="BIGINT"/>
+      <xs:enumeration value="BINARY"/>
+      <xs:enumeration value="BIT"/>
+      <xs:enumeration value="BLOB"/>
+      <xs:enumeration value="BOOLEAN"/>
+      <xs:enumeration value="CHAR"/>
+      <xs:enumeration value="CLOB"/>
+      <xs:enumeration value="DATALINK"/>
+      <xs:enumeration value="DATE"/>
+      <xs:enumeration value="DECIMAL"/>
+      <xs:enumeration value="DISTINCT"/>
+      <xs:enumeration value="DOUBLE"/>
+      <xs:enumeration value="FLOAT"/>
+      <xs:enumeration value="INTEGER"/>
+      <xs:enumeration value="JAVA_OBJECT"/>
+      <xs:enumeration value="LONGVARBINARY"/>
+      <xs:enumeration value="LONGVARCHAR"/>
+      <xs:enumeration value="NCHAR"/>
+      <xs:enumeration value="NCLOB"/>
+      <xs:enumeration value="NULL"/>
+      <xs:enumeration value="NUMERIC"/>
+      <xs:enumeration value="NVARCHAR"/>
+      <xs:enumeration value="OTHER"/>
+      <xs:enumeration value="REAL"/>
+      <xs:enumeration value="REF"/>
+      <xs:enumeration value="REF_CURSOR"/>
+      <xs:enumeration value="ROWID"/>
+      <xs:enumeration value="SMALLINT"/>
+      <xs:enumeration value="SQLXML"/>
+      <xs:enumeration value="STRUCT"/>
+      <xs:enumeration value="TIME"/>
+      <xs:enumeration value="TIME_WITH_TIMEZONE"/>
+      <xs:enumeration value="TIMESTAMP"/>
+      <xs:enumeration value="TIMESTAMP_WITH_TIMEZONE"/>
+      <xs:enumeration value="TINYINT"/>
+      <xs:enumeration value="VARBINARY"/>
+      <xs:enumeration value="VARCHAR"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="typeMappingDefinition">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="jdbcType" type="JDBCTypes"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="typeMappings">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="typeMapping" type="typeMappingDefinition"/>
+    </xs:sequence>
+  </xs:complexType>
+
   <!-- Model -->
   <xs:complexType name="syntax">
     <xs:sequence>
       <xs:element name="defaultSchema" type="xs:string" minOccurs="0"/>
       <xs:element name="templates" type="templateDefinition"/>
+      <xs:element name="typeMappings" type="typeMappings" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
 </xs:schema>

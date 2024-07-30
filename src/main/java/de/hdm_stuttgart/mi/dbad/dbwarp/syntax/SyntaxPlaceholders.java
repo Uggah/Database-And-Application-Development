@@ -67,6 +67,11 @@ public final class SyntaxPlaceholders {
   public static final String COLUMN_TYPE = "column_type";
 
   /**
+   * Placeholder for the column size.
+   */
+  public static final String COLUMN_SIZE = "column_size";
+
+  /**
    * Placeholder for the end of block constraints.
    */
   public static final String END_OF_BLOCK_CONSTRAINTS = "end_of_block_constraints";

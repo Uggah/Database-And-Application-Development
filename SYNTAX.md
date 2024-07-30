@@ -7,6 +7,9 @@ in [./src/main/resources/syntaxes/schema.xsd](./src/main/resources/syntaxes/sche
 An exemplary syntax file is found
 in [./src/main/resources/syntaxes/postgresql.xml](./src/main/resources/syntaxes/postgresql.xml).
 
+The default Syntaxes aim to be as compartible as possible, this leads to Datatype conversions that are verry inefficient.
+It is reccomended to write your own Syntaxfile, with Type Mappings adjusted to your usecase.
+
 ## Defining your own syntax
 
 If you want to customize an existing syntax or create a new one,
@@ -48,6 +51,15 @@ The following tables will give you an overview of the placeholders:
 | `${schema_name}`     | The name of the schema the affected table is defined in   |
 | `${table_name}`      | The name of the table this constraint affects             |
 | `${column_names}`    | A comma-separated list of columns this constraint affects |
+
+### Placeholders for Type-Mappings
+
+Type-Mappings are for the conversion of [JDBCTypes](https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/JDBCType.html) into vendor specific type declaration, for type declarations with size (e.g., VARCHAR(20)) you can use the `${column_size}` placeholder.
+An example on how to use the Type-Mappings can be found in [./src/main/resources/syntaxes/postgresql.xml](./src/main/resources/syntaxes/postgresql.xml).
+
+| Placeholder      | Description            |
+|------------------|------------------------|
+| `${column_size}` | The size of the column |
 
 #### Not Null Constraints
 

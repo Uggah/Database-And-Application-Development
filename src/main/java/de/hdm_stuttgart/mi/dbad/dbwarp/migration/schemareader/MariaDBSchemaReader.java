@@ -1,4 +1,4 @@
-package de.hdm_stuttgart.mi.dbad.dbwarp.migration.datawriter;
+package de.hdm_stuttgart.mi.dbad.dbwarp.migration.schemareader;
 
 /*-
  * #%L
@@ -23,29 +23,26 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.datawriter;
  */
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.connection.ConnectionManager;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.columnreader.MariaDBColumnReader;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.constraintreader.MariaDBConstraintReader;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablereader.MariaDBTableReader;
 import java.sql.SQLException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.XSlf4j;
 
 /**
- * Factory for creating {@link DataWriter} instances. The factory decides which {@link DataWriter}
- * implementation to use based on the target database.
+ * Implementation of a {@link SchemaReader} for MariaDB.
  */
 @XSlf4j
-@RequiredArgsConstructor
-public class DataWriterFactory {
+public class MariaDBSchemaReader extends AbstractJDBCSchemaReader {
 
-  private final ConnectionManager connectionManager;
-
-  public DataWriter getDataWriter() throws SQLException {
-    log.entry();
-    final String databaseProductName = connectionManager.getTargetDatabaseConnection().getMetaData()
-        .getDatabaseProductName();
-
-    return log.exit(switch (databaseProductName) {
-      case "SQLite", "PostgreSQL", "MariaDB", "MySQL" -> new SyntaxDataWriter(connectionManager);
-      default -> throw new IllegalArgumentException("Database is not supported by DBWarp");
-    });
+  protected MariaDBSchemaReader(ConnectionManager connectionManager) throws SQLException {
+    super(connectionManager,
+        new MariaDBTableReader(connectionManager),
+        new MariaDBColumnReader(connectionManager),
+        new MariaDBConstraintReader(connectionManager)
+    );
+    log.entry(connectionManager);
+    log.exit();
   }
 
 }

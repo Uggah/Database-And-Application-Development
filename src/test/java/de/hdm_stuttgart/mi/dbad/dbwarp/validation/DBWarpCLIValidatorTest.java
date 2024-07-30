@@ -30,11 +30,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.DBWarpCLI;
+import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 import picocli.CommandLine.ParameterException;
 
 class DBWarpCLIValidatorTest {
+
+  static {
+    Locale.setDefault(Locale.US);
+  }
 
   @Test
   void testValidate_NoViolation() {
@@ -59,7 +64,8 @@ class DBWarpCLIValidatorTest {
     final ParameterException parameterException = assertThrows(ParameterException.class,
         () -> validator.validate(cli));
     assertEquals(
-        "The following errors occurred while validating CLI parameters:\ntarget must not be blank",
+        "The following errors occurred while validating CLI parameters:" + System.lineSeparator()
+            + "target must not be blank",
         parameterException.getMessage());
   }
 
@@ -74,7 +80,8 @@ class DBWarpCLIValidatorTest {
     final ParameterException parameterException = assertThrows(ParameterException.class,
         () -> validator.validate(cli));
     assertEquals(
-        "The following errors occurred while validating CLI parameters:\nsource must not be blank",
+        "The following errors occurred while validating CLI parameters:" + System.lineSeparator()
+            + "source must not be blank",
         parameterException.getMessage());
   }
 
@@ -105,7 +112,8 @@ class DBWarpCLIValidatorTest {
     final ParameterException parameterException = assertThrows(ParameterException.class,
         () -> validator.validate(cli));
     assertEquals(
-        "The following errors occurred while validating CLI parameters:\nThe source and target database must not be the same.",
+        "The following errors occurred while validating CLI parameters:" + System.lineSeparator()
+            + "The source and target database must not be the same.",
         parameterException.getMessage());
   }
 
@@ -121,7 +129,8 @@ class DBWarpCLIValidatorTest {
     final ParameterException parameterException = assertThrows(ParameterException.class,
         () -> validator.validate(cli));
     assertEquals(
-        "The following errors occurred while validating CLI parameters:\nSQLite does not support multiple schemas. You must provide the --schema option when the target is an SQLite database.",
+        "The following errors occurred while validating CLI parameters:" + System.lineSeparator()
+            + "SQLite does not support multiple schemas. You must provide the --schema option when the target is an SQLite database.",
         parameterException.getMessage());
   }
 
@@ -138,7 +147,8 @@ class DBWarpCLIValidatorTest {
     final ParameterException parameterException = assertThrows(ParameterException.class,
         () -> validator.validate(cli));
     assertEquals(
-        "The following errors occurred while validating CLI parameters:\nSQLite does not support multiple schemas. Therefore, you may not provide the --schema option when the source is an SQLite database.",
+        "The following errors occurred while validating CLI parameters:" + System.lineSeparator()
+            + "SQLite does not support multiple schemas. Therefore, you may not provide the --schema option when the source is an SQLite database.",
         parameterException.getMessage());
   }
 

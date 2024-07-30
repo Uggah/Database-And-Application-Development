@@ -31,6 +31,7 @@ import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ColumnDe
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.ConstraintDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.GenerationStrategyDefinitionBuilder;
 import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition.NotNullDefinitionBuilder;
+import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.column.type.SyntaxColumnTypeMapper;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.Column;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.column.GenerationStrategy;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.ForeignKeyConstraint;
@@ -78,7 +79,8 @@ class SyntaxColumnDefinitionBuilderTest {
         this.foreignKeyConstraintConstraintDefinitionBuilder,
         this.uniqueConstraintConstraintDefinitionBuilder,
         this.notNullDefinitionBuilder,
-        this.generationStrategyDefinitionBuilder
+        this.generationStrategyDefinitionBuilder,
+        new SyntaxColumnTypeMapper(syntax)
     );
 
     final Table table = new Table("some_schema", "some_table", TableType.TABLE);
@@ -102,7 +104,8 @@ class SyntaxColumnDefinitionBuilderTest {
         this.foreignKeyConstraintConstraintDefinitionBuilder,
         this.uniqueConstraintConstraintDefinitionBuilder,
         this.notNullDefinitionBuilder,
-        this.generationStrategyDefinitionBuilder
+        this.generationStrategyDefinitionBuilder,
+        new SyntaxColumnTypeMapper(syntax)
     );
 
     final Table table = new Table("some_schema", "some_table", TableType.TABLE);
@@ -131,7 +134,8 @@ class SyntaxColumnDefinitionBuilderTest {
         this.foreignKeyConstraintConstraintDefinitionBuilder,
         this.uniqueConstraintConstraintDefinitionBuilder,
         this.notNullDefinitionBuilder,
-        this.generationStrategyDefinitionBuilder
+        this.generationStrategyDefinitionBuilder,
+        new SyntaxColumnTypeMapper(syntax)
     );
 
     final Table table = new Table("some_schema", "some_table", TableType.TABLE);
@@ -161,7 +165,8 @@ class SyntaxColumnDefinitionBuilderTest {
         this.foreignKeyConstraintConstraintDefinitionBuilder,
         this.uniqueConstraintConstraintDefinitionBuilder,
         this.notNullDefinitionBuilder,
-        this.generationStrategyDefinitionBuilder
+        this.generationStrategyDefinitionBuilder,
+        new SyntaxColumnTypeMapper(syntax)
     );
 
     final Table table = new Table("some_schema", "some_table", TableType.TABLE);
@@ -196,7 +201,8 @@ class SyntaxColumnDefinitionBuilderTest {
         this.foreignKeyConstraintConstraintDefinitionBuilder,
         this.uniqueConstraintConstraintDefinitionBuilder,
         this.notNullDefinitionBuilder,
-        this.generationStrategyDefinitionBuilder
+        this.generationStrategyDefinitionBuilder,
+        new SyntaxColumnTypeMapper(syntax)
     );
 
     final Table table = new Table("some_schema", "some_table", TableType.TABLE);
@@ -228,7 +234,8 @@ class SyntaxColumnDefinitionBuilderTest {
         this.foreignKeyConstraintConstraintDefinitionBuilder,
         this.uniqueConstraintConstraintDefinitionBuilder,
         this.notNullDefinitionBuilder,
-        this.generationStrategyDefinitionBuilder
+        this.generationStrategyDefinitionBuilder,
+        new SyntaxColumnTypeMapper(syntax)
     );
 
     final Table table = new Table("some_schema", "some_table", TableType.TABLE);
@@ -255,7 +262,8 @@ class SyntaxColumnDefinitionBuilderTest {
         this.foreignKeyConstraintConstraintDefinitionBuilder,
         this.uniqueConstraintConstraintDefinitionBuilder,
         this.notNullDefinitionBuilder,
-        this.generationStrategyDefinitionBuilder
+        this.generationStrategyDefinitionBuilder,
+        new SyntaxColumnTypeMapper(syntax)
     );
 
     final Table table = new Table("some_schema", "some_table", TableType.TABLE);
@@ -284,7 +292,8 @@ class SyntaxColumnDefinitionBuilderTest {
         this.foreignKeyConstraintConstraintDefinitionBuilder,
         this.uniqueConstraintConstraintDefinitionBuilder,
         this.notNullDefinitionBuilder,
-        this.generationStrategyDefinitionBuilder
+        this.generationStrategyDefinitionBuilder,
+        new SyntaxColumnTypeMapper(syntax)
     );
 
     final Table table = new Table("some_schema", "some_table", TableType.TABLE);

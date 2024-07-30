@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <syntax>
   <defaultSchema>
-    public
+    <!-- EMPTY TAG -->
   </defaultSchema>
   <templates>
     <createSchema>
-      CREATE SCHEMA IF NOT EXISTS ${schema_name};
+      CREATE DATABASE IF NOT EXISTS ${schema_name};
     </createSchema>
     <createTable>
       CREATE TABLE IF NOT EXISTS ${schema_name}.${table_name} (${column_definitions}
       ${end_of_block_constraints});
     </createTable>
     <columnDefinition>
-      ${column_name} ${column_type} ${column_default} ${end_of_line_constraints}
+      ${column_name} ${column_type} ${end_of_line_constraints} ${column_default}
     </columnDefinition>
     <primaryKeyConstraint>
       ALTER TABLE ${schema_name}.${table_name} ADD CONSTRAINT ${constraint_name} PRIMARY KEY
@@ -20,9 +20,8 @@
     </primaryKeyConstraint>
     <foreignKeyConstraint>
       ALTER TABLE ${child_table_schema_name}.${child_table_name} ADD CONSTRAINT ${constraint_name}
-      FOREIGN KEY
-      (${child_column_names}) REFERENCES ${parent_table_schema_name}.${parent_table_name}
-      (${parent_column_names});
+      FOREIGN KEY (${child_column_names}) REFERENCES
+      ${child_table_schema_name}.${parent_table_name}(${parent_column_names});
     </foreignKeyConstraint>
     <uniqueConstraint>
       ALTER TABLE ${schema_name}.${table_name} ADD CONSTRAINT ${constraint_name} UNIQUE
@@ -41,20 +40,18 @@
       INSERT INTO ${schema_name}.${table_name} (${column_names}) VALUES (${column_values});
     </insertData>
     <generateSerial>
-      <!-- PostgreSQL does not support non-identity auto increment. Also, columns generated must be not null -->
-      ALTER TABLE ${schema_name}.${table_name} ALTER COLUMN ${column_name} SET NOT NULL; ALTER TABLE
-      ${schema_name}.${table_name} ALTER COLUMN ${column_name} ADD GENERATED ALWAYS AS IDENTITY;
+      ALTER TABLE ${schema_name}.${table_name} MODIFY ${column_name} ${column_type} NOT NULL
+      AUTO_INCREMENT;
     </generateSerial>
     <generateIdentity>
-      <!-- PostgreSQL does not support non-identity auto increment. Also, columns generated must be not null -->
-      ALTER TABLE ${schema_name}.${table_name} ALTER COLUMN ${column_name} SET NOT NULL; ALTER TABLE
-      ${schema_name}.${table_name} ALTER COLUMN ${column_name} ADD GENERATED ALWAYS AS IDENTITY;
+      ALTER TABLE ${schema_name}.${table_name} MODIFY ${column_name} ${column_type} NOT NULL
+      AUTO_INCREMENT;
     </generateIdentity>
   </templates>
   <typeMappings>
-    <typeMapping jdbcType="VARCHAR">TEXT</typeMapping>
+    <typeMapping jdbcType="VARCHAR">LONGTEXT</typeMapping>
     <typeMapping jdbcType="CHAR">CHAR(${column_size})</typeMapping>
     <typeMapping jdbcType="DECIMAL">DECIMAL(${column_size})</typeMapping>
-    <typeMapping jdbcType="LONGVARCHAR">TEXT</typeMapping>
+    <typeMapping jdbcType="LONGVARCHAR">LONGTEXT</typeMapping>
   </typeMappings>
 </syntax>
