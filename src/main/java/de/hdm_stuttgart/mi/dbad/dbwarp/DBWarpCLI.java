@@ -51,6 +51,10 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 import picocli.CommandLine.Spec;
 
+/**
+ * DBWarpCLI is the PicoCLI command line interface for the DBWarp application. It is responsible for
+ * parsing the command line arguments and setting up the application accordingly.
+ */
 @XSlf4j
 @Command(
     name = "dbwarp",

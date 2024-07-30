@@ -26,6 +26,9 @@ import lombok.extern.slf4j.XSlf4j;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
+/**
+ * Entrypoint for the DBWarp application. Will only call the CLI.
+ */
 @XSlf4j
 @Command(name = "dbwarp", mixinStandardHelpOptions = true, version = "0.0.1-alpha")
 public class Main {

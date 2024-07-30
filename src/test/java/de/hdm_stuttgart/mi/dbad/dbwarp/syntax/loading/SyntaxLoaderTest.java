@@ -25,7 +25,7 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.syntax.loading;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.config.Configuration;
-import de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.syntax.exception.SyntaxLoadException;
+import de.hdm_stuttgart.mi.dbad.dbwarp.syntax.exception.SyntaxLoadException;
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.syntax.Syntax;
 import de.hdm_stuttgart.mi.dbad.dbwarp.providers.config.ConfigProvider;
 import java.io.IOException;

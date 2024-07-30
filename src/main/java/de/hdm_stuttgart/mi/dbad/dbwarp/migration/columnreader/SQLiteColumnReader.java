@@ -62,6 +62,18 @@ public class SQLiteColumnReader extends AbstractColumnReader {
     log.exit();
   }
 
+  /**
+   * Reads a {@link Column} from the given {@link Table} and {@link ResultSet}. This method will
+   * call {@link AbstractColumnReader#readColumn(Table, ResultSet)} and then additionally read the
+   * default value of the column from the database. Also, it will adjust the read GenerationStrategy
+   * to match the SQLite behavior.
+   *
+   * @param table     {@link Table} to read the {@link Column} from.
+   * @param resultSet {@link ResultSet} containing information about the column. Is obtained using
+   *                  {@link java.sql.DatabaseMetaData#getColumns(String, String, String, String)}.
+   * @return
+   * @throws SQLException
+   */
   @Override
   protected Column readColumn(Table table, ResultSet resultSet) throws SQLException {
     log.entry(table, resultSet);

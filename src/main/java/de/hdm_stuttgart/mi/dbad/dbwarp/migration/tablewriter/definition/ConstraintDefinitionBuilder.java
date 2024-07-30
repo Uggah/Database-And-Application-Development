@@ -24,6 +24,12 @@ package de.hdm_stuttgart.mi.dbad.dbwarp.migration.tablewriter.definition;
 
 import de.hdm_stuttgart.mi.dbad.dbwarp.model.constraints.Constraint;
 
+/**
+ * A constraint definition builder is used to create a constraint definition statement for a given
+ * constraint.
+ *
+ * @param <T> The type of the constraint
+ */
 public interface ConstraintDefinitionBuilder<T extends Constraint> {
 
   /**
