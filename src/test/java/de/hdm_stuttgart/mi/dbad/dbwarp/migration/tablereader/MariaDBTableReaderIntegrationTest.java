@@ -38,7 +38,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 class MariaDBTableReaderIntegrationTest {
 
   @Test
-  @InitializeDatabase("mariadb/MariaDBTableReaderIntegrationTest.sql")
+  @InitializeDatabase("mariaDB/MariaDBTableReaderIntegrationTest.sql")
   void testReadTables(final ConnectionManager connectionManager) throws Exception {
     final MariaDBTableReader mariaDBTableReader = new MariaDBTableReader(
         connectionManager);
